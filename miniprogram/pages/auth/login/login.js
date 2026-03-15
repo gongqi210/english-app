@@ -1,11 +1,13 @@
 // pages/auth/login/login.js
 const app = getApp();
+const api = require('../../../utils/api.js');
 
 Page({
   data: {
     phone: '',
     password: '',
-    currentRole: 'student'
+    currentRole: 'student',
+    isLoading: false
   },
 
   onLoad() {
@@ -35,15 +37,31 @@ Page({
   handleWechatLogin() {
     wx.showLoading({ title: '登录中...' });
 
-    // 模拟微信登录
-    setTimeout(() => {
-      const mockUser = app.globalData.mockData.currentUser;
-      const token = 'mock_token_' + Date.now();
-
-      app.login(mockUser, token);
-      wx.hideLoading();
-      this.redirectToHome();
-    }, 1000);
+    // 获取微信登录code
+    wx.login({
+      success: (res) => {
+        if (res.code) {
+          // 调用微信登录API
+          api.auth.wechatLogin(res.code).then(data => {
+            app.login(data.user, data.token);
+            wx.hideLoading();
+            this.redirectToHome();
+          }).catch(err => {
+            console.error('微信登录失败:', err);
+            wx.hideLoading();
+            // 使用mock数据作为后备
+            this.mockLogin();
+          });
+        } else {
+          wx.hideLoading();
+          this.mockLogin();
+        }
+      },
+      fail: () => {
+        wx.hideLoading();
+        this.mockLogin();
+      }
+    });
   },
 
   // 账号密码登录
@@ -60,20 +78,37 @@ Page({
       return;
     }
 
+    this.setData({ isLoading: true });
     wx.showLoading({ title: '登录中...' });
 
-    // 模拟登录
-    setTimeout(() => {
-      const mockUser = {
-        ...app.globalData.mockData.currentUser,
-        role: currentRole
-      };
-      const token = 'mock_token_' + Date.now();
-
-      app.login(mockUser, token);
+    // 调用登录API
+    api.auth.login(phone, password, currentRole).then(data => {
+      app.login(data.user, data.token);
       wx.hideLoading();
+      this.setData({ isLoading: false });
       this.redirectToHome();
-    }, 1000);
+    }).catch(err => {
+      console.error('登录失败:', err);
+      wx.hideLoading();
+      this.setData({ isLoading: false });
+      wx.showToast({
+        title: err.message || '登录失败，请重试',
+        icon: 'none'
+      });
+    });
+  },
+
+  // Mock登录（开发阶段使用）
+  mockLogin() {
+    const { currentRole } = this.data;
+    const mockUser = {
+      ...app.globalData.mockData.currentUser,
+      role: currentRole
+    };
+    const token = 'mock_token_' + Date.now();
+
+    app.login(mockUser, token);
+    this.redirectToHome();
   },
 
   // 跳转到首页

@@ -1,29 +1,77 @@
 // pages/student/reading/reading.js
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
+    bookId: null,
     bookTitle: 'The Little Prince',
     currentSentence: 'It is only with the heart that one can see rightly.',
     score: {
-      total: 88,
-      pronunciation: 88,
-      fluency: 82,
-      intonation: 80,
-      completeness: 92
+      total: 0,
+      pronunciation: 0,
+      fluency: 0,
+      intonation: 0,
+      completeness: 0
     },
-    problemWords: [
-      { word: 'invisible', phonetic: '/ɪnˈvɪzəbl/', problem: '发音偏快', score: 75 },
-      { word: 'essential', phonetic: '/ɪˈsenʃl/', problem: '发音清晰', score: 85 },
-      { word: 'heart', phonetic: '/hɑːt/', problem: '发音正确', score: 95 }
-    ],
+    problemWords: [],
     isRecording: false,
     recordingTime: 0,
-    timer: null
+    timer: null,
+    isLoading: true
   },
 
   onLoad(options) {
-    if (options.title) {
+    if (options.bookId) {
+      this.setData({ bookId: options.bookId });
+      this.loadReadingData(options.bookId);
+    } else if (options.title) {
       this.setData({ bookTitle: options.title });
     }
+  },
+
+  // 检查登录状态
+  checkLogin() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.redirectTo({
+        url: '/pages/auth/login/login'
+      });
+      return false;
+    }
+    return true;
+  },
+
+  // 加载阅读数据
+  loadReadingData(bookId) {
+    if (!this.checkLogin()) return;
+
+    api.book.getDetail(bookId).then(book => {
+      if (book) {
+        this.setData({
+          bookTitle: book.title,
+          bookId: book.id
+        });
+      }
+    }).catch(err => {
+      console.error('获取绘本详情失败:', err);
+    });
+
+    // 模拟读取本地保存的评分数据
+    this.setData({
+      isLoading: false,
+      score: {
+        total: 88,
+        pronunciation: 88,
+        fluency: 82,
+        intonation: 80,
+        completeness: 92
+      },
+      problemWords: [
+        { word: 'invisible', phonetic: '/ɪnˈvɪzəbl/', problem: '发音偏快', score: 75 },
+        { word: 'essential', phonetic: '/ɪˈsenʃl/', problem: '发音清晰', score: 85 },
+        { word: 'heart', phonetic: '/hɑːt/', problem: '发音正确', score: 95 }
+      ]
+    });
   },
 
   // 播放正确发音

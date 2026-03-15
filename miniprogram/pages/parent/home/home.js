@@ -1,34 +1,21 @@
 // pages/parent/home/home.js
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
     userInfo: {
       name: '小明妈妈',
       avatar: 'https://picsum.photos/100/100?random=20'
     },
-    children: [
-      {
-        id: 1,
-        name: '小明',
-        avatar: 'https://picsum.photos/100/100?random=21',
-        className: '三年级一班',
-        todayStudyTime: '30分钟',
-        status: 'completed',
-        stats: {
-          weeklyBooks: 12,
-          weeklyChange: 20,
-          readingCount: 45,
-          readingChange: 15,
-          avgScore: 88,
-          scoreChange: 3
-        }
-      }
-    ],
-    selectedChildId: 1,
+    children: [],
+    selectedChildId: null,
+    currentChild: null,
     settings: {
       studyReminder: true,
       weeklyReport: true,
       homeworkNotify: true
-    }
+    },
+    loading: true
   },
 
   onLoad: function() {
@@ -36,9 +23,40 @@ Page({
   },
 
   loadData: function() {
-    // 模拟加载数据
-    this.setData({
-      currentChild: this.data.children[0]
+    const that = this;
+    that.setData({ loading: true });
+
+    // 获取用户信息
+    api.auth.getUserInfo().then(userInfo => {
+      if (userInfo) {
+        that.setData({ userInfo });
+      }
+    }).catch(err => {
+      console.error('获取用户信息失败:', err);
+    });
+
+    // 获取子女列表
+    api.parent.getChildren().then(children => {
+      that.setData({
+        children: children,
+        selectedChildId: children.length > 0 ? children[0].id : null,
+        currentChild: children.length > 0 ? children[0] : null,
+        loading: false
+      });
+    }).catch(err => {
+      console.error('获取子女列表失败:', err);
+      that.setData({ loading: false });
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none'
+      });
+    });
+
+    // 获取通知设置
+    api.parent.updateSettings({}).then(() => {
+      // 设置默认值
+    }).catch(err => {
+      console.error('获取设置失败:', err);
     });
   },
 
@@ -64,6 +82,7 @@ Page({
       editable: true,
       success: (res) => {
         if (res.confirm && res.content) {
+          // TODO: 调用API添加孩子
           const newChild = {
             id: this.data.children.length + 1,
             name: res.content,
@@ -115,48 +134,74 @@ Page({
 
   // 切换学习提醒
   onStudyReminderChange: function(e) {
+    const value = e.detail.value;
     this.setData({
-      'settings.studyReminder': e.detail.value
+      'settings.studyReminder': value
     });
-    wx.showToast({
-      title: e.detail.value ? '已开启' : '已关闭',
-      icon: 'none'
+    // 调用API更新设置
+    api.parent.updateSettings({ studyReminder: value }).then(() => {
+      wx.showToast({
+        title: value ? '已开启' : '已关闭',
+        icon: 'none'
+      });
+    }).catch(err => {
+      console.error('更新设置失败:', err);
+      // 回滚状态
+      this.setData({
+        'settings.studyReminder': !value
+      });
     });
   },
 
   // 切换周报推送
   onWeeklyReportChange: function(e) {
+    const value = e.detail.value;
     this.setData({
-      'settings.weeklyReport': e.detail.value
+      'settings.weeklyReport': value
     });
-    wx.showToast({
-      title: e.detail.value ? '已开启' : '已关闭',
-      icon: 'none'
+    // 调用API更新设置
+    api.parent.updateSettings({ weeklyReport: value }).then(() => {
+      wx.showToast({
+        title: value ? '已开启' : '已关闭',
+        icon: 'none'
+      });
+    }).catch(err => {
+      console.error('更新设置失败:', err);
+      this.setData({
+        'settings.weeklyReport': !value
+      });
     });
   },
 
   // 切换作业通知
   onHomeworkNotifyChange: function(e) {
+    const value = e.detail.value;
     this.setData({
-      'settings.homeworkNotify': e.detail.value
+      'settings.homeworkNotify': value
     });
-    wx.showToast({
-      title: e.detail.value ? '已开启' : '已关闭',
-      icon: 'none'
+    // 调用API更新设置
+    api.parent.updateSettings({ homeworkNotify: value }).then(() => {
+      wx.showToast({
+        title: value ? '已开启' : '已关闭',
+        icon: 'none'
+      });
+    }).catch(err => {
+      console.error('更新设置失败:', err);
+      this.setData({
+        'settings.homeworkNotify': !value
+      });
     });
   },
 
   // 刷新数据
   onRefresh: function() {
     wx.showLoading({ title: '加载中...' });
-    setTimeout(() => {
-      this.loadData();
-      wx.hideLoading();
-      wx.showToast({
-        title: '刷新成功',
-        icon: 'success'
-      });
-    }, 1000);
+    this.loadData();
+    wx.hideLoading();
+    wx.showToast({
+      title: '刷新成功',
+      icon: 'success'
+    });
   },
 
   // 点击孩子卡片

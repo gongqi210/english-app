@@ -1,4 +1,6 @@
 // pages/teacher/home/home.js
+const api = require('../../../utils/api');
+
 Page({
   data: {
     userInfo: {
@@ -7,32 +9,49 @@ Page({
       avatar: 'https://picsum.photos/100/100?random=30'
     },
     stats: {
-      classCount: 3,
-      studentCount: 45,
-      bookCount: 28,
-      todayHomework: 5,
-      pendingReview: 3
+      classCount: 0,
+      studentCount: 0,
+      bookCount: 0,
+      todayHomework: 0,
+      pendingReview: 0
     },
-    todayTasks: [
-      { id: 1, title: 'Unit 4 单词练习', type: 'homework', status: 'pending', deadline: '今天 18:00' },
-      { id: 2, title: '审核学生绘本', type: 'review', status: 'pending', count: 3 },
-      { id: 3, title: '上传新绘本', type: 'upload', status: 'pending' }
-    ],
-    recentHomework: [
-      { id: 1, title: 'Unit 3 单词练习', className: '三年级一班', submitRate: 85, avgScore: 88 },
-      { id: 2, title: 'Unit 2 句子跟读', className: '三年级二班', submitRate: 100, avgScore: 92 }
-    ]
+    todayTasks: [],
+    recentHomework: [],
+    loading: true
   },
 
   onLoad: function() {
     this.loadData();
   },
 
+  onShow: function() {
+    // 每次显示页面时刷新数据
+    this.loadData();
+  },
+
   loadData: function() {
-    // 模拟加载数据
-    this.setData({
-      currentTime: this.getCurrentTime()
-    });
+    const that = this;
+    that.setData({ loading: true });
+
+    // 调用工作台API
+    api.teacher.getDashboard()
+      .then(data => {
+        that.setData({
+          stats: data.stats || {},
+          todayTasks: data.todayTasks || [],
+          recentHomework: data.recentHomework || [],
+          loading: false,
+          currentTime: that.getCurrentTime()
+        });
+      })
+      .catch(err => {
+        console.error('获取工作台数据失败:', err);
+        that.setData({ loading: false });
+        wx.showToast({
+          title: err.message || '加载失败',
+          icon: 'none'
+        });
+      });
   },
 
   getCurrentTime: function() {
@@ -98,13 +117,14 @@ Page({
   onHomeworkDetail: function(e) {
     const homeworkId = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: '/pages/teacher/homework-manage/homework-manage'
+      url: '/pages/teacher/homework-manage/homework-manage?id=' + homeworkId
     });
   },
 
   // 刷新数据
   onRefresh: function() {
     wx.showLoading({ title: '刷新中...' });
+    this.loadData();
     setTimeout(() => {
       wx.hideLoading();
       wx.showToast({

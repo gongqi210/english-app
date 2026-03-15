@@ -1,4 +1,6 @@
 // pages/parent/homework/homework.js
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
     currentChild: {
@@ -7,54 +9,96 @@ Page({
       avatar: 'https://picsum.photos/100/100?random=21',
       className: '三年级一班'
     },
-    todayHomework: {
-      id: 1,
-      title: 'Unit 3 单词练习',
-      deadline: '今天 18:00',
-      questionCount: 10,
-      duration: 15
-    },
-    completedHomework: [
-      { id: 1, title: 'Unit 2 句子跟读', score: 95, stars: 5, date: '3月14日', timeSpent: '8分钟' },
-      { id: 2, title: 'Unit 1 字母认知', score: 88, stars: 4, date: '3月13日', timeSpent: '12分钟' },
-      { id: 3, title: 'Unit 0 入门测试', score: 92, stars: 5, date: '3月12日', timeSpent: '10分钟' }
-    ],
+    todayHomework: null,
+    completedHomework: [],
     weeklyStats: {
-      total: 8,
-      completed: 6,
-      avgScore: 88,
-      totalTime: 120
+      total: 0,
+      completed: 0,
+      avgScore: 0,
+      totalTime: 0
     },
-    trendData: [
-      { day: '周一', score: 85 },
-      { day: '周二', score: 80 },
-      { day: '周三', score: 90 },
-      { day: '周四', score: 88 },
-      { day: '周五', score: 92 },
-      { day: '周六', score: 95 },
-      { day: '周日', score: 88 }
-    ],
-    showAllHomework: false
+    trendData: [],
+    showAllHomework: false,
+    loading: true
   },
 
-  onLoad: function() {
+  onLoad: function(options) {
+    // 如果传递了childId，使用传递的childId
+    if (options.childId) {
+      this.setData({
+        'currentChild.id': parseInt(options.childId)
+      });
+    }
+    this.loadData();
+  },
+
+  onShow: function() {
+    // 每次显示页面时刷新数据
     this.loadData();
   },
 
   loadData: function() {
-    // 模拟加载数据
+    const that = this;
+    const childId = this.data.currentChild.id;
+
+    that.setData({ loading: true });
+
+    // 获取孩子作业列表
+    api.parent.getChildHomework(childId).then(data => {
+      that.setData({
+        todayHomework: data.todayHomework,
+        completedHomework: data.completedHomework || [],
+        weeklyStats: data.weeklyStats || {
+          total: 0,
+          completed: 0,
+          avgScore: 0,
+          totalTime: 0
+        },
+        trendData: data.trendData || [],
+        loading: false
+      });
+    }).catch(err => {
+      console.error('获取作业列表失败:', err);
+      that.setData({ loading: false });
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none'
+      });
+    });
   },
 
   // 提醒孩子做作业
   onRemind: function() {
+    const childId = this.data.currentChild.id;
+    const homeworkId = this.data.todayHomework ? this.data.todayHomework.id : null;
+
+    if (!homeworkId) {
+      wx.showToast({
+        title: '暂无作业',
+        icon: 'none'
+      });
+      return;
+    }
+
     wx.showModal({
       title: '提醒孩子',
       content: '确定要提醒孩子做作业吗？',
       success: (res) => {
         if (res.confirm) {
-          wx.showToast({
-            title: '已发送提醒',
-            icon: 'success'
+          wx.showLoading({ title: '发送中...' });
+          api.parent.remindHomework(childId, homeworkId).then(() => {
+            wx.hideLoading();
+            wx.showToast({
+              title: '已发送提醒',
+              icon: 'success'
+            });
+          }).catch(err => {
+            wx.hideLoading();
+            console.error('发送提醒失败:', err);
+            wx.showToast({
+              title: '发送失败',
+              icon: 'none'
+            });
           });
         }
       }

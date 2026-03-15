@@ -1,78 +1,45 @@
+// pages/teacher/homework-manage/homework-manage.js
+const api = require('../../../utils/api');
+
 Page({
   data: {
     status: 'all',
     currentTime: '',
     stats: {
-      assigned: 12,
-      submitRate: 95,
-      completeRate: 88,
-      avgScore: 86
+      assigned: 0,
+      submitRate: 0,
+      completeRate: 0,
+      avgScore: 0
     },
-    homeworkList: [
-      {
-        id: 1,
-        title: 'Unit 3 单词练习',
-        status: 'ongoing',
-        statusText: '进行中',
-        dateRange: '3月15日 - 3月18日',
-        className: '三年级一班',
-        studentCount: 30,
-        submitRate: 93,
-        submitted: 28,
-        avgScore: 86,
-        excellentCount: 12,
-        needsImprovement: 3
-      },
-      {
-        id: 2,
-        title: 'Unit 2 句子跟读',
-        status: 'finished',
-        statusText: '已结束',
-        dateRange: '3月10日 - 3月14日',
-        className: '三年级一班',
-        studentCount: 30,
-        submitRate: 100,
-        submitted: 30,
-        avgScore: 92,
-        excellentCount: 20,
-        needsImprovement: 1
-      },
-      {
-        id: 3,
-        title: 'Unit 1 字母认知',
-        status: 'finished',
-        statusText: '已结束',
-        dateRange: '3月5日 - 3月9日',
-        className: '三年级二班',
-        studentCount: 28,
-        submitRate: 96,
-        submitted: 27,
-        avgScore: 89,
-        excellentCount: 15,
-        needsImprovement: 2
-      }
-    ],
+    homeworkList: [],
+    loading: true,
 
     // 反馈功能
     showFeedbackModal: false,
     showPreviewModal: false,
     selectedHomeworkId: null,
     selectedStudent: null,
-    studentList: [
-      { id: 1, name: '小明', avatar: 'https://picsum.photos/200/200?random=401', score: 95 },
-      { id: 2, name: '小红', avatar: 'https://picsum.photos/200/200?random=401', score: 88 },
-      { id: 3, name: '小刚', avatar: 'https://picsum.photos/200/200?random=401', score: 72 },
-      { id: 4, name: '小丽', avatar: 'https://picsum.photos/200/200?random=401', score: 90 }
-    ],
+    studentList: [],
     aiFeedback: '',
     teacherFeedback: '',
     sendToParent: true,
-    sendToStudent: false
+    sendToStudent: false,
+    feedbackLoading: false
   },
 
-  onLoad: function() {
-    this.loadData();
+  onLoad: function(options) {
     this.setCurrentTime();
+    this.loadData();
+
+    // 如果有传入作业ID，自动打开反馈
+    if (options.id) {
+      this.setData({ selectedHomeworkId: options.id });
+    }
+  },
+
+  onShow: function() {
+    // 每次显示时刷新数据
+    this.loadData();
   },
 
   setCurrentTime: function() {
@@ -85,12 +52,42 @@ Page({
   },
 
   loadData: function() {
-    // 模拟加载数据
+    const that = this;
+    that.setData({ loading: true });
+
+    const params = {};
+    if (this.data.status !== 'all') {
+      params.status = this.data.status;
+    }
+
+    api.teacher.getHomeworkList(params)
+      .then(data => {
+        that.setData({
+          homeworkList: data || [],
+          loading: false
+        });
+        // 获取统计信息
+        return api.teacher.getHomeworkStats();
+      })
+      .then(stats => {
+        if (stats) {
+          that.setData({ stats });
+        }
+      })
+      .catch(err => {
+        console.error('获取作业列表失败:', err);
+        that.setData({ loading: false });
+        wx.showToast({
+          title: err.message || '加载失败',
+          icon: 'none'
+        });
+      });
   },
 
   onFilterChange: function(e) {
     const status = e.currentTarget.dataset.status;
     this.setData({ status });
+    this.loadData();
   },
 
   onViewStats: function(e) {
@@ -101,10 +98,29 @@ Page({
   },
 
   onViewList: function(e) {
-    wx.showToast({
-      title: '查看名单',
-      icon: 'none'
-    });
+    const homeworkId = e.currentTarget.dataset.id;
+    this.loadStudentList(homeworkId);
+  },
+
+  loadStudentList: function(homeworkId) {
+    const that = this;
+
+    api.teacher.getStudentSubmissions(homeworkId)
+      .then(data => {
+        that.setData({
+          studentList: data || []
+        });
+        wx.showToast({
+          title: '已加载学生名单',
+          icon: 'success'
+        });
+      })
+      .catch(err => {
+        wx.showToast({
+          title: err.message || '加载学生列表失败',
+          icon: 'none'
+        });
+      });
   },
 
   onEdit: function(e) {
@@ -122,10 +138,31 @@ Page({
       selectedHomeworkId: homeworkId,
       selectedStudent: null,
       aiFeedback: '',
-      teacherFeedback: ''
+      teacherFeedback: '',
+      feedbackLoading: true
     });
-    // 生成AI反馈
-    this.generateAIFeedback();
+
+    // 加载学生列表
+    this.loadStudentListForFeedback(homeworkId);
+  },
+
+  loadStudentListForFeedback: function(homeworkId) {
+    const that = this;
+
+    api.teacher.getStudentSubmissions(homeworkId)
+      .then(data => {
+        that.setData({
+          studentList: data || [],
+          feedbackLoading: false
+        });
+      })
+      .catch(err => {
+        that.setData({ feedbackLoading: false });
+        wx.showToast({
+          title: err.message || '加载学生列表失败',
+          icon: 'none'
+        });
+      });
   },
 
   onCloseFeedback: function() {
@@ -137,16 +174,30 @@ Page({
   onSelectStudent: function(e) {
     const studentId = e.currentTarget.dataset.id;
     const student = this.data.studentList.find(s => s.id === studentId);
+
     this.setData({
       selectedStudent: studentId
     });
+
     // 根据选择的学生生成AI反馈
-    this.generateAIFeedback(student);
+    this.generateAIFeedback(this.data.selectedHomeworkId, studentId);
   },
 
-  generateAIFeedback: function(student) {
-    // 模拟AI生成反馈
-    const defaultFeedback = `【作业反馈】
+  generateAIFeedback: function(homeworkId, studentId) {
+    const that = this;
+    that.setData({ feedbackLoading: true });
+
+    api.teacher.generateAIFeedback(homeworkId, studentId)
+      .then(data => {
+        that.setData({
+          aiFeedback: data.feedback || '',
+          teacherFeedback: data.feedback || '',
+          feedbackLoading: false
+        });
+      })
+      .catch(err => {
+        // 使用本地默认反馈作为降级
+        const defaultFeedback = `【作业反馈】
 
 小朋友本次作业完成情况良好！
 
@@ -161,74 +212,17 @@ Page({
 🌟 总体评价：
 继续加油，期待下一次的进步！`;
 
-    const studentFeedbacks = {
-      1: `【小明作业反馈】
+        that.setData({
+          aiFeedback: defaultFeedback,
+          teacherFeedback: defaultFeedback,
+          feedbackLoading: false
+        });
 
-本次作业表现优秀！🎉
-
-✅ 得分：95分
-- 选择题：全对
-- 听力题：95分
-- 书写题：95分
-
-💡 建议：
-保持目前的学习状态，可以尝试挑战更高难度的题目。继续加油！`,
-
-      2: `【小红作业反馈】
-
-本次作业表现良好！👍
-
-✅ 得分：88分
-- 选择题：全对
-- 听力题：90分
-- 书写题：80分（书写需加强）
-
-💡 建议：
-- 书写要更加工整
-- 注意字母大小写规范
-- 坚持每天练习15分钟
-
-继续努力！`,
-
-      3: `【小刚作业反馈】
-
-本次作业需要加油！💪
-
-✅ 得分：72分
-- 选择题：80分
-- 听力题：75分
-- 书写题：65分
-
-💡 建议：
-- 需要加强基础词汇记忆
-- 建议每天额外练习20分钟
-- 可以从简单的字母开始复习
-- 建议家长多陪伴指导
-
-老师相信你可以进步的！`,
-
-      4: `【小丽作业反馈】
-
-本次作业表现很棒！🌟
-
-✅ 得分：90分
-- 选择题：95分
-- 听力题：90分
-- 书写题：85分
-
-💡 建议：
-- 整体表现优秀
-- 书写可以更美观
-- 可以尝试跟读更多绘本
-
-继续保持！`
-    };
-
-    const feedback = student ? studentFeedbacks[student.id] : defaultFeedback;
-    this.setData({
-      aiFeedback: feedback,
-      teacherFeedback: feedback
-    });
+        wx.showToast({
+          title: '使用默认反馈',
+          icon: 'none'
+        });
+      });
   },
 
   onAIFeedbackInput: function(e) {
@@ -244,9 +238,14 @@ Page({
   },
 
   onRegenerateAI: function() {
+    const homeworkId = this.data.selectedHomeworkId;
+    const studentId = this.data.selectedStudent;
+
     wx.showLoading({ title: 'AI生成中...' });
+
+    this.generateAIFeedback(homeworkId, studentId);
+
     setTimeout(() => {
-      this.generateAIFeedback();
       wx.hideLoading();
       wx.showToast({
         title: '重新生成完成',
@@ -287,6 +286,8 @@ Page({
   },
 
   onSendFeedback: function() {
+    const that = this;
+
     if (!this.data.selectedStudent) {
       wx.showToast({
         title: '请选择学生',
@@ -309,16 +310,32 @@ Page({
       success: (res) => {
         if (res.confirm) {
           wx.showLoading({ title: '发送中...' });
-          setTimeout(() => {
-            wx.hideLoading();
-            wx.showToast({
-              title: '发送成功',
-              icon: 'success'
+
+          const feedbackData = {
+            aiFeedback: that.data.aiFeedback,
+            teacherFeedback: that.data.teacherFeedback,
+            sendToParent: that.data.sendToParent,
+            sendToStudent: that.data.sendToStudent
+          };
+
+          api.teacher.sendFeedback(that.data.selectedHomeworkId, that.data.selectedStudent, feedbackData)
+            .then(() => {
+              wx.hideLoading();
+              wx.showToast({
+                title: '发送成功',
+                icon: 'success'
+              });
+              that.setData({
+                showFeedbackModal: false
+              });
+            })
+            .catch(err => {
+              wx.hideLoading();
+              wx.showToast({
+                title: err.message || '发送失败',
+                icon: 'none'
+              });
             });
-            this.setData({
-              showFeedbackModal: false
-            });
-          }, 1000);
         }
       }
     });

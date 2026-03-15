@@ -2,6 +2,7 @@ package com.english.app.service.impl;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import com.english.app.common.UserContext;
 import com.english.app.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Long getCurrentUserId() {
-        // TODO: 从ThreadLocal获取当前用户ID
-        return 1L;
+        return UserContext.getUserId();
     }
 }

@@ -1,49 +1,49 @@
 // pages/parent/orders/orders.js
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
     currentTab: 'all',
-    orders: [
-      {
-        id: 1,
-        orderNo: '2024031512345678',
-        productName: '季度会员',
-        productDesc: '3个月会员权益 + 10次外教课',
-        amount: 79,
-        status: 'paid',
-        statusText: '已完成',
-        createTime: '2024-03-15 14:30'
-      },
-      {
-        id: 2,
-        orderNo: '2024031012345678',
-        productName: '年度会员',
-        productDesc: '12个月会员权益 + 50次外教课',
-        amount: 299,
-        status: 'paid',
-        statusText: '已完成',
-        createTime: '2024-03-10 09:15'
-      },
-      {
-        id: 3,
-        orderNo: '2024030512345678',
-        productName: '月度会员',
-        productDesc: '1个月会员权益',
-        amount: 29,
-        status: 'refund',
-        statusText: '已退款',
-        createTime: '2024-03-05 16:20'
-      }
-    ]
+    orders: [],
+    filteredOrders: [],
+    loading: true
   },
 
   onLoad: function() {
-    this.filterOrders();
+    this.loadOrders();
+  },
+
+  onShow: function() {
+    // 每次显示页面时刷新数据
+    this.loadOrders();
+  },
+
+  loadOrders: function() {
+    const that = this;
+    const currentTab = this.data.currentTab;
+
+    that.setData({ loading: true });
+
+    api.parent.getOrders(currentTab).then(orders => {
+      that.setData({
+        orders: orders,
+        filteredOrders: orders,
+        loading: false
+      });
+    }).catch(err => {
+      console.error('获取订单列表失败:', err);
+      that.setData({ loading: false });
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none'
+      });
+    });
   },
 
   onTabChange: function(e) {
     const tab = e.currentTarget.dataset.tab;
     this.setData({ currentTab: tab });
-    this.filterOrders();
+    this.loadOrders();
   },
 
   filterOrders: function() {
@@ -63,14 +63,28 @@ Page({
 
   onRefund: function(e) {
     const orderId = e.currentTarget.dataset.id;
+
     wx.showModal({
       title: '申请退款',
       content: '确定要申请退款吗？',
       success: (res) => {
         if (res.confirm) {
-          wx.showToast({
-            title: '退款申请已提交',
-            icon: 'success'
+          wx.showLoading({ title: '申请中...' });
+          api.parent.refundOrder(orderId).then(() => {
+            wx.hideLoading();
+            wx.showToast({
+              title: '退款申请已提交',
+              icon: 'success'
+            });
+            // 刷新订单列表
+            this.loadOrders();
+          }).catch(err => {
+            wx.hideLoading();
+            console.error('申请退款失败:', err);
+            wx.showToast({
+              title: err.message || '申请失败',
+              icon: 'none'
+            });
           });
         }
       }

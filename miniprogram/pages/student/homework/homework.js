@@ -1,9 +1,11 @@
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
     currentTab: 0,
-    unreadCount: 3,
-    pendingCount: 3,
-    completedCount: 5,
+    unreadCount: 0,
+    pendingCount: 0,
+    completedCount: 0,
     stars: [
       { x: 10, y: 20, delay: 0 },
       { x: 30, y: 10, delay: 0.3 },
@@ -15,41 +17,8 @@ Page({
       { x: 60, y: 45, delay: 0.8 },
       { x: 80, y: 38, delay: 1.1 },
     ],
-    homeworkList: [
-      {
-        id: 1,
-        title: 'Unit 3 单词练习',
-        deadline: '今天 18:00',
-        questionCount: 5,
-        duration: 15,
-        progress: 40,
-        completed: false,
-        score: 0,
-        timeSpent: ''
-      },
-      {
-        id: 2,
-        title: 'Unit 2 句子跟读',
-        deadline: '今天 18:00',
-        questionCount: 3,
-        duration: 10,
-        progress: 100,
-        completed: true,
-        score: 95,
-        timeSpent: '8分32秒'
-      },
-      {
-        id: 3,
-        title: 'Unit 1 字母认知',
-        deadline: '昨天',
-        questionCount: 4,
-        duration: 8,
-        progress: 100,
-        completed: true,
-        score: 88,
-        timeSpent: '6分15秒'
-      }
-    ]
+    homeworkList: [],
+    isLoading: true
   },
 
   onLoad: function(options) {
@@ -60,11 +29,98 @@ Page({
     this.loadHomeworkList();
   },
 
-  loadHomeworkList: function() {
-    // 模拟加载作业列表
-    const tab = this.data.currentTab;
-    // 这里应该是API调用
+  // 检查登录状态
+  checkLogin() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.redirectTo({
+        url: '/pages/auth/login/login'
+      });
+      return false;
+    }
+    return true;
   },
+
+  // 加载作业列表
+  loadHomeworkList: function() {
+    if (!this.checkLogin()) return;
+
+    this.setData({ isLoading: true });
+
+    const tab = this.data.currentTab;
+    const statusMap = ['all', 'pending', 'completed'];
+    const status = statusMap[tab];
+
+    api.homework.getList(status).then(list => {
+      this.setData({
+        homeworkList: list,
+        isLoading: false
+      });
+      this.updateCounts(list);
+    }).catch(err => {
+      console.error('获取作业列表失败:', err);
+      this.setData({ isLoading: false });
+    });
+  },
+
+  // 更新统计数量
+  updateCounts: function(list) {
+    const allList = list;
+    const pendingList = allList.filter(item => !item.completed);
+    const completedList = allList.filter(item => item.completed);
+
+    this.setData({
+      unreadCount: pendingList.length,
+      pendingCount: pendingList.length,
+      completedCount: completedList.length
+    });
+  },
+
+  onTabChange: function(e) {
+    const tab = parseInt(e.currentTarget.dataset.tab);
+    this.setData({ currentTab: tab });
+    this.loadHomeworkList();
+  },
+
+  onNotificationTap: function() {
+    wx.showToast({
+      title: '通知中心',
+      icon: 'none'
+    });
+  },
+
+  onProfileTap: function() {
+    wx.switchTab({
+      url: '/pages/student/profile/profile'
+    });
+  },
+
+  onHomeworkTap: function(e) {
+    const id = e.currentTarget.dataset.id;
+    // 查看作业详情
+  },
+
+  onStartHomework: function(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/student/challenge/challenge?id=${id}`
+    });
+  },
+
+  onRetry: function(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/student/challenge/challenge?id=${id}&retry=1`
+    });
+  },
+
+  onViewDetail: function(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/student/report/report?id=${id}`
+    });
+  }
+});
 
   onTabChange: function(e) {
     const tab = parseInt(e.currentTarget.dataset.tab);

@@ -1,46 +1,48 @@
 // pages/principal/reports/reports.js
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
     timeType: 'week',
-    income: { total: '128,500', new: '15,800', renewal: 85 },
-    users: { newStudent: 45, newParent: 38, active: 92 },
-    trendData: [60, 75, 65, 80, 90, 85, 95],
-    chartLabels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    income: { total: '0', new: '0', renewal: 0 },
+    users: { newStudent: 0, newParent: 0, active: 0 },
+    trendData: [],
+    chartLabels: [],
+    loading: true
   },
 
   onLoad: function() {
     this.loadData();
   },
 
+  onShow: function() {
+    // 每次显示页面时刷新数据
+    this.loadData();
+  },
+
   loadData: function() {
-    // 根据时间类型加载不同数据
-    const timeType = this.data.timeType;
-    let data = {};
+    this.setData({ loading: true });
 
-    if (timeType === 'week') {
-      data = {
-        trendData: [60, 75, 65, 80, 90, 85, 95],
-        chartLabels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-        income: { total: '128,500', new: '15,800', renewal: 85 },
-        users: { newStudent: 45, newParent: 38, active: 92 }
-      };
-    } else if (timeType === 'month') {
-      data = {
-        trendData: [65, 72, 78, 82, 75, 88, 92, 85, 90, 95],
-        chartLabels: ['第1周', '第2周', '第3周', '第4周'],
-        income: { total: '520,000', new: '68,000', renewal: 88 },
-        users: { newStudent: 186, newParent: 152, active: 88 }
-      };
-    } else {
-      data = {
-        trendData: [45, 52, 65, 72, 78, 85, 92],
-        chartLabels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'],
-        income: { total: '2,850,000', new: '380,000', renewal: 92 },
-        users: { newStudent: 856, newParent: 720, active: 95 }
-      };
-    }
-
-    this.setData(data);
+    api.principal.getOperationReport(this.data.timeType).then((data) => {
+      if (data) {
+        this.setData({
+          income: data.income || { total: '0', new: '0', renewal: 0 },
+          users: data.users || { newStudent: 0, newParent: 0, active: 0 },
+          trendData: data.trendData || [],
+          chartLabels: data.chartLabels || [],
+          loading: false
+        });
+      } else {
+        this.setData({ loading: false });
+      }
+    }).catch((err) => {
+      console.error('加载运营报表数据失败:', err);
+      this.setData({ loading: false });
+      wx.showToast({
+        title: '数据加载失败',
+        icon: 'none'
+      });
+    });
   },
 
   onTimeChange: function(e) {
@@ -51,13 +53,21 @@ Page({
 
   onExportReport: function() {
     wx.showLoading({ title: '导出中...' });
-    setTimeout(() => {
+
+    api.principal.exportOperationReport(this.data.timeType).then(() => {
       wx.hideLoading();
       wx.showToast({
         title: '导出成功',
         icon: 'success'
       });
-    }, 1500);
+    }).catch((err) => {
+      wx.hideLoading();
+      console.error('导出报表失败:', err);
+      wx.showToast({
+        title: '导出失败',
+        icon: 'none'
+      });
+    });
   },
 
   onViewDetail: function(e) {
@@ -65,6 +75,23 @@ Page({
     wx.showToast({
       title: '查看' + (type === 'income' ? '收入' : '用户') + '详情',
       icon: 'none'
+    });
+    // TODO: 实现查看详情功能
+    // if (type === 'income') {
+    //   wx.navigateTo({
+    //     url: '/pages/principal/income/income'
+    //   });
+    // } else {
+    //   wx.navigateTo({
+    //     url: '/pages/principal/user-detail/user-detail'
+    //   });
+    // }
+  },
+
+  // 下拉刷新
+  onPullDownRefresh: function() {
+    this.loadData().then(() => {
+      wx.stopPullDownRefresh();
     });
   }
 });

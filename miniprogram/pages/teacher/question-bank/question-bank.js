@@ -1,51 +1,19 @@
+// pages/teacher/question-bank/question-bank.js
+const api = require('../../../utils/api');
+
 Page({
   data: {
     currentFilter: 'all',
     searchKeyword: '',
-    questions: [
-      {
-        id: 1,
-        type: 'choice',
-        typeName: '选择题',
-        content: 'What color is the apple?',
-        options: [
-          { key: 'A', value: 'Red' },
-          { key: 'B', value: 'Blue' },
-          { key: 'C', value: 'Yellow' },
-          { key: 'D', value: 'Green' }
-        ],
-        correctKey: 'A',
-        difficulty: 2,
-        knowledgePoint: '颜色',
-        usageCount: 25
-      },
-      {
-        id: 2,
-        type: 'fill_blank',
-        typeName: '填空题',
-        content: 'Apple 的中文意思是：___',
-        difficulty: 1,
-        knowledgePoint: '词汇',
-        usageCount: 18
-      },
-      {
-        id: 3,
-        type: 'listening',
-        typeName: '听力题',
-        content: 'Listen and choose: What do you hear?',
-        difficulty: 2,
-        knowledgePoint: '听力理解',
-        usageCount: 12
-      },
-      {
-        id: 4,
-        type: 'tracing',
-        typeName: '书写题',
-        content: '请描写字母 Aa',
-        difficulty: 1,
-        knowledgePoint: '字母',
-        usageCount: 30
-      }
+    questions: [],
+    loading: true,
+    // 筛选选项
+    filterOptions: [
+      { key: 'all', name: '全部' },
+      { key: 'choice', name: '选择题' },
+      { key: 'fill_blank', name: '填空题' },
+      { key: 'listening', name: '听力题' },
+      { key: 'tracing', name: '书写题' }
     ]
   },
 
@@ -53,8 +21,38 @@ Page({
     this.loadQuestions();
   },
 
+  onShow: function() {
+    // 每次显示时刷新数据
+    this.loadQuestions();
+  },
+
   loadQuestions: function() {
-    // 模拟API加载
+    const that = this;
+    that.setData({ loading: true });
+
+    const params = {};
+    if (this.data.currentFilter !== 'all') {
+      params.type = this.data.currentFilter;
+    }
+    if (this.data.searchKeyword) {
+      params.keyword = this.data.searchKeyword;
+    }
+
+    api.teacher.getQuestions(params)
+      .then(data => {
+        that.setData({
+          questions: data || [],
+          loading: false
+        });
+      })
+      .catch(err => {
+        console.error('获取题目列表失败:', err);
+        that.setData({ loading: false });
+        wx.showToast({
+          title: err.message || '加载失败',
+          icon: 'none'
+        });
+      });
   },
 
   onSearchInput: function(e) {
@@ -63,11 +61,16 @@ Page({
     });
   },
 
+  onSearch: function() {
+    this.loadQuestions();
+  },
+
   onFilterChange: function(e) {
     const filter = e.currentTarget.dataset.filter;
     this.setData({
       currentFilter: filter
     });
+    this.loadQuestions();
   },
 
   onCreateQuestion: function() {
@@ -87,23 +90,55 @@ Page({
 
   onCopy: function(e) {
     const id = e.currentTarget.dataset.id;
-    wx.showToast({
-      title: '复制题目',
-      icon: 'success'
-    });
+    const that = this;
+
+    wx.showLoading({ title: '复制中...' });
+
+    api.teacher.copyQuestion(id)
+      .then(() => {
+        wx.hideLoading();
+        wx.showToast({
+          title: '复制成功',
+          icon: 'success'
+        });
+        that.loadQuestions();
+      })
+      .catch(err => {
+        wx.hideLoading();
+        wx.showToast({
+          title: err.message || '复制失败',
+          icon: 'none'
+        });
+      });
   },
 
   onDelete: function(e) {
     const id = e.currentTarget.dataset.id;
+    const that = this;
+
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这道题目吗？',
       success: (res) => {
         if (res.confirm) {
-          wx.showToast({
-            title: '已删除',
-            icon: 'success'
-          });
+          wx.showLoading({ title: '删除中...' });
+
+          api.teacher.deleteQuestion(id)
+            .then(() => {
+              wx.hideLoading();
+              wx.showToast({
+                title: '已删除',
+                icon: 'success'
+              });
+              that.loadQuestions();
+            })
+            .catch(err => {
+              wx.hideLoading();
+              wx.showToast({
+                title: err.message || '删除失败',
+                icon: 'none'
+              });
+            });
         }
       }
     });

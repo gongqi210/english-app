@@ -1,3 +1,5 @@
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
     homeworkId: null,
@@ -8,76 +10,10 @@ Page({
     timer: null,
     seconds: 0,
 
-    questions: [
-      // 选择题
-      {
-        id: 1,
-        type: 'choice',
-        question: 'What color is the apple?',
-        imageUrl: 'https://picsum.photos/300/200?random=101',
-        options: [
-          { key: 'A', value: 'Red' },
-          { key: 'B', value: 'Blue' },
-          { key: 'C', value: 'Yellow' },
-          { key: 'D', value: 'Green' }
-        ],
-        correctKey: 'A',
-        explanation: 'An apple can be red, green, or yellow. This one is red.',
-        isHintShown: false
-      },
-      // 听力题
-      {
-        id: 2,
-        type: 'listening',
-        question: 'Listen and choose the correct picture:',
-        audioUrl: '/assets/audio/apple.mp3',
-        imageOptions: [
-          { id: 'A', url: 'https://picsum.photos/200/200?random=102' },
-          { id: 'B', url: 'https://picsum.photos/200/200?random=103' },
-          { id: 'C', url: 'https://picsum.photos/200/200?random=104' }
-        ],
-        correctId: 'A',
-        explanation: 'The audio says "Apple", so we choose the apple.',
-        isHintShown: false
-      },
-      // 填空题
-      {
-        id: 3,
-        type: 'fill_blank',
-        question: 'Complete the word: A___le',
-        hint: 'Fill in the missing letter',
-        keyboard: 'letter',
-        blanks: [
-          { filled: true, value: '' },
-          { filled: false, maxLength: 1 },
-          { filled: true, value: '' },
-          { filled: true, value: '' },
-          { filled: true, value: '' }
-        ],
-        correctAnswer: 'p',
-        explanation: 'The word is "Apple", so we need letter "p".',
-        isHintShown: false
-      },
-      // 描红题
-      {
-        id: 4,
-        type: 'tracing',
-        target: 'A',
-        explanation: 'Great job tracing the letter A!',
-        isHintShown: false
-      },
-      // 跟读题
-      {
-        id: 5,
-        type: 'reading',
-        sentence: 'I love my family.',
-        referenceAudio: '/assets/audio/family.mp3',
-        isHintShown: false
-      }
-    ],
+    questions: [],
 
     currentQuestion: 0,
-    progress: 20,
+    progress: 0,
     currentQ: {},
 
     // 答题状态
@@ -111,7 +47,10 @@ Page({
     correctCount: 0,
     showResultModal: false,
     grade: 'A+',
-    starCount: 5
+    starCount: 5,
+
+    // 加载状态
+    isLoading: true
   },
 
   onLoad: function(options) {
@@ -129,11 +68,112 @@ Page({
     this.stopTimer();
   },
 
+  // 检查登录状态
+  checkLogin() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.redirectTo({
+        url: '/pages/auth/login/login'
+      });
+      return false;
+    }
+    return true;
+  },
+
+  // 加载题目数据
   loadQuestions: function() {
-    // 模拟加载题目数据
-    const q = this.data.questions[0];
+    if (!this.checkLogin()) return;
+
+    const { homeworkId, levelId } = this.data;
+
+    api.challenge.getQuestions(homeworkId, levelId).then(questions => {
+      if (questions && questions.length > 0) {
+        this.setData({
+          questions,
+          currentQ: questions[0],
+          progress: (1 / questions.length) * 100,
+          isLoading: false
+        });
+      } else {
+        // 使用默认题目数据
+        this.setDefaultQuestions();
+      }
+    }).catch(err => {
+      console.error('获取题目失败:', err);
+      this.setDefaultQuestions();
+    });
+  },
+
+  // 设置默认题目
+  setDefaultQuestions: function() {
+    const defaultQuestions = [
+      {
+        id: 1,
+        type: 'choice',
+        question: 'What color is the apple?',
+        imageUrl: 'https://picsum.photos/300/200?random=101',
+        options: [
+          { key: 'A', value: 'Red' },
+          { key: 'B', value: 'Blue' },
+          { key: 'C', value: 'Yellow' },
+          { key: 'D', value: 'Green' }
+        ],
+        correctKey: 'A',
+        explanation: 'An apple can be red, green, or yellow. This one is red.',
+        isHintShown: false
+      },
+      {
+        id: 2,
+        type: 'listening',
+        question: 'Listen and choose the correct picture:',
+        audioUrl: '/assets/audio/apple.mp3',
+        imageOptions: [
+          { id: 'A', url: 'https://picsum.photos/200/200?random=102' },
+          { id: 'B', url: 'https://picsum.photos/200/200?random=103' },
+          { id: 'C', url: 'https://picsum.photos/200/200?random=104' }
+        ],
+        correctId: 'A',
+        explanation: 'The audio says "Apple", so we choose the apple.',
+        isHintShown: false
+      },
+      {
+        id: 3,
+        type: 'fill_blank',
+        question: 'Complete the word: A___le',
+        hint: 'Fill in the missing letter',
+        keyboard: 'letter',
+        blanks: [
+          { filled: true, value: '' },
+          { filled: false, maxLength: 1 },
+          { filled: true, value: '' },
+          { filled: true, value: '' },
+          { filled: true, value: '' }
+        ],
+        correctAnswer: 'p',
+        explanation: 'The word is "Apple", so we need letter "p".',
+        isHintShown: false
+      },
+      {
+        id: 4,
+        type: 'tracing',
+        target: 'A',
+        explanation: 'Great job tracing the letter A!',
+        isHintShown: false
+      },
+      {
+        id: 5,
+        type: 'reading',
+        sentence: 'I love my family.',
+        referenceAudio: '/assets/audio/family.mp3',
+        isHintShown: false
+      }
+    ];
+
     this.setData({
-      currentQ: q
+      questions: defaultQuestions,
+      currentQ: defaultQuestions[0],
+      progress: (1 / defaultQuestions.length) * 100,
+      isLoading: false
     });
   },
 

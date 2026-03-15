@@ -1,42 +1,39 @@
 // pages/parent/purchase/purchase.js
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
     selectedPackage: 2,
     selectedPayment: 'wechat',
     showPayModal: false,
-    packages: [
-      {
-        id: 1,
-        name: '月度会员',
-        price: 29,
-        unit: '月',
-        originalPrice: 39,
-        features: ['全部绘本无限读', 'AI跟读评分', '作业无限量']
-      },
-      {
-        id: 2,
-        name: '季度会员',
-        price: 79,
-        unit: '季',
-        originalPrice: 99,
-        popular: true,
-        features: ['全部绘本无限读', 'AI跟读评分', '作业无限量', '赠送10次外教课']
-      },
-      {
-        id: 3,
-        name: '年度会员',
-        price: 299,
-        unit: '年',
-        originalPrice: 399,
-        features: ['全部绘本无限读', 'AI跟读评分', '作业无限量', '赠送50次外教课', '专属学习规划']
-      }
-    ]
+    packages: [],
+    currentOrderId: null,
+    loading: true
   },
 
   onLoad: function(options) {
+    this.loadPackages();
     if (options.id) {
       this.setData({ selectedPackage: parseInt(options.id) });
     }
+  },
+
+  loadPackages: function() {
+    const that = this;
+
+    api.parent.getMembershipLevels().then(packages => {
+      that.setData({
+        packages: packages,
+        loading: false
+      });
+    }).catch(err => {
+      console.error('获取套餐列表失败:', err);
+      that.setData({ loading: false });
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none'
+      });
+    });
   },
 
   get currentPackage() {
@@ -54,6 +51,14 @@ Page({
   },
 
   onPay: function() {
+    const selectedPackage = this.currentPackage;
+    if (!selectedPackage) {
+      wx.showToast({
+        title: '请选择套餐',
+        icon: 'none'
+      });
+      return;
+    }
     this.setData({ showPayModal: true });
   },
 
@@ -62,22 +67,42 @@ Page({
   },
 
   onConfirmPay: function() {
-    wx.showLoading({ title: '支付中...' });
+    const that = this;
+    const selectedPackage = this.currentPackage;
+    const paymentMethod = this.data.selectedPayment;
 
-    // 模拟微信支付
-    setTimeout(() => {
+    wx.showLoading({ title: '创建订单...' });
+
+    // 创建订单
+    api.parent.createOrder(selectedPackage.id, paymentMethod).then(order => {
+      that.setData({ currentOrderId: order.id });
       wx.hideLoading();
-      wx.showToast({
-        title: '支付成功',
-        icon: 'success'
-      });
 
-      // 跳转到支付结果页
+      // 调用支付（这里模拟支付流程，实际需要调用微信支付API）
+      wx.showLoading({ title: '支付中...' });
+
+      // 模拟支付成功
       setTimeout(() => {
-        wx.redirectTo({
-          url: '/pages/common/payment-result/payment-result?status=success&orderId=' + Date.now()
+        wx.hideLoading();
+        wx.showToast({
+          title: '支付成功',
+          icon: 'success'
         });
-      }, 1500);
-    }, 2000);
+
+        // 跳转到支付结果页
+        setTimeout(() => {
+          wx.redirectTo({
+            url: '/pages/common/payment-result/payment-result?status=success&orderId=' + order.id
+          });
+        }, 1500);
+      }, 2000);
+    }).catch(err => {
+      wx.hideLoading();
+      console.error('创建订单失败:', err);
+      wx.showToast({
+        title: err.message || '创建订单失败',
+        icon: 'none'
+      });
+    });
   }
 });

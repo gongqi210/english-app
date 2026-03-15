@@ -1,5 +1,6 @@
 // pages/student/home/home.js
 const app = getApp();
+const api = require('../../../utils/api.js');
 
 Page({
   data: {
@@ -8,7 +9,8 @@ Page({
     recentBooks: [],
     recommendBooks: [],
     calendarDays: [],
-    homeworkCount: 2  // 待完成作业数量
+    homeworkCount: 0,
+    isLoading: true
   },
 
   onLoad() {
@@ -17,40 +19,89 @@ Page({
 
   onShow() {
     this.setGreeting();
+    // 每次显示页面时刷新数据
+    this.loadUserInfo();
+    this.loadHomeworkCount();
   },
 
+  // 检查登录状态
+  checkLogin() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.redirectTo({
+        url: '/pages/auth/login/login'
+      });
+      return false;
+    }
+    return true;
+  },
+
+  // 初始化数据
   initData() {
-    const userInfo = app.globalData.mockData.currentUser;
-    const books = app.globalData.mockData.books;
-    const recentBooks = app.globalData.mockData.recentBooks;
+    if (!this.checkLogin()) return;
 
-    // 模拟最近学习的书籍详情
-    const recentWithDetails = recentBooks.map(item => {
-      const book = books.find(b => b.id === item.id);
-      return {
-        ...item,
-        title: book ? book.title : '',
-        cover: book ? book.cover : ''
-      };
-    });
-
-    // 推荐书籍
-    const recommendBooks = books.slice(0, 4).map(book => ({
-      ...book,
-      levelIndex: parseInt(book.level.replace('L', ''))
-    }));
-
-    // 生成日历数据
-    const calendarDays = this.generateCalendar();
-
-    this.setData({
-      userInfo,
-      recentBooks: recentWithDetails,
-      recommendBooks,
-      calendarDays
-    });
-
+    this.loadUserInfo();
+    this.loadRecommendBooks();
+    this.loadRecentBooks();
+    this.loadHomeworkCount();
+    this.generateCalendar();
     this.setGreeting();
+  },
+
+  // 加载用户信息
+  loadUserInfo() {
+    api.auth.getUserInfo().then(data => {
+      this.setData({ userInfo: data });
+    }).catch(err => {
+      console.error('获取用户信息失败:', err);
+      // 使用本地存储的用户信息
+      const localUserInfo = wx.getStorageSync('userInfo');
+      if (localUserInfo) {
+        this.setData({ userInfo: localUserInfo });
+      }
+    });
+  },
+
+  // 加载推荐书籍
+  loadRecommendBooks() {
+    api.book.getRecommend().then(books => {
+      const recommendBooks = books.map(book => ({
+        ...book,
+        levelIndex: parseInt(book.level.replace('L', ''))
+      }));
+      this.setData({ recommendBooks, isLoading: false });
+    }).catch(err => {
+      console.error('获取推荐书籍失败:', err);
+      this.setData({ isLoading: false });
+    });
+  },
+
+  // 加载最近学习
+  loadRecentBooks() {
+    api.book.getRecent().then(recentBooks => {
+      const books = app.globalData.mockData.books;
+      const recentWithDetails = recentBooks.map(item => {
+        const book = books.find(b => b.id === item.id);
+        return {
+          ...item,
+          title: book ? book.title : '',
+          cover: book ? book.cover : ''
+        };
+      });
+      this.setData({ recentBooks: recentWithDetails });
+    }).catch(err => {
+      console.error('获取最近学习失败:', err);
+    });
+  },
+
+  // 加载作业数量
+  loadHomeworkCount() {
+    api.homework.getList('pending').then(list => {
+      const pendingList = list.filter(item => !item.completed);
+      this.setData({ homeworkCount: pendingList.length });
+    }).catch(err => {
+      console.error('获取作业数量失败:', err);
+    });
   },
 
   setGreeting() {
@@ -78,7 +129,7 @@ Page({
 
   generateCalendar() {
     const days = [];
-    const today = 15; // 假设今天是15号
+    const today = new Date().getDate();
 
     for (let i = 1; i <= 31; i++) {
       let status = 'future';
@@ -94,7 +145,7 @@ Page({
       });
     }
 
-    return days;
+    this.setData({ calendarDays: days });
   },
 
   // 获取书籍封面
@@ -113,7 +164,7 @@ Page({
   continueLearning() {
     const recentBooks = this.data.recentBooks;
     if (recentBooks.length > 0) {
-      this.goToBook(e, recentBooks[0].id);
+      this.goToBook({ currentTarget: { dataset: { id: recentBooks[0].id } } });
     } else {
       this.goToDiscover();
     }

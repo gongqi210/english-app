@@ -1,6 +1,8 @@
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
-    score: 1250,
+    score: 0,
     mapScrollTop: 0,
     unlockedLevel: 1,
     currentHomework: {
@@ -40,13 +42,8 @@ Page({
       { x: 12, y: 95, size: 4, delay: 0.3 },
       { x: 22, y: 88, size: 3, delay: 0.8 },
     ],
-    levels: [
-      { id: 1, name: '字母认知', icon: '🐻', x: 175, y: 100, status: 'completed' },
-      { id: 2, name: '单词拼写', icon: '🦊', x: 575, y: 200, status: 'completed' },
-      { id: 3, name: '听力训练', icon: '🦁', x: 175, y: 300, status: 'current' },
-      { id: 4, name: '句子跟读', icon: '🐰', x: 575, y: 400, status: 'locked' },
-      { id: 5, name: '综合测验', icon: '👑', x: 375, y: 500, status: 'locked' }
-    ]
+    levels: [],
+    isLoading: true
   },
 
   onLoad: function(options) {
@@ -56,19 +53,76 @@ Page({
     this.loadLevelData(homeworkId, retry);
   },
 
+  // 检查登录状态
+  checkLogin() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.redirectTo({
+        url: '/pages/auth/login/login'
+      });
+      return false;
+    }
+    return true;
+  },
+
   loadLevelData: function(id, retry) {
-    // 模拟数据加载
-    // 实际应该调用API
-    if (retry) {
-      // 重做模式，重置进度
-      this.setData({
-        levels: this.data.levels.map((level, index) => ({
+    if (!this.checkLogin()) return;
+
+    // 获取用户积分
+    api.stats.getUserStats().then(stats => {
+      this.setData({ score: stats.points || 0 });
+    }).catch(err => {
+      console.error('获取用户积分失败:', err);
+    });
+
+    // 获取关卡数据
+    api.challenge.getLevels(id).then(levels => {
+      if (retry) {
+        // 重做模式，重置进度
+        levels = levels.map((level, index) => ({
           ...level,
           status: index === 0 ? 'current' : 'locked'
-        })),
-        unlockedLevel: 1
+        }));
+      }
+
+      // 计算已解锁关卡
+      const unlockedLevel = levels.filter(l => l.status !== 'locked').length;
+
+      this.setData({
+        levels,
+        unlockedLevel,
+        isLoading: false
       });
+    }).catch(err => {
+      console.error('获取关卡数据失败:', err);
+      // 使用默认数据
+      this.setDefaultLevels(retry);
+    });
+  },
+
+  // 设置默认关卡数据
+  setDefaultLevels: function(retry) {
+    const defaultLevels = [
+      { id: 1, name: '字母认知', icon: '🐻', x: 175, y: 100, status: 'completed' },
+      { id: 2, name: '单词拼写', icon: '🦊', x: 575, y: 200, status: 'completed' },
+      { id: 3, name: '听力训练', icon: '🦁', x: 175, y: 300, status: 'current' },
+      { id: 4, name: '句子跟读', icon: '🐰', x: 575, y: 400, status: 'locked' },
+      { id: 5, name: '综合测验', icon: '👑', x: 375, y: 500, status: 'locked' }
+    ];
+
+    let levels = defaultLevels;
+    if (retry) {
+      levels = defaultLevels.map((level, index) => ({
+        ...level,
+        status: index === 0 ? 'current' : 'locked'
+      }));
     }
+
+    this.setData({
+      levels,
+      unlockedLevel: retry ? 1 : 2,
+      isLoading: false
+    });
   },
 
   onBack: function() {

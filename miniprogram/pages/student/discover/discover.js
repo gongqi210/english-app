@@ -1,5 +1,6 @@
 // pages/student/discover/discover.js
 const app = getApp();
+const api = require('../../../utils/api.js');
 
 Page({
   data: {
@@ -15,22 +16,68 @@ Page({
     showFilterModal: false,
     hasMore: true,
     page: 1,
-    pageSize: 10
+    pageSize: 10,
+    isLoading: true
   },
 
   onLoad() {
     this.loadBooks();
   },
 
-  loadBooks() {
-    const books = app.globalData.mockData.books.map(book => ({
-      ...book,
-      levelIndex: parseInt(book.level.replace('L', ''))
-    }));
+  onShow() {
+    // 每次显示时刷新数据
+    this.loadBooks();
+  },
 
-    this.setData({
-      books,
-      filteredBooks: books
+  // 检查登录状态
+  checkLogin() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.redirectTo({
+        url: '/pages/auth/login/login'
+      });
+      return false;
+    }
+    return true;
+  },
+
+  // 加载绘本列表
+  loadBooks() {
+    this.setData({ isLoading: true });
+
+    const params = {
+      page: this.data.page,
+      pageSize: this.data.pageSize,
+      category: this.data.currentCategory !== 'all' ? this.data.currentCategory : '',
+      level: this.data.currentLevel,
+      sort: this.data.currentSort,
+      keyword: this.data.searchKeyword
+    };
+
+    api.book.getList(params).then(books => {
+      const booksWithLevel = books.map(book => ({
+        ...book,
+        levelIndex: parseInt(book.level.replace('L', ''))
+      }));
+
+      this.setData({
+        books: booksWithLevel,
+        filteredBooks: booksWithLevel,
+        isLoading: false,
+        hasMore: books.length >= this.data.pageSize
+      });
+    }).catch(err => {
+      console.error('获取绘本列表失败:', err);
+      // 使用mock数据
+      const books = app.globalData.mockData.books.map(book => ({
+        ...book,
+        levelIndex: parseInt(book.level.replace('L', ''))
+      }));
+      this.setData({
+        books,
+        filteredBooks: books,
+        isLoading: false
+      });
     });
   },
 

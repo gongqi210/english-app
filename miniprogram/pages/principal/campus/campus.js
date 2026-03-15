@@ -1,41 +1,9 @@
 // pages/principal/campus/campus.js
+const api = require('../../../utils/api.js');
+
 Page({
   data: {
-    campuses: [
-      {
-        id: 1,
-        name: '总校区',
-        status: 'active',
-        statusText: '运营中',
-        studentCount: 286,
-        teacherCount: 15,
-        classCount: 12,
-        address: '北京市朝阳区',
-        phone: '010-12345678'
-      },
-      {
-        id: 2,
-        name: '南城分校',
-        status: 'active',
-        statusText: '运营中',
-        studentCount: 156,
-        teacherCount: 8,
-        classCount: 6,
-        address: '北京市海淀区',
-        phone: '010-87654321'
-      },
-      {
-        id: 3,
-        name: '城北分校',
-        status: 'pending',
-        statusText: '筹建中',
-        studentCount: 0,
-        teacherCount: 3,
-        classCount: 0,
-        address: '北京市西城区',
-        phone: '010-11112222'
-      }
-    ],
+    campuses: [],
     showModal: false,
     modalType: '',
     editingCampus: null,
@@ -43,15 +11,35 @@ Page({
       name: '',
       address: '',
       phone: ''
-    }
+    },
+    loading: true
   },
 
   onLoad: function() {
     this.loadData();
   },
 
+  onShow: function() {
+    // 每次显示页面时刷新数据
+    this.loadData();
+  },
+
   loadData: function() {
-    // 模拟加载数据
+    this.setData({ loading: true });
+
+    api.principal.getCampuses().then((campuses) => {
+      this.setData({
+        campuses: campuses || [],
+        loading: false
+      });
+    }).catch((err) => {
+      console.error('加载校区数据失败:', err);
+      this.setData({ loading: false });
+      wx.showToast({
+        title: '数据加载失败',
+        icon: 'none'
+      });
+    });
   },
 
   onAddCampus: function() {
@@ -66,16 +54,18 @@ Page({
   onEditCampus: function(e) {
     const campusId = e.currentTarget.dataset.id;
     const campus = this.data.campuses.find(c => c.id === campusId);
-    this.setData({
-      showModal: true,
-      modalType: 'edit',
-      editingCampus: campus,
-      formData: {
-        name: campus.name,
-        address: campus.address,
-        phone: campus.phone
-      }
-    });
+    if (campus) {
+      this.setData({
+        showModal: true,
+        modalType: 'edit',
+        editingCampus: campus,
+        formData: {
+          name: campus.name,
+          address: campus.address,
+          phone: campus.phone
+        }
+      });
+    }
   },
 
   onDeleteCampus: function(e) {
@@ -85,9 +75,19 @@ Page({
       content: '确定要删除该校区吗？',
       success: (res) => {
         if (res.confirm) {
-          const campuses = this.data.campuses.filter(c => c.id !== campusId);
-          this.setData({ campuses });
-          wx.showToast({ title: '删除成功', icon: 'success' });
+          api.principal.deleteCampus(campusId).then(() => {
+            wx.showToast({
+              title: '删除成功',
+              icon: 'success'
+            });
+            this.loadData();
+          }).catch((err) => {
+            console.error('删除校区失败:', err);
+            wx.showToast({
+              title: '删除失败',
+              icon: 'none'
+            });
+          });
         }
       }
     });
@@ -104,38 +104,52 @@ Page({
 
   onSaveCampus: function() {
     const { formData, modalType, editingCampus } = this.data;
+
     if (!formData.name) {
       wx.showToast({ title: '请输入校区名称', icon: 'none' });
       return;
     }
+
     if (modalType === 'add') {
-      const newCampus = {
-        id: this.data.campuses.length + 1,
-        name: formData.name,
-        address: formData.address,
-        phone: formData.phone,
-        status: 'pending',
-        statusText: '筹建中',
-        studentCount: 0,
-        teacherCount: 0,
-        classCount: 0
-      };
-      this.setData({ campuses: [...this.data.campuses, newCampus] });
-    } else if (modalType === 'edit' && editingCampus) {
-      const campuses = this.data.campuses.map(c => {
-        if (c.id === editingCampus.id) {
-          return { ...c, name: formData.name, address: formData.address, phone: formData.phone };
-        }
-        return c;
+      api.principal.addCampus(formData).then(() => {
+        wx.showToast({
+          title: '添加成功',
+          icon: 'success'
+        });
+        this.setData({ showModal: false });
+        this.loadData();
+      }).catch((err) => {
+        console.error('添加校区失败:', err);
+        wx.showToast({
+          title: '添加失败',
+          icon: 'none'
+        });
       });
-      this.setData({ campuses });
+    } else if (modalType === 'edit' && editingCampus) {
+      api.principal.updateCampus(editingCampus.id, formData).then(() => {
+        wx.showToast({
+          title: '保存成功',
+          icon: 'success'
+        });
+        this.setData({ showModal: false });
+        this.loadData();
+      }).catch((err) => {
+        console.error('更新校区失败:', err);
+        wx.showToast({
+          title: '保存失败',
+          icon: 'none'
+        });
+      });
     }
-    this.setData({ showModal: false });
-    wx.showToast({ title: modalType === 'add' ? '添加成功' : '保存成功', icon: 'success' });
   },
 
   onToggleStatus: function(e) {
     const campusId = e.currentTarget.dataset.id;
+    const campus = this.data.campuses.find(c => c.id === campusId);
+
+    if (!campus) return;
+
+    // 先更新本地状态，优化用户体验
     const campuses = this.data.campuses.map(c => {
       if (c.id === campusId) {
         const newStatus = c.status === 'active' ? 'inactive' : 'active';
@@ -144,5 +158,28 @@ Page({
       return c;
     });
     this.setData({ campuses });
+
+    // 调用API
+    api.principal.toggleCampusStatus(campusId).then(() => {
+      wx.showToast({
+        title: '状态更新成功',
+        icon: 'success'
+      });
+    }).catch((err) => {
+      console.error('更新校区状态失败:', err);
+      // 失败时恢复原状态
+      this.loadData();
+      wx.showToast({
+        title: '状态更新失败',
+        icon: 'none'
+      });
+    });
+  },
+
+  // 下拉刷新
+  onPullDownRefresh: function() {
+    this.loadData().then(() => {
+      wx.stopPullDownRefresh();
+    });
   }
 });

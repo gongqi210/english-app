@@ -1,5 +1,6 @@
 // pages/student/ai-chat/ai-chat.js
 const app = getApp();
+const api = require('../../../utils/api.js');
 
 Page({
   data: {
@@ -20,12 +21,47 @@ Page({
       { id: 2, title: 'Vocabulary', icon: '📝' },
       { id: 3, title: 'Grammar', icon: '📖' },
       { id: 4, title: 'Pronunciation', icon: '🎤' }
-    ]
+    ],
+    chatHistory: [],
+    isLoading: false
   },
 
   onLoad() {
-    this.setData({
-      userInfo: app.globalData.mockData.currentUser || { name: '小明' }
+    this.loadUserInfo();
+    this.loadQuickReplies();
+  },
+
+  // 检查登录状态
+  checkLogin() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.redirectTo({
+        url: '/pages/auth/login/login'
+      });
+      return false;
+    }
+    return true;
+  },
+
+  // 加载用户信息
+  loadUserInfo() {
+    api.auth.getUserInfo().then(data => {
+      this.setData({ userInfo: data });
+    }).catch(err => {
+      console.error('获取用户信息失败:', err);
+      const localUserInfo = wx.getStorageSync('userInfo');
+      if (localUserInfo) {
+        this.setData({ userInfo: localUserInfo });
+      }
+    });
+  },
+
+  // 加载快捷回复
+  loadQuickReplies() {
+    api.chat.getQuickReplies().then(replies => {
+      this.setData({ quickReplies: replies });
+    }).catch(err => {
+      console.error('获取快捷回复失败:', err);
     });
   },
 
@@ -34,26 +70,38 @@ Page({
   },
 
   sendMessage() {
-    const { inputValue, messages } = this.data;
+    const { inputValue, messages, chatHistory } = this.data;
     if (!inputValue.trim()) return;
 
     const userMessage = { id: Date.now(), role: 'user', content: inputValue };
     const newMessages = [...messages, userMessage];
+    const newHistory = [...chatHistory, { role: 'user', content: inputValue }];
 
     this.setData({
       messages: newMessages,
       inputValue: '',
-      isTyping: true
+      isTyping: true,
+      chatHistory: newHistory
     });
 
-    // 模拟AI回复
-    setTimeout(() => {
+    // 尝试从API获取AI回复
+    api.chat.sendMessage(inputValue, newHistory).then(response => {
+      const aiMessage = { id: Date.now() + 1, role: 'ai', content: response.content || response };
+      this.setData({
+        messages: [...this.data.messages, aiMessage],
+        isTyping: false,
+        chatHistory: [...this.data.chatHistory, { role: 'ai', content: response.content || response }]
+      });
+    }).catch(err => {
+      console.error('AI回复失败，使用本地响应:', err);
+      // 使用本地模拟响应
       const aiResponse = this.generateAIResponse(inputValue);
       this.setData({
         messages: [...this.data.messages, aiResponse],
-        isTyping: false
+        isTyping: false,
+        chatHistory: [...this.data.chatHistory, { role: 'ai', content: aiResponse.content }]
       });
-    }, 1500);
+    });
   },
 
   generateAIResponse(input) {
@@ -139,7 +187,8 @@ Page({
           this.setData({
             messages: [
               { id: 1, role: 'ai', content: "Hello! I'm your English learning assistant. Let's practice English together!" }
-            ]
+            ],
+            chatHistory: []
           });
           wx.showToast({ title: '已清空', icon: 'success' });
         }
