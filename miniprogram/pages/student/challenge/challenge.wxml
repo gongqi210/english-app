@@ -1,0 +1,76 @@
+<view class="container">
+  <!-- 顶部导航 -->
+  <view class="header">
+    <view class="back-btn" bindtap="onBack">
+      <text>←</text>
+    </view>
+    <view class="title">🌟 英语星球探险</view>
+    <view class="score-display">
+      <text class="score-icon">⭐</text>
+      <text class="score-value">{{score}}</text>
+    </view>
+  </view>
+
+  <!-- 星空背景 -->
+  <view class="star-field">
+    <view class="star" wx:for="{{stars}}" wx:key="index" style="left: {{item.x}}%; top: {{item.y}}%; width: {{item.size}}rpx; height: {{item.size}}rpx; animation-delay: {{item.delay}}s;"></view>
+  </view>
+
+  <!-- 星球地图 -->
+  <scroll-view scroll-y class="map-container" scroll-top="{{mapScrollTop}}">
+    <view class="map-canvas">
+      <!-- 彩虹桥连接线 -->
+      <view class="bridge-container">
+        <svg class="bridge-svg" viewBox="0 0 750 1200" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="bridgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+              <stop offset="50%" style="stop-color:#EC4899;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <!-- 连接线 -->
+          <path d="M 175 150 Q 375 200 575 150" stroke="url(#bridgeGradient)" stroke-width="8" fill="none" stroke-dasharray="15,10" class="bridge-line" />
+          <path d="M 175 350 Q 375 400 575 350" stroke="url(#bridgeGradient)" stroke-width="8" fill="none" stroke-dasharray="15,10" class="bridge-line" />
+          <path d="M 175 550 Q 375 600 575 550" stroke="url(#bridgeGradient)" stroke-width="8" fill="none" stroke-dasharray="15,10" class="bridge-line" />
+        </svg>
+      </view>
+
+      <!-- 关卡节点 -->
+      <view class="level-node {{item.status}}" wx:for="{{levels}}" wx:key="id" style="left: {{item.x}}rpx; top: {{item.y}}rpx;" bindtap="onLevelTap" data-id="{{item.id}}" data-status="{{item.status}}">
+        <view class="node-circle">
+          <view class="node-icon">{{item.icon}}</view>
+          <view class="level-number">第{{item.id}}关</view>
+          <view class="lock-icon" wx:if="{{item.status === 'locked'}}">🔒</view>
+          <view class="check-icon" wx:if="{{item.status === 'completed'}}">✓</view>
+          <view class="current-ring" wx:if="{{item.status === 'current'}}"></view>
+        </view>
+        <view class="node-label">{{item.name}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部任务卡片 -->
+  <view class="task-card">
+    <view class="task-header">
+      <text class="task-icon">📖</text>
+      <text class="task-title">{{currentHomework.title}}</text>
+    </view>
+    <view class="task-meta">
+      <view class="meta-item">
+        <text>🎯</text>
+        <text>共{{currentHomework.questionCount}}题</text>
+      </view>
+      <view class="meta-item">
+        <text>⏱️</text>
+        <text>约{{currentHomework.duration}}分钟</text>
+      </view>
+    </view>
+    <button class="start-btn" bindtap="onStartChallenge" wx:if="{{unlockedLevel > 0}}">
+      🚀 开始探险
+    </button>
+    <button class="locked-btn" wx:else disabled>
+      🔒 完成上一关解锁
+    </button>
+  </view>
+</view>

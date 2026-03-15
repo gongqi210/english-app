@@ -1,0 +1,239 @@
+<!--pages/student/discover/discover.wxml-->
+<view class="discover-page">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="搜索绘本..."
+        bindinput="handleSearch"
+        value="{{searchKeyword}}"
+      />
+      <text class="clear-icon" wx:if="{{searchKeyword}}" bindtap="clearSearch">✕</text>
+    </view>
+    <view class="filter-btn" bindtap="showFilter">
+      <text>筛选</text>
+    </view>
+  </view>
+
+  <!-- 分类标签 -->
+  <scroll-view class="category-scroll" scroll-x="true" enhanced show-scrollbar="{{false}}">
+    <view class="category-list">
+      <view
+        class="category-item {{currentCategory === 'all' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="all"
+      >
+        全部
+      </view>
+      <view
+        class="category-item {{currentCategory === 'story' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="story"
+      >
+        故事
+      </view>
+      <view
+        class="category-item {{currentCategory === 'animal' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="animal"
+      >
+        动物
+      </view>
+      <view
+        class="category-item {{currentCategory === 'nature' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="nature"
+      >
+        自然
+      </view>
+      <view
+        class="category-item {{currentCategory === 'knowledge' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="knowledge"
+      >
+        知识
+      </view>
+      <view
+        class="category-item {{currentCategory === 'emotion' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="emotion"
+      >
+        情感
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 排序和难度筛选 -->
+  <view class="filter-row">
+    <view class="sort-tabs">
+      <view
+        class="sort-tab {{currentSort === 'popular' ? 'active' : ''}}"
+        bindtap="selectSort"
+        data-sort="popular"
+      >
+        热门
+      </view>
+      <view
+        class="sort-tab {{currentSort === 'new' ? 'active' : ''}}"
+        bindtap="selectSort"
+        data-sort="new"
+      >
+        最新
+      </view>
+      <view
+        class="sort-tab {{currentSort === 'rating' ? 'active' : ''}}"
+        bindtap="selectSort"
+        data-sort="rating"
+      >
+        评分
+      </view>
+    </view>
+    <view class="level-filter" bindtap="showLevelFilter">
+      <text>{{currentLevelText}}</text>
+      <text class="arrow">▼</text>
+    </view>
+  </view>
+
+  <!-- 绘本列表 -->
+  <scroll-view
+    class="book-list-scroll"
+    scroll-y
+    bindscrolltolower="loadMore"
+    lower-threshold="100"
+  >
+    <view class="book-list">
+      <block wx:for="{{filteredBooks}}" wx:key="id">
+        <view class="book-item" bindtap="goToBookDetail" data-id="{{item.id}}">
+          <image class="book-cover" src="{{item.cover}}" mode="aspectFill" />
+          <view class="book-content">
+            <text class="book-title">{{item.title}}</text>
+            <text class="book-subtitle">{{item.subtitle}}</text>
+            <view class="book-tags">
+              <block wx:for="{{item.tags}}" wx:key="index" wx:for-item="tag">
+                <text class="book-tag">{{tag}}</text>
+              </block>
+            </view>
+            <view class="book-meta">
+              <view class="meta-left">
+                <text class="level-badge">L{{item.levelIndex}}</text>
+                <text class="age-range">{{item.ageRange}}岁</text>
+              </view>
+              <view class="meta-right">
+                <text class="rating">⭐ {{item.rating}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="book-action">
+            <text class="start-btn">开始</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{hasMore}}">
+      <view class="loading-icon"></view>
+      <text>加载中...</text>
+    </view>
+
+    <!-- 无数据 -->
+    <view class="empty-state" wx:if="{{filteredBooks.length === 0}}">
+      <text class="empty-icon">📚</text>
+      <text class="empty-text">暂无绘本</text>
+    </view>
+  </scroll-view>
+
+  <!-- 筛选弹窗 -->
+  <view class="filter-modal {{showFilterModal ? 'show' : ''}}" wx:if="{{showFilterModal}}">
+    <view class="filter-mask" bindtap="hideFilter"></view>
+    <view class="filter-content">
+      <view class="filter-header">
+        <text class="filter-title">筛选</text>
+        <text class="filter-close" bindtap="hideFilter">✕</text>
+      </view>
+
+      <view class="filter-section">
+        <text class="filter-label">难度级别</text>
+        <view class="filter-options">
+          <view
+            class="filter-option {{selectedLevel === '' ? 'active' : ''}}"
+            bindtap="selectLevel"
+            data-level=""
+          >
+            全部
+          </view>
+          <view
+            class="filter-option {{selectedLevel === '1' ? 'active' : ''}}"
+            bindtap="selectLevel"
+            data-level="1"
+          >
+            L1 入门
+          </view>
+          <view
+            class="filter-option {{selectedLevel === '2' ? 'active' : ''}}"
+            bindtap="selectLevel"
+            data-level="2"
+          >
+            L2 基础
+          </view>
+          <view
+            class="filter-option {{selectedLevel === '3' ? 'active' : ''}}"
+            bindtap="selectLevel"
+            data-level="3"
+          >
+            L3 进阶
+          </view>
+          <view
+            class="filter-option {{selectedLevel === '4' ? 'active' : ''}}"
+            bindtap="selectLevel"
+            data-level="4"
+          >
+            L4 高级
+          </view>
+        </view>
+      </view>
+
+      <view class="filter-section">
+        <text class="filter-label">适读年龄</text>
+        <view class="filter-options">
+          <view
+            class="filter-option {{selectedAge === '' ? 'active' : ''}}"
+            bindtap="selectAge"
+            data-age=""
+          >
+            全部
+          </view>
+          <view
+            class="filter-option {{selectedAge === '3-5' ? 'active' : ''}}"
+            bindtap="selectAge"
+            data-age="3-5"
+          >
+            3-5岁
+          </view>
+          <view
+            class="filter-option {{selectedAge === '6-8' ? 'active' : ''}}"
+            bindtap="selectAge"
+            data-age="6-8"
+          >
+            6-8岁
+          </view>
+          <view
+            class="filter-option {{selectedAge === '9-12' ? 'active' : ''}}"
+            bindtap="selectAge"
+            data-age="9-12"
+          >
+            9-12岁
+          </view>
+        </view>
+      </view>
+
+      <view class="filter-buttons">
+        <button class="btn-reset" bindtap="resetFilter">重置</button>
+        <button class="btn-confirm" bindtap="confirmFilter">确定</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,67 @@
+<view class="container">
+  <view class="section-title">🏫 校区列表</view>
+  <scroll-view scroll-y class="campus-list">
+    <view class="campus-card" wx:for="{{campuses}}" wx:key="id">
+      <view class="campus-header">
+        <text class="campus-name">{{item.name}}</text>
+        <text class="campus-status {{item.status}}">{{item.statusText}}</text>
+      </view>
+      <view class="campus-address" wx:if="{{item.address}}">
+        <text>📍 {{item.address}}</text>
+      </view>
+      <view class="campus-stats">
+        <view class="stat">
+          <text class="num">{{item.studentCount}}</text>
+          <text class="label">学生</text>
+        </view>
+        <view class="stat">
+          <text class="num">{{item.teacherCount}}</text>
+          <text class="label">老师</text>
+        </view>
+        <view class="stat">
+          <text class="num">{{item.classCount}}</text>
+          <text class="label">班级</text>
+        </view>
+      </view>
+      <view class="campus-actions">
+        <view class="action-btn edit" bindtap="onEditCampus" data-id="{{item.id}}">编辑</view>
+        <view class="action-btn toggle" bindtap="onToggleStatus" data-id="{{item.id}}">
+          {{item.status === 'active' ? '停用' : '启用'}}
+        </view>
+        <view class="action-btn delete" bindtap="onDeleteCampus" data-id="{{item.id}}">删除</view>
+      </view>
+    </view>
+  </scroll-view>
+  <view class="btn-add-container">
+    <button class="btn-add" bindtap="onAddCampus">+ 添加校区</button>
+  </view>
+
+  <!-- 添加/编辑弹窗 -->
+  <view class="modal {{showModal ? 'show' : ''}}" wx:if="{{showModal}}">
+    <view class="modal-mask" bindtap="onCloseModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">{{modalType === 'add' ? '添加校区' : '编辑校区'}}</text>
+        <text class="modal-close" bindtap="onCloseModal">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">校区名称</text>
+          <input class="form-input" placeholder="请输入校区名称" value="{{formData.name}}" data-field="name" bindinput="onInputChange" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">地址</text>
+          <input class="form-input" placeholder="请输入地址" value="{{formData.address}}" data-field="address" bindinput="onInputChange" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">电话</text>
+          <input class="form-input" placeholder="请输入联系电话" value="{{formData.phone}}" data-field="phone" bindinput="onInputChange" />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="btn-cancel" bindtap="onCloseModal">取消</button>
+        <button class="btn-confirm" bindtap="onSaveCampus">保存</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,57 @@
+<view class="container">
+  <view class="time-selector">
+    <view class="tab {{timeType === 'week' ? 'active' : ''}}" bindtap="onTimeChange" data-type="week">本周</view>
+    <view class="tab {{timeType === 'month' ? 'active' : ''}}" bindtap="onTimeChange" data-type="month">本月</view>
+    <view class="tab {{timeType === 'year' ? 'active' : ''}}" bindtap="onTimeChange" data-type="year">本年</view>
+  </view>
+
+  <view class="report-card">
+    <view class="card-title">📈 运营趋势</view>
+    <view class="chart-placeholder">
+      <view class="chart-line">
+        <view class="chart-bar" wx:for="{{trendData}}" wx:key="index" style="height: {{item}}%;"></view>
+      </view>
+      <view class="chart-labels">
+        <text wx:for="{{chartLabels}}" wx:key="index">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="report-card" bindtap="onViewDetail" data-type="income">
+    <view class="card-title">💰 收入报表</view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="label">总收入</text>
+        <text class="value">¥{{income.total}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="label">新增收入</text>
+        <text class="value up">+¥{{income.new}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="label">续费率</text>
+        <text class="value">{{income.renewal}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="report-card" bindtap="onViewDetail" data-type="users">
+    <view class="card-title">👥 用户报表</view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="label">新增学生</text>
+        <text class="value">{{users.newStudent}}人</text>
+      </view>
+      <view class="stat-item">
+        <text class="label">新增家长</text>
+        <text class="value">{{users.newParent}}人</text>
+      </view>
+      <view class="stat-item">
+        <text class="label">活跃用户</text>
+        <text class="value">{{users.active}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="btn-export" bindtap="onExportReport">📥 导出报表</button>
+</view>

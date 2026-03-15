@@ -1,0 +1,110 @@
+<!--pages/parent/home/home.wxml-->
+<view class="parent-page">
+  <!-- 顶部 -->
+  <view class="header">
+    <view class="user-info">
+      <image class="avatar" src="{{userInfo.avatar}}" />
+      <view class="info">
+        <text class="name">{{userInfo.name}}</text>
+        <text class="role">家长</text>
+      </view>
+      <view class="refresh-btn" bindtap="onRefresh">
+        <text>🔄</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 子女列表 -->
+  <view class="children-section">
+    <view class="section-header">
+      <text class="title">👶 我的孩子</text>
+      <text class="add-btn" bindtap="onAddChild">+ 添加</text>
+    </view>
+    <scroll-view scroll-x class="children-scroll">
+      <view class="children-list">
+        <view
+          class="child-card {{selectedChildId === item.id ? 'active' : ''}}"
+          wx:for="{{children}}"
+          wx:key="id"
+          bindtap="onChildTap"
+          data-id="{{item.id}}"
+        >
+          <image class="child-avatar" src="{{item.avatar}}" />
+          <view class="child-info">
+            <text class="child-name">{{item.name}}</text>
+            <text class="child-stats">今日学习 {{item.todayStudyTime}}</text>
+          </view>
+          <view class="child-status {{item.status}}">{{item.status === 'completed' ? '已完成' : '待完成'}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 学习概览 -->
+  <view class="overview-section" bindtap="onViewDetail">
+    <view class="section-header">
+      <text class="title">📊 学习概览</text>
+      <text class="view-more">查看详情 →</text>
+    </view>
+    <view class="overview-cards" wx:if="{{currentChild}}">
+      <view class="overview-card">
+        <text class="card-num">{{currentChild.stats.weeklyBooks}}</text>
+        <text class="card-label">本周绘本</text>
+        <text class="card-change up">+{{currentChild.stats.weeklyChange}}%</text>
+      </view>
+      <view class="overview-card">
+        <text class="card-num">{{currentChild.stats.readingCount}}</text>
+        <text class="card-label">跟读次数</text>
+        <text class="card-change up">+{{currentChild.stats.readingChange}}%</text>
+      </view>
+      <view class="overview-card">
+        <text class="card-num">{{currentChild.stats.avgScore}}</text>
+        <text class="card-label">平均分</text>
+        <text class="card-change up">+{{currentChild.stats.scoreChange}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="quick-actions">
+    <view class="action-card" bindtap="onViewHomework">
+      <text class="action-icon">📚</text>
+      <text class="action-label">查看作业</text>
+      <text class="action-badge">3</text>
+    </view>
+    <view class="action-card" bindtap="onViewDetail">
+      <text class="action-icon">📈</text>
+      <text class="action-label">学习报告</text>
+    </view>
+    <view class="action-card" bindtap="onMembership">
+      <text class="action-icon">💎</text>
+      <text class="action-label">会员中心</text>
+    </view>
+    <view class="action-card">
+      <text class="action-icon">💬</text>
+      <text class="action-label">联系老师</text>
+    </view>
+  </view>
+
+  <!-- 提醒设置 -->
+  <view class="remind-section">
+    <view class="section-header">
+      <text class="title">⚙️ 提醒设置</text>
+    </view>
+    <view class="remind-item">
+      <text class="remind-icon">🔔</text>
+      <text class="remind-text">学习提醒</text>
+      <switch checked="{{settings.studyReminder}}" bindchange="onStudyReminderChange" color="#FF69B4"/>
+    </view>
+    <view class="remind-item">
+      <text class="remind-icon">📊</text>
+      <text class="remind-text">周报推送</text>
+      <switch checked="{{settings.weeklyReport}}" bindchange="onWeeklyReportChange" color="#FF69B4"/>
+    </view>
+    <view class="remind-item">
+      <text class="remind-icon">📝</text>
+      <text class="remind-text">作业通知</text>
+      <switch checked="{{settings.homeworkNotify}}" bindchange="onHomeworkNotifyChange" color="#FF69B4"/>
+    </view>
+  </view>
+</view>

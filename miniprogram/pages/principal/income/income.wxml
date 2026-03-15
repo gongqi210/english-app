@@ -1,0 +1,94 @@
+<view class="income-page">
+  <!-- 时间筛选 -->
+  <view class="time-filter">
+    <view class="filter-tabs">
+      <view class="tab {{timeType === 'day' ? 'active' : ''}}" bindtap="onTimeChange" data-type="day">今日</view>
+      <view class="tab {{timeType === 'week' ? 'active' : ''}}" bindtap="onTimeChange" data-type="week">本周</view>
+      <view class="tab {{timeType === 'month' ? 'active' : ''}}" bindtap="onTimeChange" data-type="month">本月</view>
+      <view class="tab {{timeType === 'year' ? 'active' : ''}}" bindtap="onTimeChange" data-type="year">本年</view>
+    </view>
+    <picker mode="date" bindchange="onDateChange">
+      <view class="date-picker">
+        <text>{{currentDate}}</text>
+        <text class="arrow">▼</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 收入概览 -->
+  <view class="overview-card">
+    <view class="overview-header">
+      <text class="overview-title">💰 收入概览</text>
+    </view>
+    <view class="overview-stats">
+      <view class="stat-item">
+        <text class="stat-label">总收入</text>
+        <text class="stat-value primary">¥{{overview.total}}</text>
+        <text class="stat-change up">↑ {{overview.change}}%</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-label">订单数</text>
+        <text class="stat-value">{{overview.orderCount}}</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-label">客单价</text>
+        <text class="stat-value">¥{{overview.avgPrice}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收入趋势图 -->
+  <view class="chart-card">
+    <view class="card-title">📈 收入趋势</view>
+    <view class="chart-container">
+      <view class="chart-bars">
+        <view class="bar-item" wx:for="{{trendData}}" wx:key="index">
+          <view class="bar" style="height: {{item.percent}}%;"></view>
+          <text class="bar-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收入构成 -->
+  <view class="composition-card">
+    <view class="card-title">📊 收入构成</view>
+    <view class="composition-list">
+      <view class="composition-item" wx:for="{{composition}}" wx:key="id">
+        <view class="comp-left">
+          <text class="comp-icon">{{item.icon}}</text>
+          <text class="comp-name">{{item.name}}</text>
+        </view>
+        <view class="comp-right">
+          <text class="comp-amount">¥{{item.amount}}</text>
+          <text class="comp-percent">{{item.percent}}%</text>
+        </view>
+        <view class="comp-bar">
+          <view class="comp-fill" style="width: {{item.percent}}%;"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收入明细 -->
+  <view class="detail-card">
+    <view class="card-title">📋 收入明细</view>
+    <view class="detail-list">
+      <view class="detail-item" wx:for="{{details}}" wx:key="id">
+        <view class="detail-left">
+          <text class="detail-icon">{{item.icon}}</text>
+          <view class="detail-info">
+            <text class="detail-title">{{item.title}}</text>
+            <text class="detail-desc">{{item.desc}}</text>
+          </view>
+        </view>
+        <view class="detail-right">
+          <text class="detail-amount">+¥{{item.amount}}</text>
+          <text class="detail-time">{{item.time}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

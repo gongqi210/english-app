@@ -1,0 +1,180 @@
+/* pages/parent/orders/orders.wxss */
+page {
+  background: #F5F7FA;
+}
+
+.orders-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 筛选标签 */
+.tabs {
+  display: flex;
+  background: #FFFFFF;
+  padding: 0 24rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 26rpx;
+  color: #666666;
+  position: relative;
+}
+
+.tab.active {
+  color: #667EEA;
+  font-weight: 600;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 4rpx;
+  background: #667EEA;
+  border-radius: 2rpx;
+}
+
+/* 订单列表 */
+.order-list {
+  flex: 1;
+  padding: 24rpx;
+}
+
+.order-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.order-no {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.order-status {
+  font-size: 24rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+}
+
+.order-status.paid {
+  background: rgba(82, 196, 26, 0.15);
+  color: #52C41A;
+}
+
+.order-status.pending {
+  background: rgba(255, 148, 6, 0.15);
+  color: #FA8C16;
+}
+
+.order-status.refund {
+  background: rgba(255, 77, 79, 0.15);
+  color: #FF4D4F;
+}
+
+.order-body {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.order-info {
+  flex: 1;
+}
+
+.order-name {
+  display: block;
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+.order-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 8rpx;
+}
+
+.order-date {
+  display: block;
+  font-size: 22rpx;
+  color: #CCCCCC;
+}
+
+.order-price {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-symbol {
+  font-size: 24rpx;
+  color: #FF6B6B;
+}
+
+.price-value {
+  font-size: 36rpx;
+  color: #FF6B6B;
+  font-weight: bold;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-refund,
+.btn-pay {
+  font-size: 24rpx;
+  padding: 12rpx 32rpx;
+  border-radius: 24rpx;
+  margin-left: 16rpx;
+}
+
+.btn-refund {
+  background: #FFFFFF;
+  border: 1rpx solid #E5E5E5;
+  color: #666666;
+}
+
+.btn-pay {
+  background: #667EEA;
+  border: none;
+  color: #FFFFFF;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  display: block;
+  font-size: 96rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999999;
+}

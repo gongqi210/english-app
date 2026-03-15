@@ -1,0 +1,116 @@
+<view class="container">
+  <!-- 顶部 -->
+  <view class="header">
+    <view class="back-btn" bindtap="onBack">←</view>
+    <view class="title">新生英语水平测评</view>
+  </view>
+
+  <!-- 测评进行中 -->
+  <view class="assessment-content" wx:if="{{status === 'testing'}}">
+    <!-- 进度 -->
+    <view class="progress-section">
+      <view class="progress-label">测评进度</view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{progress}}%;"></view>
+      </view>
+      <view class="progress-text">第{{currentQuestion + 1}}关，共{{totalQuestions}}关</view>
+    </view>
+
+    <!-- 题目 -->
+    <view class="question-card">
+      <!-- 听力/图片 -->
+      <view class="question-image" wx:if="{{currentQ.imageUrl}}">
+        <image src="{{currentQ.imageUrl}}" mode="aspectFit" />
+      </view>
+
+      <view class="question-text">
+        {{currentQ.question}}
+      </view>
+
+      <!-- 口语测试 -->
+      <view class="speaking-section" wx:if="{{currentQ.type === 'speaking'}}">
+        <view class="sentence-to-say">{{currentQ.sentence}}</view>
+        <view class="record-area">
+          <view class="record-btn {{isRecording ? 'recording' : ''}}" bindtap="toggleRecording">
+            <text class="icon">🎤</text>
+            <text>{{isRecording ? '松开结束' : '按住录音'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 选择题 -->
+      <view class="options" wx:if="{{currentQ.type === 'choice'}}">
+        <view
+          class="option {{selectedAnswer === index ? 'selected' : ''}}"
+          wx:for="{{currentQ.options}}"
+          wx:key="index"
+          bindtap="onSelectOption"
+          data-index="{{index}}"
+        >
+          <image src="{{item.image}}" mode="aspectFit" wx:if="{{item.image}}" />
+          <text wx:else>{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作 -->
+    <view class="actions">
+      <button class="btn-next" bindtap="onNextQuestion">
+        {{currentQuestion < totalQuestions - 1 ? '下一题' : '完成测评'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 测评报告 -->
+  <view class="report-content" wx:if="{{status === 'report'}}">
+    <view class="report-header">
+      <view class="congrats">🎉 测评完成！</view>
+      <view class="level">级别：L3</view>
+      <view class="level-desc">英语水平：良好</view>
+    </view>
+
+    <!-- 雷达图 -->
+    <view class="radar-section">
+      <view class="radar-title">能力雷达图</view>
+      <view class="radar-chart">
+        <view class="radar-item" wx:for="{{abilities}}" wx:key="name">
+          <view class="radar-label">{{item.name}}</view>
+          <view class="radar-bar">
+            <view class="radar-fill" style="width: {{item.score}}%;"></view>
+          </view>
+          <view class="radar-score">{{item.score}}分</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 评估详情 -->
+    <view class="detail-section">
+      <view class="detail-title">评估详情</view>
+      <view class="detail-item" wx:for="{{abilities}}" wx:key="name">
+        <text class="detail-name">{{item.name}}</text>
+        <text class="detail-score">{{item.score}}分</text>
+        <text class="detail-desc">{{item.desc}}</text>
+      </view>
+    </view>
+
+    <!-- 推荐 -->
+    <view class="recommend-section">
+      <view class="recommend-title">📚 推荐学习路径</view>
+      <view class="recommend-item">
+        <text>建议加入：L3 基础班</text>
+      </view>
+      <view class="recommend-item">
+        <text>推荐绘本：《Brown Bear》《From Head to Toe》</text>
+      </view>
+      <view class="recommend-item">
+        <text>重点提升：口语表达</text>
+      </view>
+    </view>
+
+    <!-- 按钮 -->
+    <view class="report-actions">
+      <button class="btn-download">📥 下载报告</button>
+      <button class="btn-confirm">✅ 确认入班</button>
+    </view>
+  </view>
+</view>

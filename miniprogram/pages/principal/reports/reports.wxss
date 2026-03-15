@@ -1,0 +1,17 @@
+page { background: #F5F7FA; padding-bottom: 160rpx; }
+.container { padding: 24rpx; }
+.time-selector { display: flex; background: #FFFFFF; border-radius: 16rpx; padding: 8rpx; margin-bottom: 24rpx; }
+.tab { flex: 1; text-align: center; padding: 16rpx; font-size: 26rpx; color: #666666; border-radius: 12rpx; }
+.tab.active { background: #667EEA; color: #FFFFFF; }
+.report-card { background: #FFFFFF; border-radius: 20rpx; padding: 24rpx; margin-bottom: 16rpx; }
+.card-title { font-size: 30rpx; font-weight: 600; color: #333333; margin-bottom: 24rpx; }
+.chart-placeholder { height: 300rpx; padding: 20rpx 0; }
+.chart-line { display: flex; align-items: flex-end; justify-content: space-around; height: 240rpx; border-bottom: 2rpx solid #EEEEEE; }
+.chart-bar { width: 40rpx; background: linear-gradient(180deg, #667EEA 0%, #764BA2 100%); border-radius: 8rpx 8rpx 0 0; }
+.chart-labels { display: flex; justify-content: space-around; padding-top: 16rpx; font-size: 22rpx; color: #999999; }
+.stats-grid { display: flex; }
+.stat-item { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.stat-item .label { font-size: 24rpx; color: #999999; margin-bottom: 8rpx; }
+.stat-item .value { font-size: 32rpx; font-weight: 600; color: #333333; }
+.stat-item .value.up { color: #7ED321; }
+.btn-export { position: fixed; bottom: 32rpx; left: 32rpx; right: 32rpx; height: 96rpx; background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%); border-radius: 48rpx; color: #FFFFFF; font-size: 30rpx; font-weight: 600; border: none; }

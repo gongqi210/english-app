@@ -1,0 +1,301 @@
+page {
+  --primary: #6366F1;
+  --secondary: #10B981;
+  --accent: #F59E0B;
+  --bg-dark: #1E1B4B;
+  --bg-light: #312E81;
+  --success: #22C55E;
+  --error: #EF4444;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A5B4FC;
+
+  background: linear-gradient(180deg, #0F0D24 0%, var(--bg-dark) 50%, var(--bg-light) 100%);
+  min-height: 100vh;
+}
+
+.container {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 顶部导航 */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 180rpx;
+  padding: 100rpx 32rpx 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(15, 12, 36, 0.9) 0%, transparent 100%);
+}
+
+.back-btn {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  color: #FFFFFF;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 12rpx 24rpx;
+  border-radius: 30rpx;
+}
+
+.score-icon {
+  font-size: 32rpx;
+}
+
+.score-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* 星空背景 */
+.star-field {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  background: #FFFFFF;
+  border-radius: 50%;
+  opacity: 0;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* 地图容器 */
+.map-container {
+  height: calc(100vh - 320rpx);
+  padding-top: 160rpx;
+}
+
+.map-canvas {
+  position: relative;
+  width: 750rpx;
+  height: 1400rpx;
+}
+
+/* 彩虹桥 */
+.bridge-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.bridge-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.bridge-line {
+  animation: flowDash 2s linear infinite;
+}
+
+@keyframes flowDash {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -50; }
+}
+
+/* 关卡节点 */
+.level-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+}
+
+.node-circle {
+  position: relative;
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.level-node.completed .node-circle {
+  background: linear-gradient(135deg, var(--success) 0%, #10B981 100%);
+  box-shadow: 0 8rpx 32rpx rgba(34, 197, 94, 0.4);
+}
+
+.level-node.current .node-circle {
+  background: linear-gradient(135deg, var(--accent) 0%, #EF4444 100%);
+  box-shadow: 0 8rpx 32rpx rgba(245, 158, 11, 0.4);
+  animation: pulse 2s infinite;
+}
+
+.level-node.locked .node-circle {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 8rpx 32rpx rgba(245, 158, 11, 0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 12rpx 48rpx rgba(245, 158, 11, 0.6); }
+}
+
+.node-icon {
+  font-size: 56rpx;
+}
+
+.level-number {
+  position: absolute;
+  bottom: -8rpx;
+  font-size: 20rpx;
+  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4rpx 16rpx;
+  border-radius: 12rpx;
+}
+
+.lock-icon {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  font-size: 36rpx;
+}
+
+.check-icon {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: var(--success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #FFFFFF;
+}
+
+.current-ring {
+  position: absolute;
+  top: -12rpx;
+  left: -12rpx;
+  right: -12rpx;
+  bottom: -12rpx;
+  border: 4rpx solid var(--accent);
+  border-radius: 50%;
+  animation: ringPulse 1.5s infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+.node-label {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.level-node.current .node-label,
+.level-node.completed .node-label {
+  color: #FFFFFF;
+}
+
+/* 底部任务卡片 */
+.task-card {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 40rpx;
+  box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.2);
+}
+
+.task-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.task-icon {
+  font-size: 40rpx;
+}
+
+.task-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333333;
+}
+
+.task-meta {
+  display: flex;
+  gap: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.start-btn, .locked-btn {
+  width: 100%;
+  height: 96rpx;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.start-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, #8B5CF6 100%);
+  color: #FFFFFF;
+  box-shadow: 0 8rpx 32rpx rgba(99, 102, 241, 0.4);
+}
+
+.locked-btn {
+  background: #E5E5E5;
+  color: #999999;
+}

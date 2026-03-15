@@ -1,0 +1,75 @@
+<view class="finance-page">
+  <!-- 时间选择 -->
+  <view class="time-selector">
+    <view class="selector-item {{currentPeriod === 'month' ? 'active' : ''}}" bindtap="onPeriodChange" data-period="month">月度</view>
+    <view class="selector-item {{currentPeriod === 'quarter' ? 'active' : ''}}" bindtap="onPeriodChange" data-period="quarter">季度</view>
+    <view class="selector-item {{currentPeriod === 'year' ? 'active' : ''}}" bindtap="onPeriodChange" data-period="year">年度</view>
+  </view>
+
+  <!-- 财务概览 -->
+  <view class="finance-overview">
+    <view class="overview-card">
+      <text class="card-title">💵 收入</text>
+      <text class="overview-value primary">¥{{finance.income}}</text>
+      <text class="overview-change up">↑ {{finance.incomeChange}}%</text>
+    </view>
+    <view class="overview-card">
+      <text class="card-title">�支出</text>
+      <text class="overview-value">¥{{finance.expense}}</text>
+      <text class="overview-change down">↓ {{finance.expenseChange}}%</text>
+    </view>
+    <view class="overview-card">
+      <text class="card-title">💰 利润</text>
+      <text class="overview-value success">¥{{finance.profit}}</text>
+      <text class="overview-change up">↑ {{finance.profitChange}}%</text>
+    </view>
+  </view>
+
+  <!-- 收支趋势 -->
+  <view class="trend-card">
+    <view class="card-title">📈 收支趋势</view>
+    <view class="trend-chart">
+      <view class="chart-legend">
+        <view class="legend-item">
+          <view class="legend-color income"></view>
+          <text>收入</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-color expense"></view>
+          <text>支出</text>
+        </view>
+      </view>
+      <view class="chart-area">
+        <view class="chart-line income" style="height: {{trend.incomePercent}}%;"></view>
+        <view class="chart-line expense" style="height: {{trend.expensePercent}}%;"></view>
+      </view>
+      <view class="chart-labels">
+        <text wx:for="{{trend.labels}}" wx:key="index">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 支出明细 -->
+  <view class="expense-card">
+    <view class="card-title">📋 支出明细</view>
+    <view class="expense-list">
+      <view class="expense-item" wx:for="{{expenses}}" wx:key="id">
+        <view class="expense-left">
+          <text class="expense-icon">{{item.icon}}</text>
+          <view class="expense-info">
+            <text class="expense-name">{{item.name}}</text>
+            <text class="expense-desc">{{item.desc}}</text>
+          </view>
+        </view>
+        <text class="expense-amount">-¥{{item.amount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 导出按钮 -->
+  <view class="export-section">
+    <button class="btn-export" bindtap="onExport">
+      <text>📥 导出财务报表</text>
+    </button>
+  </view>
+</view>

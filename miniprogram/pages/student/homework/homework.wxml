@@ -1,0 +1,114 @@
+<view class="container">
+  <!-- 顶部导航 -->
+  <view class="header">
+    <view class="header-bg">
+      <view class="stars">
+        <view class="star" wx:for="{{stars}}" wx:key="index" style="left: {{item.x}}%; top: {{item.y}}%; animation-delay: {{item.delay}}s;"></view>
+      </view>
+    </view>
+    <view class="header-content">
+      <view class="notification" bindtap="onNotificationTap">
+        <text class="icon">🔔</text>
+        <view class="badge" wx:if="{{unreadCount > 0}}">{{unreadCount}}</view>
+      </view>
+      <view class="title">作业中心</view>
+      <view class="avatar" bindtap="onProfileTap">
+        <view class="avatar-placeholder">👤</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日任务概览 -->
+  <view class="overview-card">
+    <view class="overview-title">🌟 今日探险任务</view>
+    <view class="overview-stats">
+      <view class="stat-item">
+        <text class="stat-num">{{pendingCount}}</text>
+        <text class="stat-label">待完成</text>
+      </view>
+      <view class="stat-divider">|</view>
+      <view class="stat-item">
+        <text class="stat-num">{{completedCount}}</text>
+        <text class="stat-label">已完成</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Tab切换 -->
+  <view class="tab-container">
+    <view class="tab-list">
+      <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="onTabChange" data-tab="0">全部</view>
+      <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="onTabChange" data-tab="1">待完成</view>
+      <view class="tab-item {{currentTab === 2 ? 'active' : ''}}" bindtap="onTabChange" data-tab="2">已完成</view>
+    </view>
+  </view>
+
+  <!-- 作业列表 -->
+  <scroll-view scroll-y class="homework-list">
+    <view class="homework-card" wx:for="{{homeworkList}}" wx:key="id" bindtap="onHomeworkTap" data-id="{{item.id}}">
+      <view class="card-header">
+        <view class="card-icon">🌈</view>
+        <view class="card-info">
+          <view class="card-title">{{item.title}}</view>
+          <view class="card-deadline" wx:if="{{!item.completed}}">📅 截止：{{item.deadline}}</view>
+          <view class="card-completed" wx:else>✅ 已完成</view>
+        </view>
+        <view class="card-status {{item.completed ? 'completed' : 'pending'}}">
+          <text wx:if="{{item.completed}}">⭐⭐⭐⭐⭐</text>
+          <text wx:else>⏰ 进行中</text>
+        </view>
+      </view>
+
+      <view class="card-meta">
+        <view class="meta-item">
+          <text class="meta-icon">🎯</text>
+          <text>{{item.questionCount}}关</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-icon">⏱️</text>
+          <text>约{{item.duration}}分钟</text>
+        </view>
+      </view>
+
+      <!-- 进度条 -->
+      <view class="progress-section" wx:if="{{!item.completed && item.progress > 0}}">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{item.progress}}%;"></view>
+        </view>
+        <text class="progress-text">{{item.progress}}%</text>
+      </view>
+
+      <!-- 已完成显示成绩 -->
+      <view class="score-section" wx:if="{{item.completed}}">
+        <view class="score-info">
+          <text class="score-label">成绩：</text>
+          <text class="score-value">{{item.score}}分</text>
+        </view>
+        <view class="time-info">
+          <text class="time-label">用时：</text>
+          <text class="time-value">{{item.timeSpent}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="card-actions">
+        <button class="btn-primary" wx:if="{{!item.completed}}" bindtap="onStartHomework" data-id="{{item.id}}">
+          🚀 开始探险
+        </button>
+        <button class="btn-secondary" wx:if="{{item.completed}}" bindtap="onRetry" data-id="{{item.id}}">
+          🔄 再做一遍
+        </button>
+        <button class="btn-outline" bindtap="onViewDetail" data-id="{{item.id}}">
+          📋 查看详情
+        </button>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{homeworkList.length === 0}}">
+      <text class="empty-icon">🎈</text>
+      <text class="empty-text">暂无作业</text>
+      <text class="empty-subtext">快去发现更多有趣的内容吧！</text>
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,74 @@
+<view class="purchase-page">
+  <!-- 套餐选择 -->
+  <view class="package-section">
+    <view class="section-title">选择套餐</view>
+    <view class="package-list">
+      <view
+        class="package-item {{selectedPackage === item.id ? 'selected' : ''}}"
+        wx:for="{{packages}}"
+        wx:key="id"
+        bindtap="onSelectPackage"
+        data-id="{{item.id}}"
+      >
+        <view class="package-header">
+          <text class="package-name">{{item.name}}</text>
+          <view class="package-badge" wx:if="{{item.popular}}">推荐</view>
+        </view>
+        <view class="package-price">
+          <text class="price-symbol">¥</text>
+          <text class="price-value">{{item.price}}</text>
+          <text class="price-unit">/{{item.unit}}</text>
+        </view>
+        <view class="package-original" wx:if="{{item.originalPrice}}">
+          原价 ¥{{item.originalPrice}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 支付方式 -->
+  <view class="payment-section">
+    <view class="section-title">支付方式</view>
+    <view class="payment-methods">
+      <view
+        class="method-item {{selectedPayment === 'wechat' ? 'selected' : ''}}"
+        bindtap="onSelectPayment"
+        data-method="wechat"
+      >
+        <text class="method-icon">💚</text>
+        <text class="method-name">微信支付</text>
+        <view class="method-check {{selectedPayment === 'wechat' ? 'checked' : ''}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 支付按钮 -->
+  <view class="bottom-action">
+    <view class="total-info">
+      <text class="total-label">合计：</text>
+      <text class="total-price">¥{{currentPackage.price}}</text>
+    </view>
+    <button class="btn-pay" bindtap="onPay">立即支付</button>
+  </view>
+
+  <!-- 支付弹窗 -->
+  <view class="pay-modal {{showPayModal ? 'show' : ''}}" wx:if="{{showPayModal}}">
+    <view class="modal-mask" bindtap="onCloseModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">确认支付</text>
+        <text class="modal-close" bindtap="onCloseModal">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="pay-amount">
+          <text class="amount-symbol">¥</text>
+          <text class="amount-value">{{currentPackage.price}}</text>
+        </view>
+        <view class="pay-package">{{currentPackage.name}}</view>
+      </view>
+      <view class="modal-footer">
+        <button class="btn-confirm-pay" bindtap="onConfirmPay">确认支付</button>
+      </view>
+    </view>
+  </view>
+</view>

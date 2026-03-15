@@ -1,0 +1,74 @@
+{
+  "pages": [
+    "pages/auth/login/login",
+    "pages/student/home/home",
+    "pages/student/discover/discover",
+    "pages/student/profile/profile",
+    "pages/student/book-detail/book-detail",
+    "pages/student/book-read/book-read",
+    "pages/student/reading/reading",
+    "pages/student/quiz/quiz",
+    "pages/student/report/report",
+    "pages/student/ai-chat/ai-chat",
+    "pages/student/homework/homework",
+    "pages/student/challenge/challenge",
+    "pages/parent/home/home",
+    "pages/parent/homework/homework",
+    "pages/parent/membership/membership",
+    "pages/parent/purchase/purchase",
+    "pages/parent/orders/orders",
+    "pages/teacher/home/home",
+    "pages/teacher/question-bank/question-bank",
+    "pages/teacher/homework-create/homework-create",
+    "pages/teacher/homework-manage/homework-manage",
+    "pages/principal/home/home",
+    "pages/principal/teachers/teachers",
+    "pages/principal/campus/campus",
+    "pages/principal/reports/reports",
+    "pages/principal/income/income",
+    "pages/principal/finance/finance",
+    "pages/common/assessment/assessment",
+    "pages/common/institution/institution",
+    "pages/common/payment-result/payment-result"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#4A90D9",
+    "navigationBarTitleText": "我AI学英语",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F8F9FA"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#667EEA",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/student/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/student/discover/discover",
+        "text": "发现"
+      },
+      {
+        "pagePath": "pages/student/homework/homework",
+        "text": "作业"
+      },
+      {
+        "pagePath": "pages/student/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "usingComponents": {},
+  "permission": {
+    "scope.record": {
+      "desc": "用于录音跟读，评估您的发音"
+    }
+  },
+  "requiredBackgroundModes": ["audio"],
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

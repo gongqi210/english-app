@@ -1,0 +1,86 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input">
+      <text class="search-icon">🔍</text>
+      <input placeholder="搜索题目..." bindinput="onSearchInput" />
+    </view>
+  </view>
+
+  <!-- 筛选标签 -->
+  <scroll-view scroll-x class="filter-tabs">
+    <view class="tab {{currentFilter === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="all">全部</view>
+    <view class="tab {{currentFilter === 'choice' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="choice">选择题</view>
+    <view class="tab {{currentFilter === 'fill_blank' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="fill_blank">填空题</view>
+    <view class="tab {{currentFilter === 'listening' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="listening">听力题</view>
+    <view class="tab {{currentFilter === 'tracing' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="tracing">书写题</view>
+  </scroll-view>
+
+  <!-- 题目列表 -->
+  <view class="question-header">
+    <text class="header-title">题目列表</text>
+    <button class="btn-add" bindtap="onCreateQuestion">+ 新建题目</button>
+  </view>
+
+  <scroll-view scroll-y class="question-list">
+    <view class="question-card" wx:for="{{questions}}" wx:key="id">
+      <view class="card-top">
+        <view class="type-tag {{item.type}}">{{item.typeName}}</view>
+        <view class="card-actions">
+          <text class="action-btn" bindtap="onEdit" data-id="{{item.id}}">编辑</text>
+          <text class="action-btn" bindtap="onCopy" data-id="{{item.id}}">复制</text>
+          <text class="action-btn delete" bindtap="onDelete" data-id="{{item.id}}">删除</text>
+        </view>
+      </view>
+
+      <view class="question-content">
+        <text class="question-text">{{item.content}}</text>
+      </view>
+
+      <view class="question-options" wx:if="{{item.options}}">
+        <view class="option" wx:for="{{item.options}}" wx:for-item="opt" wx:key="key">
+          <text class="opt-key">{{opt.key}}.</text>
+          <text class="opt-value">{{opt.value}}</text>
+        </view>
+      </view>
+
+      <view class="question-meta">
+        <view class="meta-item">
+          <text class="label">难度：</text>
+          <text class="value">L{{item.difficulty}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="label">知识点：</text>
+          <text class="value">{{item.knowledgePoint}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="label">使用次数：</text>
+          <text class="value">{{item.usageCount}}</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 导入按钮 -->
+  <view class="import-section">
+    <view class="import-title">快速导入</view>
+    <view class="import-options">
+      <view class="import-option" bindtap="onImportImage">
+        <text class="import-icon">📷</text>
+        <text class="import-label">拍照导入</text>
+      </view>
+      <view class="import-option" bindtap="onImportPDF">
+        <text class="import-icon">📄</text>
+        <text class="import-label">PDF导入</text>
+      </view>
+      <view class="import-option" bindtap="onImportExcel">
+        <text class="import-icon">📊</text>
+        <text class="import-label">批量导入</text>
+      </view>
+      <view class="import-option" bindtap="onImportAI">
+        <text class="import-icon">🤖</text>
+        <text class="import-label">AI智能导入</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,254 @@
+/* pages/parent/home/home.wxss */
+
+.parent-page {
+  min-height: 100vh;
+  background: #F8F9FA;
+}
+
+.header {
+  background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+  padding: 120rpx 32rpx 60rpx;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+}
+
+.info {
+  padding-left: 20rpx;
+}
+
+.name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.role {
+  display: block;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 4rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 32rpx;
+}
+
+.title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.add-btn {
+  font-size: 26rpx;
+  color: #FF69B4;
+}
+
+.children-section {
+  background: #FFFFFF;
+  margin-bottom: 20rpx;
+}
+
+.children-list {
+  padding: 0 32rpx 24rpx;
+}
+
+.child-card {
+  display: flex;
+  align-items: center;
+  background: #F8F9FA;
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+
+.child-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+}
+
+.child-info {
+  flex: 1;
+  padding-left: 16rpx;
+}
+
+.child-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333333;
+}
+
+.child-stats {
+  display: block;
+  font-size: 22rpx;
+  color: #999999;
+  margin-top: 4rpx;
+}
+
+.child-status {
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+}
+
+.child-status.done {
+  background: rgba(82, 196, 26, 0.15);
+  color: #52C41A;
+}
+
+.overview-section {
+  background: #FFFFFF;
+  margin-bottom: 20rpx;
+}
+
+.overview-cards {
+  display: flex;
+  padding: 0 32rpx 24rpx;
+}
+
+.overview-card {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx;
+}
+
+.card-num {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333333;
+}
+
+.card-label {
+  display: block;
+  font-size: 22rpx;
+  color: #999999;
+  margin-top: 4rpx;
+}
+
+.card-change {
+  display: inline-block;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  margin-top: 8rpx;
+}
+
+.card-change.up {
+  background: rgba(82, 196, 26, 0.15);
+  color: #52C41A;
+}
+
+.remind-section {
+  background: #FFFFFF;
+}
+
+.remind-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.remind-icon {
+  font-size: 36rpx;
+  margin-right: 16rpx;
+}
+
+.remind-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.refresh-btn {
+  margin-left: auto;
+  padding: 10rpx;
+}
+
+.refresh-btn text {
+  font-size: 36rpx;
+}
+
+.children-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.children-list {
+  display: flex;
+  padding: 0 32rpx 24rpx;
+}
+
+.children-list .child-card {
+  flex-shrink: 0;
+  margin-right: 20rpx;
+  min-width: 400rpx;
+}
+
+.children-list .child-card.active {
+  border: 2rpx solid #FF69B4;
+  background: rgba(255, 105, 180, 0.1);
+}
+
+.view-more {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.quick-actions {
+  display: flex;
+  padding: 24rpx 32rpx;
+  background: #FFFFFF;
+  margin-bottom: 20rpx;
+}
+
+.action-card {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 16rpx;
+  background: #F8F9FA;
+  border-radius: 16rpx;
+  margin: 0 8rpx;
+  position: relative;
+}
+
+.action-icon {
+  display: block;
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.action-label {
+  display: block;
+  font-size: 24rpx;
+  color: #333333;
+}
+
+.action-badge {
+  position: absolute;
+  top: 12rpx;
+  right: 12rpx;
+  background: #FF4D4F;
+  color: #FFFFFF;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  min-width: 32rpx;
+  text-align: center;
+}

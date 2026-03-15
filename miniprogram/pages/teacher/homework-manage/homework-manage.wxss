@@ -1,0 +1,462 @@
+page {
+  background: #F5F7FA;
+}
+
+.container {
+  padding: 24rpx;
+}
+
+/* 统计卡片 */
+.stats-card {
+  background: linear-gradient(135deg, #4A90D9 0%, #3A7BC8 100%);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  color: #FFFFFF;
+}
+
+.stats-title {
+  font-size: 28rpx;
+  margin-bottom: 24rpx;
+}
+
+.stats-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-num {
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+/* 筛选 */
+.filter-tabs {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.tab.active {
+  background: #4A90D9;
+  color: #FFFFFF;
+}
+
+/* 作业列表 */
+.homework-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.card-status {
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+}
+
+.card-status.ongoing {
+  background: #FFF7E6;
+  color: #F5A623;
+}
+
+.card-status.finished {
+  background: #E6F7FF;
+  color: #4A90D9;
+}
+
+.card-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 20rpx;
+}
+
+.progress-section {
+  margin-bottom: 20rpx;
+}
+
+.progress-bar {
+  height: 16rpx;
+  background: #F0F0F0;
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-bottom: 12rpx;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4A90D9 0%, #7ED321 100%);
+  border-radius: 8rpx;
+}
+
+.progress-text {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.card-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 20rpx 0;
+  border-top: 1rpx solid #EEEEEE;
+  border-bottom: 1rpx solid #EEEEEE;
+  margin-bottom: 20rpx;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat .stat-label {
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 8rpx;
+}
+
+.stat .stat-value {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.stat .stat-value.good {
+  color: #7ED321;
+}
+
+.stat .stat-value.warning {
+  color: #F5A623;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-around;
+}
+
+.action-btn {
+  font-size: 26rpx;
+  color: #4A90D9;
+}
+
+.action-btn.feedback {
+  color: #7ED321;
+}
+
+/* 反馈弹窗 */
+.feedback-modal, .preview-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  visibility: hidden;
+}
+
+.feedback-modal.show, .preview-modal.show {
+  visibility: visible;
+}
+
+.feedback-mask, .preview-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.feedback-content, .preview-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border-radius: 40rpx 40rpx 0 0;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32rpx;
+}
+
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.feedback-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.close-btn {
+  font-size: 40rpx;
+  color: #999999;
+  padding: 16rpx;
+}
+
+.feedback-section {
+  margin-bottom: 24rpx;
+}
+
+.section-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 16rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-tip, .edit-tip {
+  font-size: 22rpx;
+  color: #999999;
+  font-weight: normal;
+}
+
+/* 学生列表 */
+.student-list {
+  white-space: nowrap;
+  height: 140rpx;
+}
+
+.student-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20rpx;
+  padding: 16rpx;
+  background: #F5F7FA;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
+}
+
+.student-item.selected {
+  border-color: #4A90D9;
+  background: #E6F0FF;
+}
+
+.student-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  margin-bottom: 8rpx;
+}
+
+.student-name {
+  font-size: 22rpx;
+  color: #333333;
+}
+
+.student-score {
+  font-size: 20rpx;
+  color: #4A90D9;
+}
+
+/* AI反馈 */
+.ai-feedback {
+  background: #F5F7FA;
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+
+.feedback-textarea {
+  width: 100%;
+  height: 160rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.ai-actions {
+  margin-top: 16rpx;
+}
+
+.btn-regenerate {
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  color: #4A90D9;
+  border: 1rpx solid #4A90D9;
+}
+
+/* 老师编辑 */
+.teacher-feedback {
+  width: 100%;
+  height: 200rpx;
+  background: #FFFFFF;
+  border: 2rpx solid #4A90D9;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+/* 发送选项 */
+.send-options {
+  display: flex;
+  gap: 24rpx;
+}
+
+.send-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 20rpx;
+  background: #F5F7FA;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  border: 2rpx solid transparent;
+}
+
+.send-option.checked {
+  border-color: #4A90D9;
+  background: #E6F0FF;
+}
+
+.check-icon {
+  width: 36rpx;
+  height: 36rpx;
+  border: 2rpx solid #DDDDDD;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #4A90D9;
+}
+
+.send-option.checked .check-icon {
+  border-color: #4A90D9;
+  background: #4A90D9;
+  color: #FFFFFF;
+}
+
+/* 发送按钮 */
+.feedback-actions {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 32rpx;
+}
+
+.btn-preview, .btn-send {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.btn-preview {
+  background: #F5F7FA;
+  color: #666666;
+}
+
+.btn-send {
+  background: linear-gradient(135deg, #4A90D9 0%, #3A7BC8 100%);
+  color: #FFFFFF;
+}
+
+/* 预览弹窗 */
+.preview-content {
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 60vh;
+  border-radius: 32rpx;
+}
+
+.preview-header {
+  font-size: 32rpx;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 24rpx;
+}
+
+.preview-chat {
+  background: #F5F7FA;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.preview-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.msg-time {
+  font-size: 20rpx;
+  color: #999999;
+  margin-bottom: 8rpx;
+}
+
+.msg-bubble {
+  max-width: 80%;
+  background: #4A90D9;
+  border-radius: 20rpx;
+  padding: 20rpx;
+}
+
+.msg-text {
+  font-size: 26rpx;
+  color: #FFFFFF;
+  line-height: 1.5;
+}
+
+.btn-close-preview {
+  width: 100%;
+  height: 88rpx;
+  background: #F5F7FA;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  color: #666666;
+  border: none;
+}

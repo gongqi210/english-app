@@ -1,0 +1,102 @@
+<view class="container">
+  <!-- 顶部 -->
+  <view class="header">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="user-info">
+        <image class="avatar" src="https://picsum.photos/200/200?random=501" />
+        <view class="info">
+          <text class="name">张校长</text>
+          <text class="school">XX外国语学校</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据概览 -->
+  <view class="overview-section">
+    <view class="section-title">📊 今日数据概览</view>
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-num">{{stats.totalStudents}}</text>
+        <text class="stat-label">学生总数</text>
+        <text class="stat-change up">↑ 12%</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-num">{{stats.todayHomework}}</text>
+        <text class="stat-label">今日作业</text>
+        <text class="stat-change">完成 85%</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-num">{{stats.avgScore}}</text>
+        <text class="stat-label">平均分</text>
+        <text class="stat-change up">↑ 3%</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-num">{{stats.activeRate}}%</text>
+        <text class="stat-label">活跃度</text>
+        <text class="stat-change up">↑ 5%</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 班级排名 -->
+  <view class="ranking-section">
+    <view class="section-title">🏆 班级数据排名</view>
+    <view class="ranking-tabs">
+      <view class="tab {{rankingType === 'score' ? 'active' : ''}}" bindtap="onRankingTypeChange" data-type="score">平均分</view>
+      <view class="tab {{rankingType === 'completion' ? 'active' : ''}}" bindtap="onRankingTypeChange" data-type="completion">完成率</view>
+      <view class="tab {{rankingType === 'activity' ? 'active' : ''}}" bindtap="onRankingTypeChange" data-type="activity">活跃度</view>
+    </view>
+    <view class="ranking-list">
+      <view class="ranking-item" wx:for="{{classRankings}}" wx:key="id">
+        <view class="rank-num {{index < 3 ? 'top' : ''}}">{{index + 1}}</view>
+        <view class="class-info">
+          <text class="class-name">{{item.name}}</text>
+          <text class="class-teacher">{{item.teacher}}</text>
+        </view>
+        <view class="rank-value">{{item.value}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷功能 -->
+  <view class="quick-actions">
+    <view class="action-item" bindtap="onNavigate" data-url="/pages/principal/teachers/teachers">
+      <text class="action-icon">👩‍🏫</text>
+      <text class="action-label">教师管理</text>
+    </view>
+    <view class="action-item" bindtap="onNavigate" data-url="/pages/principal/campus/campus">
+      <text class="action-icon">🏫</text>
+      <text class="action-label">校区管理</text>
+    </view>
+    <view class="action-item" bindtap="onNavigate" data-url="/pages/principal/reports/reports">
+      <text class="action-icon">📈</text>
+      <text class="action-label">运营报表</text>
+    </view>
+    <view class="action-item" bindtap="onNavigate" data-url="/pages/common/institution/institution">
+      <text class="action-icon">⚙️</text>
+      <text class="action-label">机构设置</text>
+    </view>
+  </view>
+
+  <!-- 底部导航 -->
+  <view class="tab-bar">
+    <view class="tab-item active">
+      <text class="tab-icon">📊</text>
+      <text>数据</text>
+    </view>
+    <view class="tab-item" bindtap="onNavigate" data-url="/pages/principal/teachers/teachers">
+      <text class="tab-icon">👩‍🏫</text>
+      <text>教师</text>
+    </view>
+    <view class="tab-item" bindtap="onNavigate" data-url="/pages/principal/reports/reports">
+      <text class="tab-icon">📈</text>
+      <text>报表</text>
+    </view>
+    <view class="tab-item" bindtap="onNavigate" data-url="/pages/common/institution/institution">
+      <text class="tab-icon">⚙️</text>
+      <text>设置</text>
+    </view>
+  </view>
+</view>

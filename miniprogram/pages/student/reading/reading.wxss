@@ -1,0 +1,268 @@
+/* pages/student/reading/reading.wxss */
+
+.reading-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #F8F9FA 0%, #E8F4FD 100%);
+  padding: 32rpx;
+  padding-bottom: 200rpx;
+}
+
+/* 顶部评分 */
+.score-header {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.stars {
+  font-size: 48rpx;
+}
+
+.star {
+  color: #E0E0E0;
+  margin: 0 4rpx;
+}
+
+.star.active {
+  color: #FFD700;
+}
+
+.total-score {
+  margin-top: 24rpx;
+}
+
+.score-num {
+  font-size: 96rpx;
+  font-weight: bold;
+  background: linear-gradient(135deg, #4A90D9 0%, #6BA3E0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.score-label {
+  display: block;
+  font-size: 28rpx;
+  color: #999999;
+  margin-top: 8rpx;
+}
+
+/* 雷达图卡片 */
+.radar-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  margin-bottom: 24rpx;
+}
+
+.radar-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 24rpx;
+}
+
+.radar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.radar-item {
+  display: flex;
+  align-items: center;
+}
+
+.radar-label {
+  width: 100rpx;
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.radar-bar-wrap {
+  flex: 1;
+  height: 20rpx;
+  background: #F0F0F0;
+  border-radius: 10rpx;
+  overflow: hidden;
+  margin: 0 16rpx;
+}
+
+.radar-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4A90D9 0%, #6BA3E0 100%);
+  border-radius: 10rpx;
+  transition: width 0.5s ease;
+}
+
+.radar-bar.fluency {
+  background: linear-gradient(90deg, #52C41A 0%, #73D13D 100%);
+}
+
+.radar-bar.intonation {
+  background: linear-gradient(90deg, #F5A623 0%, #FFC53D 100%);
+}
+
+.radar-bar.completeness {
+  background: linear-gradient(90deg, #FF69B4 0%, #FF1493 100%);
+}
+
+.radar-value {
+  width: 60rpx;
+  text-align: right;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+/* 问题单词卡片 */
+.problem-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+}
+
+.problem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.problem-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.problem-count {
+  font-size: 24rpx;
+  color: #F5A623;
+  background: rgba(245, 166, 35, 0.15);
+  padding: 4rpx 16rpx;
+  border-radius: 16rpx;
+}
+
+.problem-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.problem-item {
+  background: #F8F9FA;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.word-info {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+  margin-bottom: 12rpx;
+}
+
+.word {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.phonetic {
+  font-size: 24rpx;
+  color: #999999;
+  margin-left: 12rpx;
+}
+
+.word-problem {
+  width: 100%;
+  margin-bottom: 12rpx;
+}
+
+.problem-text {
+  font-size: 24rpx;
+  color: #F5A623;
+}
+
+.word-action {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-play-sound {
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background: rgba(74, 144, 217, 0.15);
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  color: #4A90D9;
+}
+
+.word-score {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #F5A623;
+}
+
+.no-problem {
+  text-align: center;
+  padding: 40rpx;
+  color: #52C41A;
+  font-size: 28rpx;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 24rpx;
+  position: fixed;
+  bottom: 40rpx;
+  left: 32rpx;
+  right: 32rpx;
+}
+
+.btn-retry,
+.btn-quiz {
+  flex: 1;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 48rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.btn-retry {
+  background: #FFFFFF;
+  color: #4A90D9;
+  border: 2rpx solid #4A90D9;
+}
+
+.btn-quiz {
+  background: linear-gradient(135deg, #4A90D9 0%, #3A7BC8 100%);
+  color: #FFFFFF;
+  box-shadow: 0 8rpx 24rpx rgba(74, 144, 217, 0.3);
+}
+
+.btn-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}
+
+/* 底部提示 */
+.tips {
+  position: fixed;
+  bottom: 160rpx;
+  left: 32rpx;
+  right: 32rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #999999;
+}

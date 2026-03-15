@@ -1,0 +1,99 @@
+<!--pages/student/reading/reading.wxml-->
+<view class="reading-page">
+  <!-- 顶部评分 -->
+  <view class="score-header">
+    <view class="stars">
+      <text class="star">⭐</text>
+      <text class="star">⭐</text>
+      <text class="star">⭐</text>
+      <text class="star">⭐</text>
+      <text class="star {{score.total >= 90 ? 'active' : ''}}">⭐</text>
+    </view>
+    <view class="total-score">
+      <text class="score-num">{{score.total}}</text>
+      <text class="score-label">综合得分</text>
+    </view>
+  </view>
+
+  <!-- 雷达图 -->
+  <view class="radar-card">
+    <view class="radar-title">📊 四维能力分析</view>
+    <view class="radar-chart">
+      <view class="radar-item">
+        <view class="radar-label">发音</view>
+        <view class="radar-bar-wrap">
+          <view class="radar-bar" style="width: {{score.pronunciation}}%"></view>
+        </view>
+        <view class="radar-value">{{score.pronunciation}}</view>
+      </view>
+      <view class="radar-item">
+        <view class="radar-label">流利度</view>
+        <view class="radar-bar-wrap">
+          <view class="radar-bar fluency" style="width: {{score.fluency}}%"></view>
+        </view>
+        <view class="radar-value">{{score.fluency}}</view>
+      </view>
+      <view class="radar-item">
+        <view class="radar-label">语调</view>
+        <view class="radar-bar-wrap">
+          <view class="radar-bar intonation" style="width: {{score.intonation}}%"></view>
+        </view>
+        <view class="radar-value">{{score.intonation}}</view>
+      </view>
+      <view class="radar-item">
+        <view class="radar-label">完整度</view>
+        <view class="radar-bar-wrap">
+          <view class="radar-bar completeness" style="width: {{score.completeness}}%"></view>
+        </view>
+        <view class="radar-value">{{score.completeness}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 问题单词 -->
+  <view class="problem-card">
+    <view class="problem-header">
+      <text class="problem-title">🔍 需要改进的单词</text>
+      <text class="problem-count">{{problemWords.length}}个</text>
+    </view>
+    <view class="problem-list">
+      <block wx:for="{{problemWords}}" wx:key="index">
+        <view class="problem-item">
+          <view class="word-info">
+            <text class="word">{{item.word}}</text>
+            <text class="phonetic">{{item.phonetic}}</text>
+          </view>
+          <view class="word-problem">
+            <text class="problem-text">{{item.problem}}</text>
+          </view>
+          <view class="word-action">
+            <button class="btn-play-sound" bindtap="playCorrectSound" data-word="{{item.word}}">
+              🔊 播放
+            </button>
+            <text class="word-score">{{item.score}}分</text>
+          </view>
+        </view>
+      </block>
+    </view>
+    <view class="no-problem" wx:if="{{problemWords.length === 0}}">
+      <text>🎉 太棒了！所有单词发音都很准确！</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="btn-retry" bindtap="tryAgain">
+      <text class="btn-icon">🔄</text>
+      <text>再读一次</text>
+    </button>
+    <button class="btn-quiz" bindtap="startQuiz">
+      <text class="btn-icon">📝</text>
+      <text>开始测验</text>
+    </button>
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="tips">
+    <text>💡 每天坚持跟读，发音会越来越标准哦！</text>
+  </view>
+</view>

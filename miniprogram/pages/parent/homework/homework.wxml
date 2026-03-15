@@ -1,0 +1,81 @@
+<view class="container">
+  <!-- 孩子信息卡片 -->
+  <view class="child-card">
+    <view class="child-info">
+      <image class="child-avatar" src="https://picsum.photos/200/200?random=502" />
+      <view class="child-detail">
+        <text class="child-name">小明</text>
+        <text class="child-class">三年级一班</text>
+      </view>
+    </view>
+    <view class="week-summary">
+      <view class="summary-item">
+        <text class="summary-num">8/10</text>
+        <text class="summary-label">本周完成</text>
+      </view>
+      <view class="summary-item">
+        <text class="summary-num">88分</text>
+        <text class="summary-label">平均分</text>
+      </view>
+      <view class="summary-progress">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: 80%;"></view>
+        </view>
+        <text>80%</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日待完成 -->
+  <view class="section-title">🔥 今日待完成</view>
+  <view class="todo-card" wx:if="{{todayHomework}}">
+    <view class="todo-header">
+      <text class="todo-title">{{todayHomework.title}}</text>
+      <text class="todo-deadline">截止：{{todayHomework.deadline}}</text>
+    </view>
+    <button class="btn-remind" bindtap="onRemind">提醒孩子做作业</button>
+  </view>
+
+  <!-- 最近完成 -->
+  <view class="section-title">✅ 最近完成</view>
+  <view class="completed-list">
+    <view class="completed-card" wx:for="{{completedHomework}}" wx:key="id">
+      <view class="completed-header">
+        <text class="completed-title">{{item.title}}</text>
+        <view class="completed-score">
+          <text class="score">{{item.score}}分</text>
+          <text class="stars">{{item.stars}}</text>
+        </view>
+      </view>
+      <view class="completed-info">
+        <text>{{item.date}}</text>
+        <text>用时：{{item.timeSpent}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 学习趋势 -->
+  <view class="section-title">📈 学习趋势</view>
+  <view class="trend-card">
+    <view class="trend-chart">
+      <view class="chart-line">
+        <view class="chart-point" wx:for="{{trendData}}" wx:key="index" style="left: {{item.x}}%; bottom: {{item.y}}%;">
+          <view class="point-dot"></view>
+        </view>
+      </view>
+      <view class="chart-labels">
+        <text>周一</text>
+        <text>周二</text>
+        <text>周三</text>
+        <text>周四</text>
+        <text>周五</text>
+        <text>周六</text>
+        <text>周日</text>
+      </view>
+    </view>
+    <view class="trend-summary">
+      <text class="trend-label">薄弱环节：听力理解</text>
+      <text class="trend-suggestion">建议加强练习</text>
+    </view>
+  </view>
+</view>

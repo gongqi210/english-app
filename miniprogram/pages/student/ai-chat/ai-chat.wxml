@@ -1,0 +1,38 @@
+<!--pages/student/ai-chat/ai-chat.wxml-->
+<view class="chat-page">
+  <!-- 聊天内容 -->
+  <scroll-view class="chat-list" scroll-y bindscrolltoupper="loadMore">
+    <block wx:for="{{messages}}" wx:key="id">
+      <view class="message-item {{item.role === 'user' ? 'user' : 'ai'}}">
+        <image class="avatar" src="{{item.role === 'ai' ? '/images/ai-avatar.png' : userInfo.avatar}}" />
+        <view class="message-content">
+          <text class="message-text">{{item.content}}</text>
+        </view>
+      </view>
+    </block>
+    <view class="typing" wx:if="{{isTyping}}">
+      <text>AI正在输入...</text>
+    </view>
+  </scroll-view>
+
+  <!-- 输入区域 -->
+  <view class="input-area safe-bottom">
+    <view class="input-wrap">
+      <input
+        class="message-input"
+        type="text"
+        placeholder="用英语和AI聊天..."
+        bindinput="handleInput"
+        value="{{inputValue}}"
+        confirm-type="send"
+        bindconfirm="sendMessage"
+      />
+      <button class="btn-send" bindtap="sendMessage" disabled="{{!inputValue}}">
+        发送
+      </button>
+    </view>
+    <button class="btn-voice" bindtap="startVoice">
+      <text>🎤</text>
+    </button>
+  </view>
+</view>

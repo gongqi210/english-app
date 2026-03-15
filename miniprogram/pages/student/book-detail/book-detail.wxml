@@ -1,0 +1,113 @@
+<!--pages/student/book-detail/book-detail.wxml-->
+<view class="book-detail-page">
+  <!-- 封面区域 -->
+  <view class="cover-section">
+    <image class="cover-bg" src="{{book.cover}}" mode="aspectFill" />
+    <view class="cover-overlay"></view>
+    <view class="cover-content">
+      <view class="cover-wrapper">
+        <image class="cover-image" src="{{book.cover}}" mode="aspectFill" />
+      </view>
+      <view class="book-info">
+        <text class="book-title">{{book.title}}</text>
+        <text class="book-subtitle">{{book.subtitle}}</text>
+        <view class="book-tags">
+          <block wx:for="{{book.tags}}" wx:key="index">
+            <text class="tag">{{item}}</text>
+          </block>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-num">{{book.pageCount}}</text>
+      <text class="stat-label">页数</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-num">{{book.duration}}</text>
+      <text class="stat-label">分钟</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-num">{{book.wordCount}}</text>
+      <text class="stat-label">单词</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-num">L{{book.levelIndex}}</text>
+      <text class="stat-label">级别</text>
+    </view>
+  </view>
+
+  <!-- 简介 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">📝 简介</text>
+    </view>
+    <view class="description">
+      <text class="desc-text {{isExpanded ? '' : 'collapsed'}}">{{book.description}}</text>
+      <text class="expand-btn" bindtap="toggleExpand" wx:if="{{book.description.length > 80}}">
+        {{isExpanded ? '收起' : '展开更多'}}
+      </text>
+    </view>
+  </view>
+
+  <!-- 评价 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">⭐ 评价</text>
+      <view class="rating-info">
+        <text class="rating-score">{{book.rating}}</text>
+        <text class="rating-star">⭐⭐⭐⭐⭐</text>
+      </view>
+    </view>
+    <view class="rating-chart">
+      <view class="rating-bar" wx:for="{{ratingData}}" wx:key="index">
+        <text class="bar-label">{{item.star}}星</text>
+        <view class="bar-track">
+          <view class="bar-fill" style="width: {{item.percent}}%"></view>
+        </view>
+        <text class="bar-percent">{{item.percent}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 绘本预览 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">📖 预览</text>
+    </view>
+    <scroll-view class="preview-scroll" scroll-x="true">
+      <view class="preview-list">
+        <block wx:for="{{[1,2,3,4,5]}}" wx:key="index">
+          <view class="preview-item">
+            <image class="preview-image" src="{{book.cover}}" mode="aspectFill" />
+            <text class="preview-page">第{{item}}页</text>
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar safe-bottom">
+    <view class="bar-left">
+      <view class="action-item">
+        <text class="action-icon">❤️</text>
+        <text class="action-text">收藏</text>
+      </view>
+      <view class="action-item">
+        <text class="action-icon">📚</text>
+        <text class="action-text">书架</text>
+      </view>
+    </view>
+    <button class="btn-start" bindtap="startReading">
+      <text class="btn-icon">🎵</text>
+      <text>开始学习</text>
+    </button>
+  </view>
+</view>

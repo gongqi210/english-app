@@ -1,0 +1,259 @@
+<view class="quiz-page">
+  <!-- 顶部导航 -->
+  <view class="header">
+    <view class="back-btn" bindtap="onExit">
+      <text>←</text>
+    </view>
+    <view class="header-title">第{{currentLevel}}关 {{levelName}}</view>
+    <view class="header-right">
+      <text class="timer">⏱️ {{timeElapsed}}</text>
+    </view>
+  </view>
+
+  <!-- 进度条 -->
+  <view class="progress-bar">
+    <view class="progress-info">
+      <text class="question-num">第 {{currentQuestion + 1}} 题 / 共 {{questions.length}} 题</text>
+    </view>
+    <view class="progress-track">
+      <view class="progress-fill" style="width: {{progress}}%"></view>
+    </view>
+  </view>
+
+  <!-- 题目内容 -->
+  <scroll-view scroll-y class="question-container">
+    <view class="question-card">
+      <!-- 听力题 - 音频播放 -->
+      <view class="audio-player" wx:if="{{currentQ.type === 'listening'}}">
+        <view class="audio-hint">🔊 点击播放音频</view>
+        <view class="audio-wave">
+          <view class="wave-bar" wx:for="{{[1,2,3,4,5,6,7,8]}}" wx:key="index" style="animation-delay: {{index * 0.1}}s"></view>
+        </view>
+        <button class="btn-play" bindtap="playAudio">
+          <text wx:if="{{!isPlaying}}">▶️ 播放</text>
+          <text wx:else>⏸️ 播放中</text>
+        </button>
+      </view>
+
+      <!-- 图片展示 -->
+      <view class="question-image" wx:if="{{currentQ.imageUrl}}">
+        <image src="{{currentQ.imageUrl}}" mode="aspectFit" />
+      </view>
+
+      <!-- 问题文本 -->
+      <view class="question-text">
+        <text>{{currentQ.question}}</text>
+      </view>
+
+      <!-- ========== 选择题 ========== -->
+      <view class="options-list" wx:if="{{currentQ.type === 'choice'}}">
+        <block wx:for="{{currentQ.options}}" wx:key="key">
+          <view
+            class="option-item {{selectedAnswer === item.key ? 'selected' : ''}}"
+            bindtap="selectOption"
+            data-key="{{item.key}}"
+          >
+            <view class="option-key">{{item.key}}</view>
+            <view class="option-value">{{item.value}}</view>
+            <view class="option-icon" wx:if="{{selectedAnswer === item.key}}">●</view>
+          </view>
+        </block>
+      </view>
+
+      <!-- ========== 听力题 - 图片选择 ========== -->
+      <view class="image-options" wx:if="{{currentQ.type === 'listening'}}">
+        <block wx:for="{{currentQ.imageOptions}}" wx:key="id">
+          <view
+            class="image-option {{selectedAnswer === item.id ? 'selected' : ''}}"
+            bindtap="selectImageOption"
+            data-id="{{item.id}}"
+          >
+            <image src="{{item.url}}" mode="aspectFit" />
+            <view class="image-check" wx:if="{{selectedAnswer === item.id}}">✓</view>
+          </view>
+        </block>
+      </view>
+
+      <!-- ========== 填空题 ========== -->
+      <view class="fill-blank" wx:if="{{currentQ.type === 'fill_blank'}}">
+        <view class="fill-hint" wx:if="{{currentQ.hint}}">{{currentQ.hint}}</view>
+        <view class="input-slots">
+          <view class="input-slot" wx:for="{{currentQ.blanks}}" wx:key="index">
+            <text class="slot-text" wx:if="{{item.filled}}">{{item.value}}</text>
+            <input
+              class="slot-input"
+              wx:if="{{!item.filled}}"
+              type="text"
+              maxlength="{{item.maxLength || 20}}"
+              placeholder="?"
+              bindinput="handleFillInput"
+              data-index="{{index}}"
+              disabled="{{showResult}}"
+            />
+          </view>
+        </view>
+        <!-- 键盘 -->
+        <view class="keyboard" wx:if="{{currentQ.keyboard === 'letter'}}">
+          <view class="keyboard-row" wx:for="{{keyboardRows}}" wx:key="index">
+            <view
+              class="key"
+              wx:for="{{item}}"
+              wx:for-item="key"
+              wx:key="key"
+              bindtap="onKeyPress"
+              data-key="{{key}}"
+            >{{key}}</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- ========== 描红/手写题 ========== -->
+      <view class="tracing-area" wx:if="{{currentQ.type === 'tracing' || currentQ.type === 'handwriting'}}">
+        <view class="tracing-header">
+          <text class="tracing-target">{{currentQ.target}}</text>
+        </view>
+        <view class="tracing-canvas-wrapper">
+          <!-- 描红模板 -->
+          <view class="tracing-template" wx:if="{{currentQ.type === 'tracing'}}">
+            <text class="template-text" style="color: #CCCCCC; opacity: 0.5;">{{currentQ.target}}</text>
+          </view>
+          <!-- 书写画布 -->
+          <canvas
+            class="writing-canvas"
+            canvas-id="writingCanvas"
+            bindtouchstart="onTouchStart"
+            bindtouchmove="onTouchMove"
+            bindtouchend="onTouchEnd"
+          ></canvas>
+        </view>
+        <view class="tracing-actions">
+          <button class="btn-clear" bindtap="clearCanvas">🔄 重写</button>
+          <button class="btn-submit-canvas" bindtip="submitTracing">✅ 完成书写</button>
+        </view>
+      </view>
+
+      <!-- ========== 跟读题 ========== -->
+      <view class="reading-area" wx:if="{{currentQ.type === 'reading'}}">
+        <view class="reading-sentence">
+          <text>"{{currentQ.sentence}}"</text>
+        </view>
+        <view class="reference-audio">
+          <button class="btn-listen" bindtap="playReference">
+            🔊 点击听原声
+          </button>
+        </view>
+        <view class="record-area">
+          <view class="record-btn {{isRecording ? 'recording' : ''}}" bindtap="toggleRecording">
+            <text class="record-icon">🎤</text>
+            <text class="record-text">{{isRecording ? '松开结束' : '按住录音'}}</text>
+            <view class="wave-animation" wx:if="{{isRecording}}">
+              <view class="wave" wx:for="{{[1,2,3,4,5]}}" wx:key="index" style="animation-delay: {{index * 0.2}}s"></view>
+            </view>
+          </view>
+        </view>
+        <!-- 评分结果 -->
+        <view class="score-result" wx:if="{{showReadingScore}}">
+          <view class="score-stars">
+            <text wx:for="{{[1,2,3,4,5]}}" wx:key="index" class="star {{index < readingScore ? 'active' : ''}}">⭐</text>
+          </view>
+          <view class="score-text">评分：{{readingScore}}分</view>
+        </view>
+      </view>
+
+      <!-- ========== 连线题 ========== -->
+      <view class="matching-area" wx:if="{{currentQ.type === 'matching'}}">
+        <view class="matching-container">
+          <view class="matching-left">
+            <view
+              class="matching-item"
+              wx:for="{{currentQ.leftItems}}"
+              wx:key="id"
+              bindtap="onMatchingSelect"
+              data-id="{{item.id}}"
+              data-side="left"
+              data-value="{{item.value}}"
+              class="{{matchedLeft === item.id ? 'selected' : ''}}"
+            >
+              {{item.value}}
+            </view>
+          </view>
+          <view class="matching-right">
+            <view
+              class="matching-item"
+              wx:for="{{currentQ.rightItems}}"
+              wx:key="id"
+              bindtap="onMatchingSelect"
+              data-id="{{item.id}}"
+              data-side="right"
+              class="{{selectedRight === item.id ? 'selected' : ''}}"
+            >
+              {{item.value}}
+            </view>
+          </view>
+        </view>
+        <view class="matching-line" wx:if="{{matchedLeft && selectedRight}}">
+          <button class="btn-confirm-match" bindtap="confirmMatch">确认连线</button>
+        </view>
+      </view>
+
+      <!-- 解析 -->
+      <view class="explanation" wx:if="{{showResult && currentQ.explanation}}">
+        <view class="explanation-title">{{isCorrect ? '✅ 回答正确！' : '❌ 回答错误'}}</view>
+        <text class="explanation-text">{{currentQ.explanation}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="action-bar">
+    <button class="btn-hint" bindtap="showHint" wx:if="{{!showResult && !currentQ.isHintShown}}">
+      💡 提示
+    </button>
+    <button
+      class="btn-submit {{canSubmit ? '' : 'disabled'}}"
+      bindtap="submitAnswer"
+      disabled="{{!canSubmit}}"
+      wx:if="{{!showResult}}"
+    >
+      ✅ 确认
+    </button>
+    <button
+      class="btn-next"
+      bindtap="nextQuestion"
+      wx:if="{{showResult}}"
+    >
+      {{currentQuestion < questions.length - 1 ? '下一题 →' : '查看成绩'}}
+    </button>
+  </view>
+
+  <!-- 结果弹窗 -->
+  <view class="result-modal {{showResultModal ? 'show' : ''}}" wx:if="{{showResultModal}}">
+    <view class="result-mask"></view>
+    <view class="result-content">
+      <view class="result-icon">🎉</view>
+      <view class="result-title">闯关成功！</view>
+      <view class="result-grade">{{grade}}</view>
+      <view class="result-stars">
+        <text wx:for="{{[1,2,3,4,5]}}" wx:key="index" class="star {{index < starCount ? 'active' : ''}}">⭐</text>
+      </view>
+      <view class="result-stats">
+        <view class="stat-item">
+          <text class="stat-num">{{correctCount}}</text>
+          <text class="stat-label">正确</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">{{questions.length - correctCount}}</text>
+          <text class="stat-label">错误</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">{{timeElapsed}}</text>
+          <text class="stat-label">用时</text>
+        </view>
+      </view>
+      <view class="result-actions">
+        <button class="btn-retry" bindtap="retryHomework">🔄 再做一遍</button>
+        <button class="btn-finish" bindtap="finishHomework">🏠 返回首页</button>
+      </view>
+    </view>
+  </view>
+</view>

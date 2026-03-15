@@ -1,0 +1,66 @@
+<view class="container">
+  <!-- 机构信息 -->
+  <view class="section">
+    <view class="section-title">🏫 机构信息</view>
+    <view class="form-item">
+      <view class="form-label">机构名称</view>
+      <input class="form-input" placeholder="请输入机构名称" value="{{institution.name}}" bindinput="onNameInput" />
+    </view>
+    <view class="form-item">
+      <view class="form-label">机构Logo</view>
+      <view class="logo-upload" bindtap="onUploadLogo">
+        <image wx:if="{{institution.logo}}" src="{{institution.logo}}" mode="aspectFit" class="logo-preview" />
+        <view wx:else class="upload-placeholder">
+          <text class="upload-icon">🖼️</text>
+          <text>点击上传Logo</text>
+        </view>
+      </view>
+      <text class="upload-hint">建议尺寸：200x200</text>
+    </view>
+  </view>
+
+  <!-- 主题风格 -->
+  <view class="section">
+    <view class="section-title">🎨 主题风格</view>
+    <view class="form-item">
+      <view class="form-label">主题色</view>
+      <view class="color-picker">
+        <view
+          class="color-option {{institution.themeColor === color ? 'selected' : ''}}"
+          wx:for="{{colorOptions}}"
+          wx:key="index"
+          style="background: {{item}};"
+          bindtap="onColorSelect"
+          data-color="{{item}}"
+        ></view>
+      </view>
+    </view>
+    <view class="form-item">
+      <view class="form-label">自定义颜色</view>
+      <view class="custom-color">
+        <input class="color-input" placeholder="#4A90D9" value="{{institution.themeColor}}" bindinput="onCustomColor" />
+        <view class="color-preview" style="background: {{institution.themeColor}};"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预览效果 -->
+  <view class="section">
+    <view class="section-title">👀 预览效果</view>
+    <view class="preview-card" style="border-color: {{institution.themeColor}};">
+      <view class="preview-header" style="background: {{institution.themeColor}};">
+        <image wx:if="{{institution.logo}}" src="{{institution.logo}}" class="preview-logo" />
+        <text class="preview-name">{{institution.name || '机构名称'}}</text>
+      </view>
+      <view class="preview-body">
+        <view class="preview-btn">登录</view>
+        <view class="preview-btn primary" style="background: {{institution.themeColor}};">开始学习</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="bottom-action">
+    <button class="btn-save" bindtap="onSave">💾 保存设置</button>
+  </view>
+</view>

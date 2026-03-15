@@ -1,0 +1,243 @@
+page {
+  background: #F5F7FA;
+}
+
+.container {
+  padding: 24rpx;
+}
+
+/* 孩子信息卡片 */
+.child-card {
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+  color: #FFFFFF;
+}
+
+.child-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.child-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+}
+
+.child-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.child-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.child-class {
+  font-size: 26rpx;
+  opacity: 0.8;
+}
+
+.week-summary {
+  display: flex;
+  align-items: center;
+}
+
+.summary-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.summary-num {
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.summary-label {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.summary-progress {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 16rpx;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 8rpx;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #7ED321;
+  border-radius: 8rpx;
+}
+
+/* 标题 */
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 20rpx;
+}
+
+/* 今日待完成 */
+.todo-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 32rpx;
+  border-left: 8rpx solid #F5A623;
+}
+
+.todo-header {
+  margin-bottom: 20rpx;
+}
+
+.todo-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.todo-deadline {
+  font-size: 24rpx;
+  color: #F5A623;
+}
+
+.btn-remind {
+  width: 100%;
+  height: 80rpx;
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  border-radius: 40rpx;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  border: none;
+}
+
+/* 已完成列表 */
+.completed-list {
+  margin-bottom: 32rpx;
+}
+
+.completed-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.completed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.completed-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333333;
+}
+
+.completed-score {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.score {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #7ED321;
+}
+
+.stars {
+  font-size: 24rpx;
+}
+
+.completed-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 学习趋势 */
+.trend-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx;
+}
+
+.trend-chart {
+  height: 300rpx;
+  position: relative;
+  margin-bottom: 24rpx;
+}
+
+.chart-line {
+  position: absolute;
+  bottom: 40rpx;
+  left: 40rpx;
+  right: 40rpx;
+  height: 200rpx;
+  border-bottom: 2rpx solid #EEEEEE;
+  border-left: 2rpx solid #EEEEEE;
+}
+
+.chart-point {
+  position: absolute;
+}
+
+.point-dot {
+  width: 16rpx;
+  height: 16rpx;
+  background: #4A90D9;
+  border-radius: 50%;
+}
+
+.chart-labels {
+  position: absolute;
+  bottom: 0;
+  left: 40rpx;
+  right: 40rpx;
+  display: flex;
+  justify-content: space-between;
+  font-size: 20rpx;
+  color: #999999;
+}
+
+.trend-summary {
+  padding: 20rpx;
+  background: #FFF7E6;
+  border-radius: 16rpx;
+}
+
+.trend-label {
+  font-size: 26rpx;
+  color: #F5A623;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.trend-suggestion {
+  font-size: 24rpx;
+  color: #999999;
+}

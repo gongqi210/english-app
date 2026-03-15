@@ -1,0 +1,125 @@
+<!--pages/teacher/home/home.wxml-->
+<view class="teacher-page">
+  <!-- 顶部 -->
+  <view class="header">
+    <view class="header-content">
+      <view class="user-info">
+        <image class="avatar" src="{{userInfo.avatar}}" />
+        <view class="info">
+          <text class="name">{{userInfo.name}}</text>
+          <text class="role">{{userInfo.role}}</text>
+        </view>
+      </view>
+      <view class="header-right">
+        <text class="current-time">{{currentTime}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据概览 -->
+  <view class="stats-section">
+    <view class="stat-card" bindtap="onClassManage">
+      <text class="stat-num">{{stats.classCount}}</text>
+      <text class="stat-label">班级</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{stats.studentCount}}</text>
+      <text class="stat-label">学生</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{stats.bookCount}}</text>
+      <text class="stat-label">绘本</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{stats.todayHomework}}</text>
+      <text class="stat-label">今日作业</text>
+    </view>
+  </view>
+
+  <!-- 今日待办 -->
+  <view class="todo-section">
+    <view class="section-header">
+      <text class="section-title">📋 今日待办</text>
+      <text class="refresh-link" bindtap="onRefresh">刷新</text>
+    </view>
+    <view class="todo-list">
+      <view class="todo-item" wx:for="{{todayTasks}}" wx:key="id">
+        <view class="todo-icon {{item.type}}">
+          <text wx:if="{{item.type === 'homework'}}">📝</text>
+          <text wx:elif="{{item.type === 'review'}}">✅</text>
+          <text wx:else>📚</text>
+        </view>
+        <view class="todo-content">
+          <text class="todo-title">{{item.title}}</text>
+          <text class="todo-desc" wx:if="{{item.deadline}}">{{item.deadline}}</text>
+          <text class="todo-desc" wx:elif="{{item.count}}">待审核 {{item.count}} 篇</text>
+        </view>
+        <view class="todo-action">
+          <text class="action-btn" wx:if="{{item.type === 'homework'}}" bindtap="onHomeworkCreate">去处理</text>
+          <text class="action-btn" wx:elif="{{item.type === 'review'}}" bindtap="onContentReview">去审核</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近作业 -->
+  <view class="recent-section">
+    <view class="section-header">
+      <text class="section-title">📊 最近作业</text>
+      <text class="more-link" bindtap="onHomeworkManage">查看全部 →</text>
+    </view>
+    <view class="homework-list">
+      <view class="homework-card" wx:for="{{recentHomework}}" wx:key="id" bindtap="onHomeworkDetail" data-id="{{item.id}}">
+        <view class="homework-info">
+          <text class="homework-title">{{item.title}}</text>
+          <text class="homework-class">{{item.className}}</text>
+        </view>
+        <view class="homework-stats">
+          <view class="stat-item">
+            <text class="stat-label">提交率</text>
+            <text class="stat-value">{{item.submitRate}}%</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">平均分</text>
+            <text class="stat-value">{{item.avgScore}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="onQuestionBank">
+      <text class="menu-icon">📚</text>
+      <text class="menu-text">题库管理</text>
+      <text class="menu-arrow">→</text>
+    </view>
+    <view class="menu-item" bindtap="onHomeworkCreate">
+      <text class="menu-icon">✏️</text>
+      <text class="menu-text">创建作业</text>
+      <text class="menu-arrow">→</text>
+    </view>
+    <view class="menu-item" bindtap="onHomeworkManage">
+      <text class="menu-icon">📋</text>
+      <text class="menu-text">作业管理</text>
+      <text class="menu-badge" wx:if="{{stats.pendingReview > 0}}">{{stats.pendingReview}}</text>
+      <text class="menu-arrow">→</text>
+    </view>
+    <view class="menu-item" bindtap="onBookUpload">
+      <text class="menu-icon">📖</text>
+      <text class="menu-text">绘本上传</text>
+      <text class="menu-arrow">→</text>
+    </view>
+    <view class="menu-item" bindtap="onClassManage">
+      <text class="menu-icon">🏫</text>
+      <text class="menu-text">班级管理</text>
+      <text class="menu-arrow">→</text>
+    </view>
+    <view class="menu-item" bindtap="onClassData">
+      <text class="menu-icon">📈</text>
+      <text class="menu-text">班级数据</text>
+      <text class="menu-arrow">→</text>
+    </view>
+  </view>
+</view>

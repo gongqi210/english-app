@@ -1,0 +1,73 @@
+<view class="container">
+  <view class="form-section">
+    <view class="form-item">
+      <view class="form-label">作业名称</view>
+      <input class="form-input" placeholder="请输入作业名称" bindinput="onTitleInput" />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">适用班级</view>
+      <picker mode="selector" range="{{classes}}" bindchange="onClassChange">
+        <view class="picker-trigger">
+          <text>{{selectedClass || '选择班级'}}</text>
+          <text class="arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">截止时间</view>
+      <picker mode="date" bindchange="onDateChange">
+        <view class="picker-trigger">
+          <text>{{deadline || '选择日期'}}</text>
+          <text class="arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 题目选择 -->
+  <view class="section-title">
+    <text>题目选择</text>
+    <button class="btn-add-question" bindtap="onAddQuestions">+ 从题库选择</button>
+  </view>
+
+  <view class="questions-container">
+    <view class="question-block" wx:for="{{selectedQuestions}}" wx:key="id">
+      <view class="block-header">
+        <view class="block-num">关卡{{index + 1}}</view>
+        <view class="block-type">{{item.typeName}}</view>
+        <text class="block-delete" bindtap="onRemoveQuestion" data-index="{{index}}">✕</text>
+      </view>
+      <view class="block-content">{{item.content}}</view>
+      <view class="drag-handle">⋮⋮ 拖拽排序</view>
+    </view>
+
+    <view class="empty-questions" wx:if="{{selectedQuestions.length === 0}}">
+      <text>暂无题目，请从题库添加</text>
+    </view>
+  </view>
+
+  <!-- 作业设置 -->
+  <view class="settings-section">
+    <view class="section-title">作业设置</view>
+    <view class="setting-item">
+      <text>显示答案解析</text>
+      <switch checked="{{showExplanation}}" bindchange="onExplanationChange" color="#4A90D9"/>
+    </view>
+    <view class="setting-item">
+      <text>成绩排行榜</text>
+      <switch checked="{{showRanking}}" bindchange="onRankingChange" color="#4A90D9"/>
+    </view>
+    <view class="setting-item">
+      <text>允许重复完成</text>
+      <switch checked="{{allowRetry}}" bindchange="onRetryChange" color="#4A90D9"/>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="bottom-actions">
+    <button class="btn-draft" bindtap="onSaveDraft">保存草稿</button>
+    <button class="btn-publish" bindtap="onPublish">🚀 发布作业</button>
+  </view>
+</view>

@@ -1,0 +1,179 @@
+<view class="container">
+  <!-- 统计卡片 -->
+  <view class="stats-card">
+    <view class="stats-title">📊 本周数据</view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-num">{{stats.assigned}}</text>
+        <text class="stat-label">布置作业</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.submitRate}}%</text>
+        <text class="stat-label">提交率</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.completeRate}}%</text>
+        <text class="stat-label">完成率</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.avgScore}}分</text>
+        <text class="stat-label">平均分</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选 -->
+  <view class="filter-tabs">
+    <view class="tab {{status === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-status="all">全部</view>
+    <view class="tab {{status === 'ongoing' ? 'active' : ''}}" bindtap="onFilterChange" data-status="ongoing">进行中</view>
+    <view class="tab {{status === 'finished' ? 'active' : ''}}" bindtap="onFilterChange" data-status="finished">已结束</view>
+  </view>
+
+  <!-- 作业列表 -->
+  <view class="homework-list">
+    <view class="homework-card" wx:for="{{homeworkList}}" wx:key="id">
+      <view class="card-header">
+        <view class="card-title">{{item.title}}</view>
+        <view class="card-status {{item.status}}">{{item.statusText}}</view>
+      </view>
+      <view class="card-info">
+        <text>{{item.dateRange}}</text>
+        <text>{{item.className}} · {{item.studentCount}}人</text>
+      </view>
+
+      <view class="progress-section">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{item.submitRate}}%;"></view>
+        </view>
+        <text class="progress-text">提交 {{item.submitted}}/{{item.studentCount}} ({{item.submitRate}}%)</text>
+      </view>
+
+      <view class="card-stats">
+        <view class="stat">
+          <text class="stat-label">平均分</text>
+          <text class="stat-value">{{item.avgScore}}分</text>
+        </view>
+        <view class="stat">
+          <text class="stat-label">优秀</text>
+          <text class="stat-value good">{{item.excellentCount}}人</text>
+        </view>
+        <view class="stat">
+          <text class="stat-label">需加油</text>
+          <text class="stat-value warning">{{item.needsImprovement}}人</text>
+        </view>
+      </view>
+
+      <view class="card-actions">
+        <view class="action-btn" bindtap="onViewStats" data-id="{{item.id}}">📊 统计</view>
+        <view class="action-btn" bindtap="onViewList" data-id="{{item.id}}">📋 名单</view>
+        <view class="action-btn" bindtap="onEdit" data-id="{{item.id}}">✏️ 编辑</view>
+        <view class="action-btn feedback" bindtap="onFeedback" data-id="{{item.id}}">💬 反馈</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 反馈弹窗 -->
+  <view class="feedback-modal {{showFeedbackModal ? 'show' : ''}}" wx:if="{{showFeedbackModal}}">
+    <view class="feedback-mask" bindtap="onCloseFeedback"></view>
+    <view class="feedback-content">
+      <view class="feedback-header">
+        <text class="feedback-title">💬 作业反馈</text>
+        <text class="close-btn" bindtap="onCloseFeedback">✕</text>
+      </view>
+
+      <!-- 选择学生 -->
+      <view class="feedback-section">
+        <view class="section-label">选择学生</view>
+        <scroll-view scroll-x class="student-list">
+          <view
+            class="student-item {{selectedStudent === student.id ? 'selected' : ''}}"
+            wx:for="{{studentList}}"
+            wx:for-item="student"
+            wx:key="id"
+            bindtap="onSelectStudent"
+            data-id="{{student.id}}"
+          >
+            <image class="student-avatar" src="{{student.avatar}}" />
+            <text class="student-name">{{student.name}}</text>
+            <text class="student-score">{{student.score}}分</text>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- AI生成反馈 -->
+      <view class="feedback-section">
+        <view class="section-label">
+          <text>🤖 AI生成反馈</text>
+          <text class="ai-tip">基于学生作业情况自动生成</text>
+        </view>
+        <view class="ai-feedback">
+          <textarea
+            class="feedback-textarea"
+            value="{{aiFeedback}}"
+            bindinput="onAIFeedbackInput"
+            placeholder="AI将生成个性化反馈内容..."
+            maxlength="500"
+          />
+          <view class="ai-actions">
+            <button class="btn-regenerate" bindtap="onRegenerateAI">
+              🔄 重新生成
+            </button>
+          </view>
+        </view>
+      </view>
+
+      <!-- 老师编辑 -->
+      <view class="feedback-section">
+        <view class="section-label">
+          <text>✏️ 老师审核编辑</text>
+          <text class="edit-tip">可修改AI生成的内容后再发送</text>
+        </view>
+        <textarea
+          class="teacher-feedback"
+          value="{{teacherFeedback}}"
+          bindinput="onTeacherFeedbackInput"
+          placeholder="在这里编辑反馈内容..."
+          maxlength="500"
+        />
+      </view>
+
+      <!-- 发送选项 -->
+      <view class="feedback-section">
+        <view class="section-label">发送给</view>
+        <view class="send-options">
+          <view class="send-option {{sendToParent ? 'checked' : ''}}" bindtap="onToggleParent">
+            <text class="check-icon">{{sendToParent ? '✓' : ''}}</text>
+            <text>家长</text>
+          </view>
+          <view class="send-option {{sendToStudent ? 'checked' : ''}}" bindtap="onToggleStudent">
+            <text class="check-icon">{{sendToStudent ? '✓' : ''}}</text>
+            <text>学生</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 发送按钮 -->
+      <view class="feedback-actions">
+        <button class="btn-preview" bindtap="onPreviewFeedback">👀 预览</button>
+        <button class="btn-send" bindtap="onSendFeedback">📤 发送反馈</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预览弹窗 -->
+  <view class="preview-modal {{showPreviewModal ? 'show' : ''}}" wx:if="{{showPreviewModal}}">
+    <view class="preview-mask" bindtap="onClosePreview"></view>
+    <view class="preview-content">
+      <view class="preview-header">📱 预览效果</view>
+      <view class="preview-chat">
+        <view class="preview-msg">
+          <text class="msg-time">{{currentTime}}</text>
+          <view class="msg-bubble">
+            <text class="msg-text">{{teacherFeedback || aiFeedback}}</text>
+          </view>
+        </view>
+      </view>
+      <button class="btn-close-preview" bindtap="onClosePreview">关闭预览</button>
+    </view>
+  </view>
+</view>

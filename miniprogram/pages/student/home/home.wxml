@@ -1,0 +1,157 @@
+<!--pages/student/home/home.wxml-->
+<view class="home-page">
+  <!-- 顶部 header -->
+  <view class="header">
+    <view class="header-content">
+      <view class="user-info" bindtap="goToProfile">
+        <image class="avatar" src="{{userInfo.avatar}}" mode="aspectFill" />
+        <view class="user-text">
+          <text class="greeting">{{greeting}}，{{userInfo.nickname}}!</text>
+          <text class="level">Lv.{{userInfo.level}} · {{userInfo.points}}积分</text>
+        </view>
+      </view>
+      <view class="streak-badge">
+        <text class="fire">🔥</text>
+        <text class="streak-num">{{userInfo.streak}}</text>
+        <text class="streak-text">天</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日目标卡片 -->
+  <view class="goal-card">
+    <view class="goal-header">
+      <view class="goal-icon">🏆</view>
+      <text class="goal-title">今日学习目标</text>
+    </view>
+    <view class="goal-progress">
+      <view class="progress-item">
+        <view class="progress-icon book">📚</view>
+        <view class="progress-info">
+          <text class="progress-num">2</text>
+          <text class="progress-label">绘本</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: 40%"></view>
+        </view>
+      </view>
+      <view class="progress-item">
+        <view class="progress-icon read">🎯</view>
+        <view class="progress-info">
+          <text class="progress-num">5</text>
+          <text class="progress-label">跟读</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill success" style="width: 60%"></view>
+        </view>
+      </view>
+      <view class="progress-item">
+        <view class="progress-icon star">⭐</view>
+        <view class="progress-info">
+          <text class="progress-num">100</text>
+          <text class="progress-label">积分</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill warning" style="width: 80%"></view>
+        </view>
+      </view>
+    </view>
+    <button class="btn-continue" bindtap="continueLearning">
+      继续学习 >
+    </button>
+  </view>
+
+  <!-- 作业入口卡片 -->
+  <view class="homework-entry" bindtap="goToHomework">
+    <view class="entry-left">
+      <view class="entry-icon">🎯</view>
+      <view class="entry-info">
+        <text class="entry-title">今日作业</text>
+        <text class="entry-desc" wx:if="{{homeworkCount > 0}}">还有 {{homeworkCount}} 份作业待完成</text>
+        <text class="entry-desc done" wx:else>今日作业已完成！</text>
+      </view>
+    </view>
+    <view class="entry-right">
+      <text class="entry-action" wx:if="{{homeworkCount > 0}}">去做作业 ></text>
+      <text class="entry-action done" wx:else>查看成绩 ></text>
+    </view>
+  </view>
+
+  <!-- 继续上次学习 -->
+  <view class="section" wx:if="{{recentBooks.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">🔥 继续上次学习</text>
+    </view>
+    <scroll-view class="recent-scroll" scroll-x="true">
+      <view class="recent-list">
+        <block wx:for="{{recentBooks}}" wx:key="id">
+          <view class="recent-item" bindtap="goToBook" data-id="{{item.id}}">
+            <image class="recent-cover" src="{{getBookCover(item.id)}}" mode="aspectFill" />
+            <view class="recent-progress">
+              <view class="progress-ring">
+                <text class="progress-percent">{{item.progress}}%</text>
+              </view>
+            </view>
+            <text class="recent-title">{{getBookTitle(item.id)}}</text>
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 绘本推荐 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">📚 为你推荐</text>
+      <text class="section-more" bindtap="goToDiscover">查看全部 ></text>
+    </view>
+    <view class="book-grid">
+      <block wx:for="{{recommendBooks}}" wx:key="id">
+        <view class="book-card" bindtap="goToBookDetail" data-id="{{item.id}}">
+          <image class="book-cover" src="{{item.cover}}" mode="aspectFill" />
+          <view class="book-info">
+            <text class="book-title">{{item.title}}</text>
+            <view class="book-meta">
+              <text class="book-level">L{{item.levelIndex}}</text>
+              <text class="book-rating">⭐ {{item.rating}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 打卡日历 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">📅 打卡日历</text>
+      <text class="month-text">3月</text>
+    </view>
+    <view class="calendar-card">
+      <view class="calendar-header">
+        <text>一</text>
+        <text>二</text>
+        <text>三</text>
+        <text>四</text>
+        <text>五</text>
+        <text>六</text>
+        <text>日</text>
+      </view>
+      <view class="calendar-days">
+        <block wx:for="{{calendarDays}}" wx:key="index">
+          <view class="calendar-day {{item.status}}">
+            <text>{{item.day}}</text>
+          </view>
+        </block>
+      </view>
+      <view class="streak-info">
+        <text class="streak-fire">🔥 连续打卡 <text class="highlight">{{userInfo.streak}}</text> 天！</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI对话按钮 -->
+  <view class="fab-ai" bindtap="goToAIChat">
+    <text>💬</text>
+  </view>
+</view>
