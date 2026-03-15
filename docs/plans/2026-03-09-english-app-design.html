@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英语学习微信小程序 — 产品设计文档</title>
+  <style>
+    :root {
+      --primary: #4f8ef7;
+      --primary-dark: #2563eb;
+      --accent: #10b981;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --code-bg: #f1f5f9;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 15px;
+    }
+
+    /* ── Header ── */
+    .doc-header {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+      color: #fff;
+      padding: 48px 40px 36px;
+    }
+    .doc-header h1 { font-size: 2rem; font-weight: 700; letter-spacing: .5px; }
+    .doc-header .meta {
+      margin-top: 12px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      opacity: .85;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-green  { background: #d1fae5; color: #065f46; }
+    .badge-blue   { background: #dbeafe; color: #1e40af; }
+    .badge-yellow { background: #fef3c7; color: #92400e; }
+
+    /* ── Layout ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Sections ── */
+    section { margin-bottom: 48px; }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 24px 0 10px;
+    }
+
+    h4 {
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin: 18px 0 8px;
+    }
+
+    p { margin-bottom: 10px; }
+
+    ul, ol {
+      padding-left: 22px;
+      margin-bottom: 10px;
+    }
+    li { margin-bottom: 4px; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; margin: 12px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    thead th {
+      background: #eff6ff;
+      color: var(--primary-dark);
+      font-weight: 600;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 2px solid var(--primary);
+    }
+    tbody td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #f8faff; }
+
+    /* ── Code block ── */
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+      margin: 12px 0;
+    }
+    code {
+      font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+      font-size: 13px;
+    }
+    p code, li code {
+      background: var(--code-bg);
+      color: #c026d3;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* ── Role cards ── */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .role-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+    .role-card .icon { font-size: 2rem; margin-bottom: 6px; }
+    .role-card .name { font-weight: 600; font-size: .9rem; margin-bottom: 4px; }
+    .role-card .login { font-size: .78rem; color: var(--text-muted); }
+
+    /* ── Version timeline ── */
+    .timeline { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+    .tl-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .tl-ver {
+      min-width: 52px;
+      font-weight: 700;
+      font-size: .85rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-align: center;
+    }
+    .tl-ver.mvp  { background: #dbeafe; color: #1e40af; }
+    .tl-ver.v11  { background: #d1fae5; color: #065f46; }
+    .tl-ver.v12  { background: #fef3c7; color: #92400e; }
+    .tl-ver.v13  { background: #fce7f3; color: #9d174d; }
+    .tl-ver.v20  { background: #f3e8ff; color: #6b21a8; }
+    .tl-text { flex: 1; font-size: .93rem; padding-top: 4px; }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; padding: 0; }
+    .checklist li {
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: .93rem;
+    }
+    .checklist li::before {
+      content: "";
+      width: 18px; height: 18px;
+      border: 2px solid #cbd5e1;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ── Tech tag ── */
+    .tech-tag {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+      border-radius: 4px;
+      font-size: 12px;
+      padding: 2px 8px;
+      margin: 2px;
+      font-weight: 500;
+    }
+
+    /* ── Divider ── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .doc-header { padding: 32px 20px 24px; }
+      .doc-header h1 { font-size: 1.5rem; }
+      .container { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+<div class="doc-header">
+  <h1>英语学习微信小程序<br>产品设计文档</h1>
+  <div class="meta">
+    <span>日期：2026-03-09</span>
+    <span>版本：v1.0</span>
+    <span><span class="badge badge-green">已确认，待实施</span></span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══ 一、产品概述 ══ -->
+  <section>
+    <h2>一、产品概述</h2>
+    <div class="card">
+      <p>一款面向<strong>全年龄段（3岁以上）</strong>的英语学习微信小程序，支持多机构/学校/家庭平台化接入。核心围绕<strong>英文绘本</strong>展开，提供跟读评分、AI出题、AI对话、听写等功能，帮助学生在真实语言环境中学习英语。</p>
+    </div>
+  </section>
+
+  <!-- ══ 二、目标用户 ══ -->
+  <section>
+    <h2>二、目标用户</h2>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="icon">&#x1F9D2;</div>
+        <div class="name">学生</div>
+        <div class="login">3岁以上，全年龄段</div>
+      </div>
+      <div class="role-card">
+        <div class="icon">&#x1F468;&#x200D;&#x1F467;</div>
+        <div class="name">家长</div>
+        <div class="login">监督子女，参与陪读</div>
+      </div>
+      <div class="role-card">
+        <div class="icon">&#x1F4DA;</div>
+        <div class="name">英语老师</div>
+        <div class="login">上传内容，管理班级</div>
+      </div>
+      <div class="role-card">
+        <div class="icon">&#x1F3EB;</div>
+        <div class="name">校长</div>
+        <div class="login">管理机构，内容初审</div>
+      </div>
+      <div class="role-card">
+        <div class="icon">&#x2699;&#xFE0F;</div>
+        <div class="name">管理员</div>
+        <div class="login">平台运营与合规管理</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 三、商业模式 ══ -->
+  <section>
+    <h2>三、商业模式</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>版本</th><th>描述</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-blue">免费版</span></td>
+            <td>可访问平台官方基础绘本，每日跟读限 3 次</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">付费个人版（C端订阅）</span></td>
+            <td>解锁全部绘本、无限跟读、AI对话、听写功能</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-yellow">机构版（B端订阅）</span></td>
+            <td>按学生席位收费，校长统一管理账号</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:10px;color:var(--text-muted);font-size:.9rem;">策略：Freemium — 免费功能吸引用户，付费功能转化留存。</p>
+  </section>
+
+  <!-- ══ 四、用户角色与权限 ══ -->
+  <section>
+    <h2>四、用户角色与权限</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>角色</th><th>登录方式</th><th>核心权限</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>学生</strong></td>
+            <td>微信一键登录</td>
+            <td>学习绘本、跟读打分、AI对话、听写、查看个人报告</td>
+          </tr>
+          <tr>
+            <td><strong>家长</strong></td>
+            <td>微信一键登录</td>
+            <td>绑定子女、查看报告、布置任务、收提醒、陪读模式</td>
+          </tr>
+          <tr>
+            <td><strong>英语老师</strong></td>
+            <td>账号密码登录</td>
+            <td>上传绘本、录制音频、管理班级、布置作业、查看班级数据</td>
+          </tr>
+          <tr>
+            <td><strong>校长</strong></td>
+            <td>账号密码登录</td>
+            <td>管理机构内老师账号、审核老师上传内容、查看机构数据报告、采购版权绘本</td>
+          </tr>
+          <tr>
+            <td><strong>管理员</strong></td>
+            <td>账号密码（H5后台）</td>
+            <td>审核机构入驻、平台合规终审、数据看板、系统配置</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>关键规则</h3>
+    <div class="card">
+      <ul>
+        <li>学生账号由老师或家长创建，低龄学生无需自行注册</li>
+        <li>家长可绑定多个子女，一个学生可被多个家长绑定</li>
+        <li>老师属于某机构，机构由管理员审核入驻</li>
+        <li>内容审核两级：<strong>老师上传 → 校长初审 → 管理员合规终审</strong></li>
+        <li>一个机构有且只有一个校长账号（由管理员分配）</li>
+        <li>权限采用 <strong>RBAC</strong>（基于角色的访问控制）</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ 五、技术架构 ══ -->
+  <section>
+    <h2>五、技术架构</h2>
+
+    <h3>技术选型</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>层级</th><th>技术选型</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>前端</td>
+            <td><span class="tech-tag">微信小程序（原生框架）</span></td>
+          </tr>
+          <tr>
+            <td>后端</td>
+            <td><span class="tech-tag">Python FastAPI</span></td>
+          </tr>
+          <tr>
+            <td>数据库</td>
+            <td><span class="tech-tag">PostgreSQL（主数据）</span><span class="tech-tag">Redis（缓存/队列）</span></td>
+          </tr>
+          <tr>
+            <td>文件存储</td>
+            <td><span class="tech-tag">腾讯云 COS</span></td>
+          </tr>
+          <tr>
+            <td>AI 语音</td>
+            <td><span class="tech-tag">科大讯飞（跟读评分、STT、TTS）</span></td>
+          </tr>
+          <tr>
+            <td>AI 文本</td>
+            <td><span class="tech-tag">OpenAI</span><span class="tech-tag">Claude</span></td>
+          </tr>
+          <tr>
+            <td>部署</td>
+            <td><span class="tech-tag">腾讯云 CVM</span><span class="tech-tag">Docker</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>架构图</h3>
+    <pre>
+┌─────────────────────────────────────────────────────┐
+│                   微信小程序（前端）                    │
+│  学生端 │ 家长端 │ 老师端 │ 管理员端（H5 后台）         │
+└─────────────────┬───────────────────────────────────┘
+                  │ HTTPS / WebSocket
+┌─────────────────▼───────────────────────────────────┐
+│              Python FastAPI 后端                      │
+│  认证模块   绘本模块   学习模块   AI模块   支付模块    │
+│  (JWT/微信) (上传/管理) (跟读/出题) (评分/对话) (订阅) │
+└────┬──────────┬──────────┬──────────┬────────────────┘
+     │          │          │          │
+┌────▼──┐  ┌───▼───┐  ┌───▼───┐  ┌───▼──────────────┐
+│Postgres│  │ Redis │  │腾讯云 │  │   AI 服务层       │
+│(主数据)│  │(缓存/ │  │  COS  │  │ 科大讯飞（语音）  │
+│        │  │ 队列) │  │(文件) │  │ OpenAI / Claude  │
+└────────┘  └───────┘  └───────┘  │（出题/对话/听写） │
+                                   └──────────────────┘</pre>
+  </section>
+
+  <!-- ══ 六、核心功能模块 ══ -->
+  <section>
+    <h2>六、核心功能模块</h2>
+
+    <h3>MVP 功能（第一版）</h3>
+
+    <h4>1. 绘本管理</h4>
+    <div class="card">
+      <ul>
+        <li><strong>内容来源：</strong>平台官方预置 + 老师上传 + 第三方版权库对接</li>
+        <li><strong>上传流程：</strong>老师上传图片（每页一张）→ 填写文字内容 → 录制/上传音频 → 提交校长初审 → 管理员合规审核 → 上架</li>
+        <li><strong>绘本属性：</strong>标题、封面、适读年龄、难度级别（L1-L6）、分类标签（自然/动物/生活/故事等）、来源类型</li>
+        <li><strong>页面属性：</strong>图片 + 文字 + 标准音频 + 单词高亮时间轴</li>
+      </ul>
+    </div>
+
+    <h4>2. 跟读打分（核心）</h4>
+    <div class="card">
+      <ul>
+        <li><strong>学习流程：</strong>选择绘本 → 听标准音频 → 点击录音跟读 → 上传音频 → 讯飞语音评测 → 返回评分</li>
+        <li><strong>评分维度：</strong>发音准确度、流利度、语调/韵律、完整度 + 综合总分</li>
+        <li><strong>结果展示：</strong>雷达图四维展示、问题单词红色高亮 + 正确发音播放、历史趋势折线图</li>
+        <li><strong>异步处理：</strong>评分任务走 Redis 队列，避免 API 超时</li>
+      </ul>
+    </div>
+
+    <h4>3. AI 动态出题</h4>
+    <div class="card">
+      <ul>
+        <li><strong>触发时机：</strong>完成一遍绘本跟读后触发</li>
+        <li><strong>题型：</strong>
+          <ul>
+            <li>选择题：绘本内容理解（4选1）</li>
+            <li>看图填词：给图片填入对应英文单词</li>
+            <li>问答题：AI 提问，学生语音或文字回答</li>
+          </ul>
+        </li>
+        <li><strong>出题逻辑：</strong>绘本文字内容 → Claude/OpenAI 按年龄/难度生成 → 缓存复用（同绘本不重复出题）→ 答题后 AI 解析 + 解释</li>
+        <li><strong>交互方式：</strong>根据学生年龄/题型自动切换语音或文字输入</li>
+      </ul>
+    </div>
+
+    <hr>
+    <h3>扩展功能（后续版本）</h3>
+
+    <h4>4. AI 对话</h4>
+    <div class="card">
+      <ul>
+        <li><strong>自由对话模式：</strong>学生用英语与 AI 随意聊天，AI 实时纠错并鼓励</li>
+        <li><strong>情景对话模式：</strong>预设场景（餐厅/超市/学校等），AI 扮演场景角色</li>
+        <li><strong>绘本对话模式：</strong>围绕当前绘本，AI 提问辅助理解</li>
+        <li><strong>技术流程：</strong>语音输入 → 讯飞 STT → Claude/OpenAI → TTS 语音播放</li>
+      </ul>
+    </div>
+
+    <h4>5. AI 听写</h4>
+    <div class="card">
+      <ul>
+        <li><strong>流程：</strong>老师/平台设定词汇范围 → AI 朗读单词/句子 → 学生作答（低龄选字母拼写，高年级直接输入）→ 自动批改 + 错词记录</li>
+        <li><strong>智能复习：</strong>基于遗忘曲线定时推送复习提醒，错词关联绘本语境</li>
+        <li><strong>错词本：</strong>错误词汇自动归集，可随时复习</li>
+      </ul>
+    </div>
+
+    <h4>6. 学习数据分析</h4>
+    <div class="card">
+      <ul>
+        <li><strong>学生视角：</strong>学习时长、跟读次数、平均得分趋势、发音弱项词汇 Top10、词汇掌握图谱</li>
+        <li><strong>家长/老师视角：</strong>每日打卡情况、班级强弱项热力图、个人 vs 班级均值对比</li>
+        <li><strong>自动推送：</strong>每周生成学习周报，通过微信服务通知发送</li>
+      </ul>
+    </div>
+
+    <h4>7. 家长陪读模式</h4>
+    <div class="card">
+      <ul>
+        <li>家长与学生同步学习同一绘本</li>
+        <li>家长可给孩子布置指定绘本学习任务</li>
+        <li>接收子女学习提醒（未打卡、成绩下降等）</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ 七、数据模型 ══ -->
+  <section>
+    <h2>七、数据模型</h2>
+    <pre>
+-- 用户体系
+users:               id, openid, phone, role, institution_id, created_at
+institutions:        id, name, status(pending/active), principal_id
+parent_student:      parent_id, student_id
+teacher_class_student: teacher_id, class_id, student_id
+
+-- 绘本体系
+books:      id, title, cover_url, age_range, level(L1-L6), source, status, institution_id, created_by
+book_pages: id, book_id, page_no, image_url, text_content, audio_url
+book_words: id, page_id, word, start_ms, end_ms
+
+-- 学习记录
+reading_records:  id, student_id, book_id, page_id, audio_url,
+                  score_total, score_pronunciation, score_fluency,
+                  score_intonation, score_completeness, created_at
+quiz_records:     id, student_id, book_id, question, answer, is_correct
+dialogue_records: id, student_id, mode, messages(JSON), created_at
+dictation_records: id, student_id, word, user_input, is_correct, created_at
+
+-- 词汇体系
+vocabulary:        id, word, definition, phonetic
+student_vocabulary: id, student_id, word_id, status(new/learning/mastered), next_review_at</pre>
+  </section>
+
+  <!-- ══ 八、MVP 实施范围 ══ -->
+  <section>
+    <h2>八、MVP 实施范围（第一版）</h2>
+
+    <h3>第一版交付功能</h3>
+    <div class="card" style="margin-bottom:20px;">
+      <ol>
+        <li>用户注册/登录（学生、家长、老师、校长、管理员）</li>
+        <li>绘本上传、审核、展示</li>
+        <li>跟读 + AI 评分</li>
+        <li>AI 动态出题（选择题、填词题）</li>
+        <li>基础学习报告（个人得分历史）</li>
+        <li>基础管理后台（H5）</li>
+      </ol>
+    </div>
+
+    <h3>后续版本迭代</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <span class="tl-ver mvp">MVP</span>
+        <div class="tl-text">用户体系、绘本管理、跟读评分、AI出题、基础报告、管理后台</div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-ver v11">v1.1</span>
+        <div class="tl-text">AI 对话、AI 听写</div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-ver v12">v1.2</span>
+        <div class="tl-text">学习数据深度分析、周报推送</div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-ver v13">v1.3</span>
+        <div class="tl-text">家长陪读模式、错词本、遗忘曲线复习</div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-ver v20">v2.0</span>
+        <div class="tl-text">第三方版权绘本对接、付费订阅体系</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 九、待确认事项 ══ -->
+  <section>
+    <h2>九、待确认事项</h2>
+    <ul class="checklist">
+      <li>科大讯飞 API 申请（语音评测、STT、TTS）</li>
+      <li>腾讯云 COS Bucket 配置</li>
+      <li>第三方版权绘本合作方（牛津阅读树等）接洽</li>
+      <li>微信小程序 AppID 注册</li>
+      <li>服务器选型（腾讯云 CVM 规格）</li>
+    </ul>
+  </section>
+
+</div><!-- /container -->
+</body>
+</html>
