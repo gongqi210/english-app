@@ -214,6 +214,52 @@ CREATE TABLE IF NOT EXISTS `income_stat` (
     KEY `idx_date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='收入统计表';
 
+-- =============================================
+-- v1.1 补充：question 表新增字段
+-- =============================================
+ALTER TABLE `question`
+    ADD COLUMN IF NOT EXISTS `image_url` VARCHAR(500) DEFAULT NULL COMMENT '题目配图URL' AFTER `content`,
+    ADD COLUMN IF NOT EXISTS `knowledge_point` VARCHAR(100) DEFAULT NULL COMMENT '知识点' AFTER `tags`;
+
+-- =============================================
+-- v1.1 补充：机构入驻申请表（institution_application）
+-- =============================================
+CREATE TABLE IF NOT EXISTS `institution_application` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `name` VARCHAR(100) NOT NULL COMMENT '机构名称',
+    `contact` VARCHAR(50) NOT NULL COMMENT '联系人',
+    `phone` VARCHAR(20) NOT NULL COMMENT '联系电话',
+    `address` VARCHAR(255) DEFAULT NULL COMMENT '地址',
+    `remark` TEXT COMMENT '申请说明',
+    `status` VARCHAR(20) NOT NULL DEFAULT 'pending' COMMENT 'pending/approved/rejected',
+    `reviewer_id` BIGINT DEFAULT NULL COMMENT '审核人 → sys_user.id',
+    `review_time` DATETIME DEFAULT NULL COMMENT '审核时间',
+    `review_note` VARCHAR(255) DEFAULT NULL COMMENT '审核备注',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '申请时间',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='机构入驻申请表';
+
+-- =============================================
+-- v1.1 补充：内容举报表（content_report）
+-- =============================================
+CREATE TABLE IF NOT EXISTS `content_report` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `reporter_id` BIGINT NOT NULL COMMENT '举报人 → sys_user.id',
+    `content_type` VARCHAR(20) NOT NULL COMMENT 'question/book',
+    `content_id` BIGINT NOT NULL COMMENT '被举报内容ID',
+    `reason` VARCHAR(255) DEFAULT NULL COMMENT '举报原因',
+    `status` VARCHAR(20) NOT NULL DEFAULT 'pending' COMMENT 'pending/handled/dismissed',
+    `handler_id` BIGINT DEFAULT NULL COMMENT '处理人 → sys_user.id',
+    `handle_time` DATETIME DEFAULT NULL COMMENT '处理时间',
+    `handle_note` VARCHAR(255) DEFAULT NULL COMMENT '处理备注',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '举报时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_status` (`status`),
+    KEY `idx_reporter_id` (`reporter_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='内容举报表';
+
 -- 初始化数据
 INSERT INTO `membership_level` (`name`, `level`, `price`, `duration_days`, `features`, `status`) VALUES
 ('免费版', 0, 0, 0, '["基础绘本阅读", "每日1本", "基础AI评分"]', 1),

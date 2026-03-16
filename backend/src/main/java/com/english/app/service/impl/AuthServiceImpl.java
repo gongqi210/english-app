@@ -10,6 +10,7 @@ import com.english.app.mapper.UserMembershipMapper;
 import com.english.app.service.AuthService;
 import com.english.app.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final UserMembershipMapper userMembershipMapper;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public LoginResponse login(String code, String role) {
@@ -72,6 +74,39 @@ public class AuthServiceImpl implements AuthService {
             response.setIsVip(false);
         }
 
+        return response;
+    }
+
+    @Override
+    public LoginResponse adminLogin(String username, String password) {
+        User user = userMapper.selectOne(
+            new LambdaQueryWrapper<User>()
+                .eq(User::getUsername, username)
+                .or()
+                .eq(User::getPhone, username)
+        );
+
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        if (user.getStatus() != null && user.getStatus() == 0) {
+            throw new RuntimeException("账号已被禁用");
+        }
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("密码错误");
+        }
+
+        String token = jwtService.generateToken(user.getId());
+
+        LoginResponse response = new LoginResponse();
+        response.setUserId(user.getId());
+        response.setToken(token);
+        response.setNickname(user.getNickname());
+        response.setAvatar(user.getAvatar());
+        response.setRole(user.getRole());
+        response.setInstitutionId(user.getInstitutionId());
+        response.setMembershipLevel(0);
+        response.setIsVip(false);
         return response;
     }
 

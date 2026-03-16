@@ -33,8 +33,10 @@ public class SecurityConfig implements WebMvcConfigurer {
     private static final String[] PERMIT_ALL_PATTERNS = {
             "/api/auth/login",
             "/api/auth/wechat",
+            "/api/auth/admin-login",
             "/api/auth/logout",
             "/api/auth/info",
+            "/uploads/**",
             "/error"
     };
 
@@ -45,8 +47,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 );
 
         return http.build();

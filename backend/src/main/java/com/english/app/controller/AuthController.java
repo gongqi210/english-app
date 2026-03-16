@@ -35,6 +35,16 @@ public class AuthController {
     }
 
     /**
+     * 管理后台账号密码登录
+     * POST /api/auth/admin-login
+     */
+    @PostMapping("/admin-login")
+    public Result<LoginResponse> adminLogin(@RequestBody LoginRequest request) {
+        LoginResponse response = authService.adminLogin(request.getCode(), request.getPassword());
+        return Result.success(response);
+    }
+
+    /**
      * 获取用户信息
      */
     @GetMapping("/info")

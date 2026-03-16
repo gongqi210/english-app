@@ -12,6 +12,11 @@ public interface AuthService {
     LoginResponse login(String code, String role);
 
     /**
+     * 管理后台账号密码登录
+     */
+    LoginResponse adminLogin(String username, String password);
+
+    /**
      * 获取当前登录用户
      * @return 用户信息
      */

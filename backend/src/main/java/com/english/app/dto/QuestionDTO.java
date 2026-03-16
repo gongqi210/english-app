@@ -10,11 +10,14 @@ public class QuestionDTO {
     private String type;
     private String typeName;
     private String content;
+    private String imageUrl;
     private List<OptionDTO> options;
     private String correctKey;
     private Integer difficulty;
     private String knowledgePoint;
     private Integer usageCount;
+    private Integer status;
+    private String createTime;
 
     @Data
     public static class OptionDTO {
