@@ -15,7 +15,18 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     * 微信登录
+     * 微信登录（小程序端）
+     * POST /api/auth/wechat
+     */
+    @PostMapping("/wechat")
+    public Result<LoginResponse> wechatLogin(@RequestBody LoginRequest request) {
+        LoginResponse response = authService.login(request.getCode(), request.getRole());
+        return Result.success(response);
+    }
+
+    /**
+     * 手机号密码登录（兼容旧接口）
+     * POST /api/auth/login
      */
     @PostMapping("/login")
     public Result<LoginResponse> login(@RequestBody LoginRequest request) {

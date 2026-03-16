@@ -1,8 +1,10 @@
 // miniprogram/utils/api.js
 const app = getApp();
 
-// API基础路径 - 开发环境使用本地地址，生产环境使用服务器地址
-const API_BASE = 'https://api.english-app.com';
+// API基础路径
+// 开发环境：后端运行在局域网本机，前端从其他设备通过局域网 IP 访问
+// 生产环境：替换为服务器域名
+const API_BASE = 'http://192.168.8.143:8080';
 
 // 统一的请求封装
 const request = (options) => {
@@ -754,10 +756,13 @@ const teacherAPI = {
     });
   },
 
-  // 获取作业统计
+  // 获取作业统计（不传 homeworkId 时返回老师汇总统计）
   getHomeworkStats: (homeworkId) => {
+    const url = homeworkId
+      ? `/api/teacher/homework/${homeworkId}/stats`
+      : `/api/teacher/homework/stats`;
     return request({
-      url: `/api/teacher/homework/${homeworkId}/stats`,
+      url,
       method: 'GET',
       mockData: {
         assigned: 12,

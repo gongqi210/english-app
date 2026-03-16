@@ -47,7 +47,7 @@ public class MembershipServiceImpl implements MembershipService {
             dto.setLevel(level.getLevel());
             dto.setPrice(level.getPrice());
             dto.setDurationDays(level.getDurationDays());
-            dto.setFeatures(JSONUtil.toArray(level.getFeatures(), String.class));
+            dto.setFeatures(JSONUtil.parseArray(level.getFeatures()).toList(String.class).toArray(new String[0]));
             dto.setIsCurrent(level.getLevel().equals(currentLevel));
             return dto;
         }).collect(Collectors.toList());
@@ -89,7 +89,7 @@ public class MembershipServiceImpl implements MembershipService {
         order.setOrderNo(generateOrderNo());
         order.setUserId(userId);
         order.setLevelId(request.getLevelId());
-        order.setAmount(level.getPrice().multiply(java.math.BigDecimal.valueOf(100)));
+        order.setAmount(java.math.BigDecimal.valueOf(level.getPrice()));
         order.setStatus("pending");
         orderMapper.insert(order);
 

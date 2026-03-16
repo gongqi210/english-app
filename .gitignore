@@ -38,3 +38,5 @@ node_modules/
 # Backend
 backend/*.pyc
 backend/__pycache__/
+backend/target/
+*.class

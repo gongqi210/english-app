@@ -67,7 +67,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         );
 
         double todayIncome = todayStats.stream()
-                .mapToDouble(IncomeStat::getTotalIncome).sum();
+                .mapToDouble(s -> s.getTotalIncome() != null ? s.getTotalIncome().doubleValue() : 0.0).sum();
         dto.setTodayIncome(todayIncome);
 
         // 模拟月收入

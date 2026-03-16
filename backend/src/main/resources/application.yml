@@ -7,7 +7,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/english_app?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://localhost:3306/english_app?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: root
 
@@ -39,7 +39,7 @@ mybatis-plus:
 
 # JWT
 jwt:
-  secret: english-app-jwt-secret-key-2024
+  secret: english-app-jwt-secret-key-2024-extended!
   expiration: 86400000
 
 # WeChat
@@ -50,9 +50,9 @@ wechat:
   mchKey: your-mch-key
   notifyUrl: https://your-domain.com/api/payment/notify
 
-# CORS
+# CORS（开发模式：允许局域网所有来源）
 cors:
-  allowed-origins: http://localhost:8080,http://localhost:5173
+  allowed-origins: "*"
 
 logging:
   level:

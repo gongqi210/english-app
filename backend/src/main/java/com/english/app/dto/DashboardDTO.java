@@ -2,6 +2,8 @@ package com.english.app.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class DashboardDTO {
     private Integer totalStudents;

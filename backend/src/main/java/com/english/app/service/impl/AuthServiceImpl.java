@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
             // 创建新用户
             user = new User();
             user.setOpenid(openid);
-            user.setNickname("用户" + IdUtil.fastSimpleId().substring(0, 6));
+            user.setNickname("用户" + IdUtil.fastSimpleUUID().substring(0, 6));
             user.setRole(role);
             user.setStatus(1);
             userMapper.insert(user);
