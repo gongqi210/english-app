@@ -135,6 +135,17 @@ CREATE TABLE IF NOT EXISTS `book` (
     KEY `idx_level` (`level`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='绘本表';
 
+-- 初始化绘本数据
+INSERT INTO `book` (`title`, `subtitle`, `cover`, `level`, `age_range`, `rating`, `tags`, `page_count`, `duration`, `word_count`, `description`, `status`) VALUES
+('The Little Red Hen', '小红母鸡', 'https://picsum.photos/200/300?random=1', 'A', '3-6', 4.8, '经典童话,动手能力', 16, 5, 120, '一只勤劳的小红母鸡种小麦、烤面包的故事，培养孩子的勤劳品质', 1),
+('Brown Bear Brown Bear', '棕熊棕熊', 'https://picsum.photos/200/300?random=2', 'A', '2-5', 4.9, '动物,颜色,重复句式', 12, 4, 80, '经典英文绘本，通过重复的句式帮助孩子认识颜色和动物', 1),
+('The Very Hungry Caterpillar', '饥饿的毛毛虫', 'https://picsum.photos/200/300?random=3', 'B', '3-7', 4.9, '数字,食物,生命教育', 20, 6, 150, '一只小毛毛虫变成蝴蝶的故事，教会孩子数字和生命科学', 1),
+('Pat the Bunny', '拍拍小兔子', 'https://picsum.photos/200/300?random=4', 'A', '0-3', 4.7, '感官,互动,亲子', 10, 3, 50, '适合0-3岁宝宝的触感书，培养触觉和亲子互动', 1),
+('Good Night Moon', '晚安月亮', 'https://picsum.photos/200/300?random=5', 'B', '2-5', 4.8, ' bedtime,睡前,安静', 20, 5, 100, '经典的睡前绘本，帮助孩子建立良好的睡眠习惯', 1),
+('Where is Wally', '找沃利', 'https://picsum.photos/200/300?random=6', 'C', '5-10', 4.6, '观察力,益智,冒险', 30, 15, 200, '在复杂的画面中寻找沃利，培养孩子的观察力', 1),
+('Charlotte Web', '夏洛特的网', 'https://picsum.photos/200/300?random=7', 'D', '8-12', 4.9, '友谊,生命,成长', 50, 30, 800, '关于小猪威尔伯和蜘蛛夏洛特感人故事', 1),
+('Harry Potter', '哈利波特', 'https://picsum.photos/200/300?random=8', 'E', '10+', 4.9, '魔法,冒险,奇幻', 200, 120, 5000, '风靡全球的魔法冒险故事', 1);
+
 -- 题库表
 CREATE TABLE IF NOT EXISTS `question` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '题目ID',

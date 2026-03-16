@@ -11,18 +11,18 @@ const request = (options) => {
   return new Promise((resolve, reject) => {
     const token = wx.getStorageSync('token');
 
-    const defaultOptions = {
-      url: API_BASE + options.url,
+    // 先拼接完整URL，再合并其他选项
+    const fullUrl = API_BASE + options.url;
+
+    wx.request({
+      url: fullUrl,
+      method: options.method || 'GET',
+      data: options.data || {},
       header: {
         'Content-Type': 'application/json',
         'Authorization': token ? `Bearer ${token}` : ''
       },
-      timeout: 15000,
-      ...options
-    };
-
-    wx.request({
-      ...defaultOptions,
+      timeout: options.timeout || 15000,
       success: (res) => {
         if (res.statusCode === 200) {
           if (res.data.code === 200) {
@@ -42,13 +42,12 @@ const request = (options) => {
         }
       },
       fail: (err) => {
-        // 网络请求失败，使用mock数据（开发阶段）
-        console.warn('API请求失败，使用mock数据:', err);
-        if (options.mockData) {
-          resolve(options.mockData);
-        } else {
-          reject({ message: '网络请求失败' });
-        }
+        console.error('API请求失败:', err);
+        wx.showToast({
+          title: '网络请求失败',
+          icon: 'none'
+        });
+        reject({ message: '网络请求失败' });
       }
     });
   });

@@ -64,8 +64,8 @@
   },
   "usingComponents": {},
   "permission": {
-    "scope.record": {
-      "desc": "用于录音跟读，评估您的发音"
+    "scope.userLocation": {
+      "desc": "用于定位校区位置"
     }
   },
   "requiredBackgroundModes": ["audio"],
