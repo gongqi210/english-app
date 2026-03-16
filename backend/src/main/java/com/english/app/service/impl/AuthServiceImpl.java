@@ -113,7 +113,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse getCurrentUser() {
         Long userId = jwtService.getCurrentUserId();
+        if (userId == null) {
+            throw new RuntimeException("未登录");
+        }
         User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在，请重新登录");
+        }
 
         LoginResponse response = new LoginResponse();
         response.setUserId(user.getId());
