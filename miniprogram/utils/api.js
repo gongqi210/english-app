@@ -25,7 +25,7 @@ const request = (options) => {
       ...defaultOptions,
       success: (res) => {
         if (res.statusCode === 200) {
-          if (res.data.code === 0 || res.data.success) {
+          if (res.data.code === 200) {
             resolve(res.data.data);
           } else if (res.data.code === 401) {
             // Token过期或未登录

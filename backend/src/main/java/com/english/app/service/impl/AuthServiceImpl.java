@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
             user = new User();
             user.setOpenid(openid);
             user.setNickname("用户" + IdUtil.fastSimpleUUID().substring(0, 6));
-            user.setRole(role);
+            user.setRole(role != null && !role.isEmpty() ? role : "student");
             user.setStatus(1);
             userMapper.insert(user);
         }
