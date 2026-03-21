@@ -104,5 +104,9 @@ Page({
         icon: 'none'
       });
     });
+  },
+
+  onBack: function() {
+    wx.navigateBack({ delta: 1 });
   }
 });

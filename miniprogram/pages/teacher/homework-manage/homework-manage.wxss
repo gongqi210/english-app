@@ -1,23 +1,61 @@
 page {
-  background: #F5F7FA;
+  background: var(--teacher-bg, #F0FDFA);
+  min-height: 100vh;
 }
 
-.container {
-  padding: 24rpx;
+.homework-manage-page {
+  min-height: 100vh;
+  background: var(--teacher-bg, #F0FDFA);
+  padding-bottom: 40rpx;
 }
 
-/* 统计卡片 */
-.stats-card {
-  background: linear-gradient(135deg, #4A90D9 0%, #3A7BC8 100%);
-  border-radius: 24rpx;
-  padding: 32rpx;
-  margin-bottom: 24rpx;
+/* 自定义导航栏 */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(135deg, var(--teacher-primary, #14B8A6) 0%, var(--teacher-primary-dark, #0D9488) 100%);
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+}
+
+.nav-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  flex: 1;
+  text-align: center;
+}
+
+.nav-back {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
   color: #FFFFFF;
 }
 
-.stats-title {
-  font-size: 28rpx;
-  margin-bottom: 24rpx;
+/* 统计卡片 */
+.stats-section {
+  position: relative;
+  z-index: 50;
+  padding: 24rpx 32rpx 0;
+}
+
+.stats-card {
+  background: linear-gradient(135deg, var(--teacher-primary, #14B8A6) 0%, var(--teacher-primary-dark, #0D9488) 100%);
+  border-radius: var(--radius-lg, 24rpx);
+  padding: 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(20, 184, 166, 0.3);
 }
 
 .stats-grid {
@@ -34,149 +72,307 @@ page {
 .stat-num {
   font-size: 40rpx;
   font-weight: bold;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
 }
 
 .stat-label {
   font-size: 24rpx;
-  opacity: 0.8;
+  color: rgba(255, 255, 255, 0.8);
 }
 
-/* 筛选 */
+/* 筛选区域 */
+.filter-section {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  gap: 20rpx;
+}
+
 .filter-tabs {
+  flex: 1;
   display: flex;
   gap: 16rpx;
-  margin-bottom: 24rpx;
 }
 
 .tab {
   flex: 1;
   text-align: center;
-  padding: 20rpx;
+  padding: 16rpx 0;
   background: #FFFFFF;
-  border-radius: 20rpx;
+  border-radius: var(--radius-child, 40rpx);
   font-size: 26rpx;
   color: #666666;
+  transition: all 0.2s ease;
 }
 
 .tab.active {
-  background: #4A90D9;
+  background: linear-gradient(135deg, var(--teacher-primary, #14B8A6) 0%, var(--teacher-primary-dark, #0D9488) 100%);
   color: #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(20, 184, 166, 0.3);
+}
+
+.class-filter {
+  flex-shrink: 0;
+}
+
+.class-picker {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background: #FFFFFF;
+  border-radius: var(--radius-child, 40rpx);
+  font-size: 24rpx;
+  color: #333333;
+  box-shadow: 0 4rpx 16rpx rgba(20, 184, 166, 0.1);
+}
+
+.picker-arrow {
+  font-size: 20rpx;
+  color: var(--teacher-primary, #14B8A6);
+  margin-left: 12rpx;
 }
 
 /* 作业列表 */
+.homework-list {
+  height: calc(100vh - 380rpx);
+  padding: 0 32rpx;
+}
+
 .homework-card {
   background: #FFFFFF;
-  border-radius: 24rpx;
+  border-radius: var(--radius-lg, 24rpx);
   padding: 24rpx;
   margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(20, 184, 166, 0.08);
 }
 
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16rpx;
-}
-
-.card-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #333333;
-}
-
-.card-status {
-  padding: 8rpx 16rpx;
-  border-radius: 12rpx;
-  font-size: 22rpx;
-}
-
-.card-status.ongoing {
-  background: #FFF7E6;
-  color: #F5A623;
-}
-
-.card-status.finished {
-  background: #E6F7FF;
-  color: #4A90D9;
-}
-
-.card-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 24rpx;
-  color: #999999;
   margin-bottom: 20rpx;
 }
 
+.card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+  flex: 1;
+  margin-right: 16rpx;
+}
+
+.status-pill {
+  padding: 8rpx 20rpx;
+  border-radius: var(--radius-child, 40rpx);
+  font-size: 22rpx;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.status-pill.ongoing {
+  background: var(--teacher-bg, #F0FDFA);
+  color: var(--teacher-primary, #14B8A6);
+}
+
+.status-pill.finished {
+  background: #F0F0F0;
+  color: #999999;
+}
+
+.status-pill.pending {
+  background: #FEF3C7;
+  color: #D97706;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.meta-dot {
+  margin: 0 8rpx;
+}
+
+/* 进度条 */
 .progress-section {
   margin-bottom: 20rpx;
 }
 
-.progress-bar {
-  height: 16rpx;
-  background: #F0F0F0;
-  border-radius: 8rpx;
-  overflow: hidden;
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 12rpx;
 }
 
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4A90D9 0%, #7ED321 100%);
-  border-radius: 8rpx;
-}
-
-.progress-text {
+.progress-label {
   font-size: 24rpx;
   color: #666666;
 }
 
-.card-stats {
-  display: flex;
-  justify-content: space-around;
-  padding: 20rpx 0;
-  border-top: 1rpx solid #EEEEEE;
-  border-bottom: 1rpx solid #EEEEEE;
-  margin-bottom: 20rpx;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.stat .stat-label {
+.progress-value {
   font-size: 24rpx;
-  color: #999999;
-  margin-bottom: 8rpx;
-}
-
-.stat .stat-value {
-  font-size: 28rpx;
+  color: var(--teacher-primary, #14B8A6);
   font-weight: 600;
 }
 
-.stat .stat-value.good {
-  color: #7ED321;
+.progress-bar {
+  height: 12rpx;
+  background: var(--teacher-bg, #F0FDFA);
+  border-radius: 6rpx;
+  overflow: hidden;
 }
 
-.stat .stat-value.warning {
-  color: #F5A623;
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teacher-primary, #14B8A6) 0%, var(--teacher-primary-light, #5EEAD4) 100%);
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
 }
 
+/* 分数区域 */
+.score-section {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  margin-bottom: 20rpx;
+  border-top: 1rpx solid #F0F0F0;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+}
+
+.score-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: var(--radius-child, 40rpx);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12rpx;
+}
+
+.score-icon.avg {
+  background: var(--teacher-bg, #F0FDFA);
+}
+
+.score-icon.excellent {
+  background: #FEF3C7;
+}
+
+.score-icon.warning {
+  background: #FEE2E2;
+}
+
+.score-icon-text {
+  font-size: 28rpx;
+}
+
+.score-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.score-label {
+  font-size: 22rpx;
+  color: #999999;
+  margin-bottom: 2rpx;
+}
+
+.score-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.score-value.good {
+  color: #22C55E;
+}
+
+.score-value.warn {
+  color: #EF4444;
+}
+
+/* 操作按钮 */
 .card-actions {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .action-btn {
-  font-size: 26rpx;
-  color: #4A90D9;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16rpx 0;
+  background: var(--teacher-bg, #F0FDFA);
+  border-radius: var(--radius-child, 40rpx);
+  margin-right: 12rpx;
 }
 
-.action-btn.feedback {
-  color: #7ED321;
+.action-btn:last-child {
+  margin-right: 0;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, var(--teacher-primary, #14B8A6) 0%, var(--teacher-primary-dark, #0D9488) 100%);
+}
+
+.action-btn.primary .action-text {
+  color: #FFFFFF;
+}
+
+.action-icon {
+  font-size: 26rpx;
+  margin-right: 8rpx;
+}
+
+.action-text {
+  font-size: 24rpx;
+  color: var(--teacher-primary, #14B8A6);
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999999;
+  margin-bottom: 32rpx;
+}
+
+.empty-action {
+  padding: 20rpx 48rpx;
+  background: linear-gradient(135deg, var(--teacher-primary, #14B8A6) 0%, var(--teacher-primary-dark, #0D9488) 100%);
+  border-radius: var(--radius-child, 40rpx);
+  box-shadow: 0 4rpx 16rpx rgba(20, 184, 166, 0.3);
+}
+
+.empty-btn {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  font-weight: 500;
 }
 
 /* 反馈弹窗 */
@@ -188,10 +384,13 @@ page {
   bottom: 0;
   z-index: 1000;
   visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
 }
 
 .feedback-modal.show, .preview-modal.show {
   visibility: visible;
+  opacity: 1;
 }
 
 .feedback-mask, .preview-mask {
@@ -213,6 +412,7 @@ page {
   max-height: 90vh;
   overflow-y: auto;
   padding: 32rpx;
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
 }
 
 .feedback-header {
@@ -231,7 +431,7 @@ page {
 .close-btn {
   font-size: 40rpx;
   color: #999999;
-  padding: 16rpx;
+  padding: 8rpx;
 }
 
 .feedback-section {
@@ -266,14 +466,15 @@ page {
   align-items: center;
   margin-right: 20rpx;
   padding: 16rpx;
-  background: #F5F7FA;
-  border-radius: 16rpx;
+  background: var(--teacher-bg, #F0FDFA);
+  border-radius: var(--radius-lg, 24rpx);
   border: 2rpx solid transparent;
+  min-width: 120rpx;
 }
 
 .student-item.selected {
-  border-color: #4A90D9;
-  background: #E6F0FF;
+  border-color: var(--teacher-primary, #14B8A6);
+  background: #FFFFFF;
 }
 
 .student-avatar {
@@ -286,17 +487,21 @@ page {
 .student-name {
   font-size: 22rpx;
   color: #333333;
+  max-width: 100rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .student-score {
   font-size: 20rpx;
-  color: #4A90D9;
+  color: var(--teacher-primary, #14B8A6);
 }
 
 /* AI反馈 */
 .ai-feedback {
-  background: #F5F7FA;
-  border-radius: 16rpx;
+  background: var(--teacher-bg, #F0FDFA);
+  border-radius: var(--radius-lg, 24rpx);
   padding: 20rpx;
 }
 
@@ -305,6 +510,9 @@ page {
   height: 160rpx;
   font-size: 26rpx;
   line-height: 1.6;
+  background: #FFFFFF;
+  border-radius: var(--radius-lg, 24rpx);
+  padding: 20rpx;
 }
 
 .ai-actions {
@@ -316,10 +524,10 @@ page {
   align-items: center;
   padding: 12rpx 24rpx;
   background: #FFFFFF;
-  border-radius: 20rpx;
+  border-radius: var(--radius-child, 40rpx);
   font-size: 24rpx;
-  color: #4A90D9;
-  border: 1rpx solid #4A90D9;
+  color: var(--teacher-primary, #14B8A6);
+  border: 1rpx solid var(--teacher-primary, #14B8A6);
 }
 
 /* 老师编辑 */
@@ -327,8 +535,8 @@ page {
   width: 100%;
   height: 200rpx;
   background: #FFFFFF;
-  border: 2rpx solid #4A90D9;
-  border-radius: 16rpx;
+  border: 2rpx solid var(--teacher-primary, #14B8A6);
+  border-radius: var(--radius-lg, 24rpx);
   padding: 20rpx;
   font-size: 26rpx;
   line-height: 1.6;
@@ -347,15 +555,15 @@ page {
   justify-content: center;
   gap: 12rpx;
   padding: 20rpx;
-  background: #F5F7FA;
-  border-radius: 16rpx;
+  background: var(--teacher-bg, #F0FDFA);
+  border-radius: var(--radius-lg, 24rpx);
   font-size: 28rpx;
   border: 2rpx solid transparent;
 }
 
 .send-option.checked {
-  border-color: #4A90D9;
-  background: #E6F0FF;
+  border-color: var(--teacher-primary, #14B8A6);
+  background: #FFFFFF;
 }
 
 .check-icon {
@@ -367,12 +575,12 @@ page {
   align-items: center;
   justify-content: center;
   font-size: 24rpx;
-  color: #4A90D9;
+  color: var(--teacher-primary, #14B8A6);
 }
 
 .send-option.checked .check-icon {
-  border-color: #4A90D9;
-  background: #4A90D9;
+  border-color: var(--teacher-primary, #14B8A6);
+  background: var(--teacher-primary, #14B8A6);
   color: #FFFFFF;
 }
 
@@ -386,7 +594,7 @@ page {
 .btn-preview, .btn-send {
   flex: 1;
   height: 88rpx;
-  border-radius: 44rpx;
+  border-radius: var(--radius-child, 40rpx);
   font-size: 28rpx;
   display: flex;
   align-items: center;
@@ -395,21 +603,29 @@ page {
 }
 
 .btn-preview {
-  background: #F5F7FA;
+  background: var(--teacher-bg, #F0FDFA);
   color: #666666;
 }
 
 .btn-send {
-  background: linear-gradient(135deg, #4A90D9 0%, #3A7BC8 100%);
+  background: linear-gradient(135deg, var(--teacher-primary, #14B8A6) 0%, var(--teacher-primary-dark, #0D9488) 100%);
   color: #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(20, 184, 166, 0.3);
 }
 
 /* 预览弹窗 */
 .preview-content {
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) scale(0.9);
   max-height: 60vh;
-  border-radius: 32rpx;
+  border-radius: var(--radius-lg, 24rpx);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.preview-modal.show .preview-content {
+  transform: translateY(-50%) scale(1);
+  opacity: 1;
 }
 
 .preview-header {
@@ -420,8 +636,8 @@ page {
 }
 
 .preview-chat {
-  background: #F5F7FA;
-  border-radius: 16rpx;
+  background: var(--teacher-bg, #F0FDFA);
+  border-radius: var(--radius-lg, 24rpx);
   padding: 24rpx;
   margin-bottom: 24rpx;
 }
@@ -440,8 +656,8 @@ page {
 
 .msg-bubble {
   max-width: 80%;
-  background: #4A90D9;
-  border-radius: 20rpx;
+  background: linear-gradient(135deg, var(--teacher-primary, #14B8A6) 0%, var(--teacher-primary-dark, #0D9488) 100%);
+  border-radius: var(--radius-lg, 24rpx);
   padding: 20rpx;
 }
 
@@ -454,9 +670,12 @@ page {
 .btn-close-preview {
   width: 100%;
   height: 88rpx;
-  background: #F5F7FA;
-  border-radius: 44rpx;
+  background: var(--teacher-bg, #F0FDFA);
+  border-radius: var(--radius-child, 40rpx);
   font-size: 28rpx;
   color: #666666;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

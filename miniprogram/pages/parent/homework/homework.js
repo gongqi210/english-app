@@ -158,5 +158,9 @@ Page({
         }
       }
     });
+  },
+
+  onBack: function() {
+    wx.navigateBack({ delta: 1 });
   }
 });

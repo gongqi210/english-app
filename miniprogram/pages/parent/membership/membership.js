@@ -82,5 +82,9 @@ Page({
     wx.navigateTo({
       url: '/pages/parent/orders/orders'
     });
+  },
+
+  onBack: function() {
+    wx.navigateBack({ delta: 1 });
   }
 });

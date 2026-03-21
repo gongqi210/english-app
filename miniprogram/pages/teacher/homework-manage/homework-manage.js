@@ -28,6 +28,7 @@ Page({
   },
 
   onLoad: function(options) {
+    this.setStatusBarHeight();
     this.setCurrentTime();
     this.loadData();
 
@@ -40,6 +41,13 @@ Page({
   onShow: function() {
     // 每次显示时刷新数据
     this.loadData();
+  },
+
+  setStatusBarHeight: function() {
+    const app = getApp();
+    this.setData({
+      statusBarHeight: app.globalData.systemInfo ? app.globalData.systemInfo.statusBarHeight : 20
+    });
   },
 
   setCurrentTime: function() {
@@ -339,5 +347,9 @@ Page({
         }
       }
     });
+  },
+
+  onBack: function() {
+    wx.navigateBack({ delta: 1 });
   }
 });

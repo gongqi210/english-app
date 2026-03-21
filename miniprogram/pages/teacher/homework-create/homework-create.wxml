@@ -1,73 +1,249 @@
-<view class="container">
-  <view class="form-section">
-    <view class="form-item">
-      <view class="form-label">作业名称</view>
-      <input class="form-input" placeholder="请输入作业名称" bindinput="onTitleInput" />
-    </view>
-
-    <view class="form-item">
-      <view class="form-label">适用班级</view>
-      <picker mode="selector" range="{{classes}}" bindchange="onClassChange">
-        <view class="picker-trigger">
-          <text>{{selectedClass || '选择班级'}}</text>
-          <text class="arrow">▼</text>
-        </view>
-      </picker>
-    </view>
-
-    <view class="form-item">
-      <view class="form-label">截止时间</view>
-      <picker mode="date" bindchange="onDateChange">
-        <view class="picker-trigger">
-          <text>{{deadline || '选择日期'}}</text>
-          <text class="arrow">▼</text>
-        </view>
-      </picker>
-    </view>
-  </view>
-
-  <!-- 题目选择 -->
-  <view class="section-title">
-    <text>题目选择</text>
-    <button class="btn-add-question" bindtap="onAddQuestions">+ 从题库选择</button>
-  </view>
-
-  <view class="questions-container">
-    <view class="question-block" wx:for="{{selectedQuestions}}" wx:key="id">
-      <view class="block-header">
-        <view class="block-num">关卡{{index + 1}}</view>
-        <view class="block-type">{{item.typeName}}</view>
-        <text class="block-delete" bindtap="onRemoveQuestion" data-index="{{index}}">✕</text>
+<!--pages/teacher/homework-create/homework-create.wxml-->
+<view class="homework-create-page">
+  <!-- 自定义导航栏 -->
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-content">
+      <view class="nav-back" bindtap="onBack">
+        <text>←</text>
       </view>
-      <view class="block-content">{{item.content}}</view>
-      <view class="drag-handle">⋮⋮ 拖拽排序</view>
-    </view>
-
-    <view class="empty-questions" wx:if="{{selectedQuestions.length === 0}}">
-      <text>暂无题目，请从题库添加</text>
+      <text class="nav-title">创建作业</text>
     </view>
   </view>
 
-  <!-- 作业设置 -->
-  <view class="settings-section">
-    <view class="section-title">作业设置</view>
-    <view class="setting-item">
-      <text>显示答案解析</text>
-      <switch checked="{{showExplanation}}" bindchange="onExplanationChange" color="#4A90D9"/>
+  <!-- 步骤指示器 -->
+  <view class="step-section" style="padding-top: calc(88rpx + var(--status-bar-height, 0));">
+    <view class="step-indicator">
+      <view class="step-item {{currentStep >= 1 ? 'active' : ''}} {{currentStep > 1 ? 'completed' : ''}}">
+        <view class="step-circle">
+          <text class="step-num" wx:if="{{currentStep <= 1}}">1</text>
+          <text class="step-check" wx:else>✓</text>
+        </view>
+        <text class="step-label">选择绘本</text>
+      </view>
+      <view class="step-line {{currentStep > 1 ? 'active' : ''}}"></view>
+      <view class="step-item {{currentStep >= 2 ? 'active' : ''}} {{currentStep > 2 ? 'completed' : ''}}">
+        <view class="step-circle">
+          <text class="step-num" wx:if="{{currentStep <= 2}}">2</text>
+          <text class="step-check" wx:else>✓</text>
+        </view>
+        <text class="step-label">题目设置</text>
+      </view>
+      <view class="step-line {{currentStep > 2 ? 'active' : ''}}"></view>
+      <view class="step-item {{currentStep >= 3 ? 'active' : ''}} {{currentStep > 3 ? 'completed' : ''}}">
+        <view class="step-circle">
+          <text class="step-num" wx:if="{{currentStep <= 3}}">3</text>
+          <text class="step-check" wx:else>✓</text>
+        </view>
+        <text class="step-label">作业设置</text>
+      </view>
+      <view class="step-line {{currentStep > 3 ? 'active' : ''}}"></view>
+      <view class="step-item {{currentStep >= 4 ? 'active' : ''}}">
+        <view class="step-circle">
+          <text class="step-num">4</text>
+        </view>
+        <text class="step-label">预览发布</text>
+      </view>
     </view>
-    <view class="setting-item">
-      <text>成绩排行榜</text>
-      <switch checked="{{showRanking}}" bindchange="onRankingChange" color="#4A90D9"/>
+  </view>
+
+  <!-- 表单内容 -->
+  <view class="form-content">
+    <!-- Step 1: 选择绘本 -->
+    <view class="step-panel {{currentStep === 1 ? 'active' : ''}}">
+      <view class="form-section">
+        <view class="form-item">
+          <view class="form-label">作业名称</view>
+          <input class="form-input" placeholder="请输入作业名称" bindinput="onTitleInput" value="{{title}}" />
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">选择绘本</view>
+          <scroll-view scroll-x class="book-list">
+            <view class="book-card {{selectedBookId === item.id ? 'selected' : ''}}" wx:for="{{books}}" wx:key="id" bindtap="onSelectBook" data-id="{{item.id}}">
+              <image class="book-cover" src="{{item.cover}}" mode="aspectFill" />
+              <text class="book-title">{{item.title}}</text>
+              <view class="book-check" wx:if="{{selectedBookId === item.id}}">✓</view>
+            </view>
+          </scroll-view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">适用班级</view>
+          <picker mode="selector" range="{{classes}}" range-key="name" bindchange="onClassChange">
+            <view class="picker-trigger">
+              <text>{{selectedClassName || '选择班级'}}</text>
+              <text class="arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">截止时间</view>
+          <picker mode="date" bindchange="onDateChange">
+            <view class="picker-trigger">
+              <text>{{deadline || '选择日期'}}</text>
+              <text class="arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+      </view>
     </view>
-    <view class="setting-item">
-      <text>允许重复完成</text>
-      <switch checked="{{allowRetry}}" bindchange="onRetryChange" color="#4A90D9"/>
+
+    <!-- Step 2: 题目设置 -->
+    <view class="step-panel {{currentStep === 2 ? 'active' : ''}}">
+      <view class="form-section">
+        <view class="form-item">
+          <view class="form-label">题目类型</view>
+          <view class="type-grid">
+            <view class="type-item {{selectedTypes.includes('choice') ? 'selected' : ''}}" bindtap="onToggleType" data-type="choice">
+              <text class="type-icon">📋</text>
+              <text class="type-name">选择题</text>
+              <view class="type-check" wx:if="{{selectedTypes.includes('choice')}}">✓</view>
+            </view>
+            <view class="type-item {{selectedTypes.includes('fill_blank') ? 'selected' : ''}}" bindtap="onToggleType" data-type="fill_blank">
+              <text class="type-icon">✏️</text>
+              <text class="type-name">填空题</text>
+              <view class="type-check" wx:if="{{selectedTypes.includes('fill_blank')}}">✓</view>
+            </view>
+            <view class="type-item {{selectedTypes.includes('listening') ? 'selected' : ''}}" bindtap="onToggleType" data-type="listening">
+              <text class="type-icon">🎧</text>
+              <text class="type-name">听力题</text>
+              <view class="type-check" wx:if="{{selectedTypes.includes('listening')}}">✓</view>
+            </view>
+            <view class="type-item {{selectedTypes.includes('reading') ? 'selected' : ''}}" bindtap="onToggleType" data-type="reading">
+              <text class="type-icon">🗣️</text>
+              <text class="type-name">跟读题</text>
+              <view class="type-check" wx:if="{{selectedTypes.includes('reading')}}">✓</view>
+            </view>
+          </view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">各类型题目数量</view>
+          <view class="count-section">
+            <view class="count-item" wx:for="{{questionCounts}}" wx:key="type">
+              <text class="count-label">{{item.typeName}}</text>
+              <view class="count-control">
+                <text class="count-btn minus" bindtap="onDecCount" data-type="{{item.type}}">-</text>
+                <text class="count-num">{{item.count}}</text>
+                <text class="count-btn plus" bindtap="onIncCount" data-type="{{item.type}}">+</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">已选题目预览</view>
+          <view class="preview-list">
+            <view class="preview-item" wx:for="{{selectedQuestions}}" wx:key="id">
+              <view class="preview-num">{{index + 1}}</view>
+              <view class="preview-content">
+                <text class="preview-type">{{item.typeName}}</text>
+                <text class="preview-text">{{item.content}}</text>
+              </view>
+              <text class="preview-remove" bindtap="onRemoveQuestion" data-index="{{index}}">✕</text>
+            </view>
+            <view class="add-questions-btn" bindtap="onAddQuestions">
+              <text class="add-icon">+</text>
+              <text class="add-text">从题库添加</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Step 3: 作业设置 -->
+    <view class="step-panel {{currentStep === 3 ? 'active' : ''}}">
+      <view class="form-section settings-section">
+        <view class="setting-item">
+          <view class="setting-info">
+            <text class="setting-title">显示答案解析</text>
+            <text class="setting-desc">完成后学生可查看题目解析</text>
+          </view>
+          <switch checked="{{showExplanation}}" bindchange="onExplanationChange" color="#14B8A6"/>
+        </view>
+        <view class="setting-item">
+          <view class="setting-info">
+            <text class="setting-title">成绩排行榜</text>
+            <text class="setting-desc">显示班级作业排名</text>
+          </view>
+          <switch checked="{{showRanking}}" bindchange="onRankingChange" color="#14B8A6"/>
+        </view>
+        <view class="setting-item">
+          <view class="setting-info">
+            <text class="setting-title">允许重复完成</text>
+            <text class="setting-desc">学生可多次完成作业取最高分</text>
+          </view>
+          <switch checked="{{allowRetry}}" bindchange="onRetryChange" color="#14B8A6"/>
+        </view>
+        <view class="setting-item">
+          <view class="setting-info">
+            <text class="setting-title">开启AI评估</text>
+            <text class="setting-desc">使用AI对口语跟读进行评分</text>
+          </view>
+          <switch checked="{{enableAI}}" bindchange="onAIChange" color="#14B8A6"/>
+        </view>
+      </view>
+    </view>
+
+    <!-- Step 4: 预览发布 -->
+    <view class="step-panel {{currentStep === 4 ? 'active' : ''}}">
+      <view class="form-section preview-section">
+        <view class="preview-header">
+          <text class="preview-title">作业预览</text>
+        </view>
+        <view class="preview-card">
+          <view class="preview-book">
+            <image class="preview-cover" src="{{selectedBook.cover}}" mode="aspectFill" wx:if="{{selectedBook}}" />
+            <image class="preview-cover" src="" mode="aspectFill" wx:if="{{!selectedBook}}" />
+            <view class="preview-book-info">
+              <text class="preview-book-title">{{selectedBook.title || '未选择绘本'}}</text>
+              <text class="preview-book-author">{{selectedBook.author || ''}}</text>
+            </view>
+          </view>
+          <view class="preview-divider"></view>
+          <view class="preview-info-grid">
+            <view class="preview-info-item">
+              <text class="info-label">作业名称</text>
+              <text class="info-value">{{title || '未设置'}}</text>
+            </view>
+            <view class="preview-info-item">
+              <text class="info-label">适用班级</text>
+              <text class="info-value">{{selectedClassName || '未选择'}}</text>
+            </view>
+            <view class="preview-info-item">
+              <text class="info-label">截止时间</text>
+              <text class="info-value">{{deadline || '未设置'}}</text>
+            </view>
+            <view class="preview-info-item">
+              <text class="info-label">题目数量</text>
+              <text class="info-value">{{selectedQuestions.length}} 题</text>
+            </view>
+          </view>
+          <view class="preview-settings">
+            <view class="preview-setting-tag {{showExplanation ? 'active' : ''}}">答案解析</view>
+            <view class="preview-setting-tag {{showRanking ? 'active' : ''}}">排行榜</view>
+            <view class="preview-setting-tag {{allowRetry ? 'active' : ''}}">重复完成</view>
+            <view class="preview-setting-tag {{enableAI ? 'active' : ''}}">AI评估</view>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 
   <!-- 底部按钮 -->
   <view class="bottom-actions">
-    <button class="btn-draft" bindtap="onSaveDraft">保存草稿</button>
-    <button class="btn-publish" bindtap="onPublish">🚀 发布作业</button>
+    <button class="btn-prev {{currentStep === 1 ? 'disabled' : ''}}" bindtap="onPrevStep" wx:if="{{currentStep > 1}}">
+      <text class="btn-text">上一步</text>
+    </button>
+    <button class="btn-next" bindtap="onNextStep" wx:if="{{currentStep < 4}}">
+      <text class="btn-text">下一步</text>
+    </button>
+    <button class="btn-draft" bindtap="onSaveDraft" wx:if="{{currentStep === 4}}">
+      <text class="btn-text">保存草稿</text>
+    </button>
+    <button class="btn-publish" bindtap="onPublish" wx:if="{{currentStep === 4}}">
+      <text class="btn-text">发布作业</text>
+    </button>
   </view>
 </view>

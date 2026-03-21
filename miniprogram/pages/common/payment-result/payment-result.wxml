@@ -1,35 +1,57 @@
 <view class="result-page">
-  <view class="result-icon {{status}}">
-    <text wx:if="{{status === 'success'}}">✓</text>
-    <text wx:else>✕</text>
+  <!-- Custom Navigation -->
+  <view class="custom-nav">
+    <view class="nav-content">
+      <view class="nav-back" bindtap="onBack">
+        <text>←</text>
+      </view>
+      <text class="nav-title">支付结果</text>
+    </view>
   </view>
+
+  <!-- Result Icon with Animation -->
+  <view class="result-icon-container">
+    <view class="result-icon {{status}}">
+      <text wx:if="{{status === 'success'}}">✓</text>
+      <text wx:else>✕</text>
+    </view>
+  </view>
+
+  <!-- Result Title -->
   <view class="result-title">{{status === 'success' ? '支付成功' : '支付失败'}}</view>
-  <view class="result-desc">{{status === 'success' ? '您已成功开通会员， Enjoy!' : '请重新支付'}}</view>
+  <view class="result-desc">{{status === 'success' ? '您已成功开通会员，Enjoy!' : '请重新支付'}}</view>
 
-  <view class="order-info" wx:if="{{status === 'success'}}">
-    <view class="info-row">
-      <text class="label">套餐</text>
-      <text class="value">{{orderInfo.packageName}}</text>
+  <!-- Order Info Card (Success Only) -->
+  <view class="order-card" wx:if="{{status === 'success'}}">
+    <view class="order-header">
+      <text class="order-title">订单信息</text>
     </view>
-    <view class="info-row">
-      <text class="label">金额</text>
-      <text class="value price">¥{{orderInfo.amount}}</text>
-    </view>
-    <view class="info-row">
-      <text class="label">订单号</text>
-      <text class="value">{{orderInfo.orderNo}}</text>
+    <view class="order-body">
+      <view class="info-row">
+        <text class="info-label">套餐</text>
+        <text class="info-value">{{orderInfo.packageName}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">金额</text>
+        <text class="info-value price">¥{{orderInfo.amount}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">订单号</text>
+        <text class="info-value">{{orderInfo.orderNo}}</text>
+      </view>
     </view>
   </view>
 
+  <!-- Actions -->
   <view class="actions">
     <button class="btn-primary" bindtap="onViewMembership" wx:if="{{status === 'success'}}">
-      查看会员
+      <text>查看会员</text>
     </button>
     <button class="btn-secondary" bindtap="onRetry" wx:if="{{status === 'failed'}}">
-      重新支付
+      <text>重新支付</text>
     </button>
     <button class="btn-outline" bindtap="onGoHome">
-      返回首页
+      <text>返回首页</text>
     </button>
   </view>
 </view>

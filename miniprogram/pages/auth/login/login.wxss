@@ -1,285 +1,508 @@
 /* pages/auth/login/login.wxss */
 
-.login-page {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #4A90D9 0%, #6BA3E0 40%, #87CEEB 70%, #F8F9FA 100%);
-  position: relative;
-  overflow: hidden;
+/* ========== Keyframes ========== */
+@keyframes cloud-drift {
+  0% { transform: translateX(-100rpx); }
+  100% { transform: translateX(750rpx); }
 }
 
-/* 顶部装饰 */
-.header-decoration {
-  position: absolute;
+@keyframes anim-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16rpx); }
+}
+
+@keyframes anim-bounce-in {
+  0% { opacity: 0; transform: scale(0.3) translateY(40rpx); }
+  50% { opacity: 1; transform: scale(1.05) translateY(-8rpx); }
+  70% { transform: scale(0.95) translateY(4rpx); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes anim-twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+@keyframes balloon-rise {
+  0% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-60rpx) rotate(5deg); }
+  50% { transform: translateY(-120rpx) rotate(-3deg); }
+  75% { transform: translateY(-180rpx) rotate(4deg); }
+  100% { transform: translateY(-240rpx) rotate(0deg); opacity: 0.4; }
+}
+
+@keyframes rainbow-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ========== Utility Animation Classes ========== */
+.anim-float {
+  animation: anim-float 3s ease-in-out infinite;
+}
+
+.anim-bounce-in {
+  animation: anim-bounce-in 0.8s var(--ease-bounce) both;
+}
+
+.anim-twinkle {
+  animation: anim-twinkle 2s ease-in-out infinite;
+}
+
+.tap-bounce {
+  transition: transform 0.2s var(--ease-bounce);
+}
+
+.tap-bounce:active {
+  transform: scale(0.95) !important;
+}
+
+/* ========== Page Layout ========== */
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #87CEEB 0%, #B8E0F7 50%, var(--student-bg) 100%);
+  position: relative;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-spacer {
+  height: 88rpx;
+}
+
+/* ========== Sky Background & Clouds ========== */
+.sky-bg {
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 300rpx;
+  height: 100vh;
+  pointer-events: none;
   overflow: hidden;
+  z-index: 0;
 }
 
 .cloud {
   position: absolute;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 50rpx;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 100rpx;
+  animation: cloud-drift linear infinite;
+}
+
+.cloud::before {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
 }
 
 .cloud-1 {
-  width: 200rpx;
+  width: 240rpx;
   height: 80rpx;
-  top: 60rpx;
-  left: -50rpx;
-  animation: cloudMove 15s linear infinite;
+  top: 120rpx;
+  left: -240rpx;
+  animation-duration: 25s;
+}
+
+.cloud-1::before {
+  width: 100rpx;
+  height: 100rpx;
+  top: -50rpx;
+  left: 60rpx;
 }
 
 .cloud-2 {
-  width: 150rpx;
+  width: 180rpx;
   height: 60rpx;
-  top: 100rpx;
-  right: -30rpx;
-  animation: cloudMove 20s linear infinite;
+  top: 220rpx;
+  left: -180rpx;
+  animation-duration: 35s;
+  animation-delay: 5s;
+}
+
+.cloud-2::before {
+  width: 80rpx;
+  height: 80rpx;
+  top: -40rpx;
+  left: 40rpx;
 }
 
 .cloud-3 {
-  width: 100rpx;
-  height: 40rpx;
-  top: 40rpx;
-  left: 30%;
-  animation: cloudMove 18s linear infinite;
+  width: 280rpx;
+  height: 90rpx;
+  top: 80rpx;
+  left: -280rpx;
+  animation-duration: 30s;
+  animation-delay: 10s;
+  opacity: 0.7;
 }
 
-@keyframes cloudMove {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(200rpx); }
+.cloud-3::before {
+  width: 120rpx;
+  height: 120rpx;
+  top: -60rpx;
+  left: 80rpx;
 }
 
-/* Logo区域 */
+.cloud-4 {
+  width: 160rpx;
+  height: 50rpx;
+  top: 300rpx;
+  left: -160rpx;
+  animation-duration: 22s;
+  animation-delay: 15s;
+  opacity: 0.6;
+}
+
+.cloud-4::before {
+  width: 70rpx;
+  height: 70rpx;
+  top: -35rpx;
+  left: 35rpx;
+}
+
+/* ========== Stars Layer ========== */
+.stars-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 500rpx;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.star {
+  position: absolute;
+  color: var(--student-yellow);
+  font-size: 28rpx;
+}
+
+.star-1 { top: 100rpx; left: 12%; animation-delay: 0s; }
+.star-2 { top: 160rpx; right: 15%; animation-delay: 0.6s; }
+.star-3 { top: 80rpx; right: 30%; animation-delay: 1.2s; font-size: 20rpx; }
+.star-4 { top: 200rpx; left: 25%; animation-delay: 0.3s; font-size: 22rpx; }
+.star-5 { top: 140rpx; left: 60%; animation-delay: 0.9s; font-size: 24rpx; }
+
+/* ========== Balloons ========== */
+.balloons-layer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.balloon {
+  position: absolute;
+  font-size: 56rpx;
+  animation: balloon-rise 8s ease-in-out infinite;
+}
+
+.balloon-1 {
+  bottom: 5%;
+  left: 8%;
+  animation-duration: 10s;
+  animation-delay: 0s;
+}
+
+.balloon-2 {
+  bottom: 10%;
+  left: 50%;
+  animation-duration: 12s;
+  animation-delay: 3s;
+}
+
+.balloon-3 {
+  bottom: 2%;
+  right: 10%;
+  animation-duration: 9s;
+  animation-delay: 6s;
+}
+
+/* ========== Logo Section ========== */
 .logo-section {
   position: relative;
-  padding-top: 180rpx;
-  padding-bottom: 60rpx;
-  text-align: center;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  padding-top: 40rpx;
+  padding-bottom: 16rpx;
 }
 
 .logo-wrapper {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
 }
 
 .logo-icon {
-  width: 160rpx;
-  height: 160rpx;
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  border-radius: 40rpx;
+  width: 180rpx;
+  height: 180rpx;
+  background: linear-gradient(135deg, var(--student-yellow) 0%, #FFA500 100%);
+  border-radius: var(--radius-child);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10rpx 30rpx rgba(255, 165, 0, 0.4);
+  box-shadow: 0 12rpx 40rpx rgba(255, 165, 0, 0.45);
 }
 
 .icon-abc {
-  font-size: 48rpx;
+  font-size: 60rpx;
   font-weight: 900;
   color: #FFFFFF;
   letter-spacing: 4rpx;
+  text-shadow: 0 4rpx 8rpx rgba(0,0,0,0.15);
 }
 
-.logo-float {
+.ai-badge {
   position: absolute;
-  top: -20rpx;
-  right: -30rpx;
-  width: 60rpx;
-  height: 60rpx;
-  background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
-  border-radius: 16rpx;
+  top: -16rpx;
+  right: -24rpx;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #FF6B6B, #FFD93D, #6BCB77, #5BC0EB, #C084FC, #FF8FAB);
+  background-size: 300% 300%;
+  animation: rainbow-shift 4s ease infinite, anim-float 2.5s ease-in-out infinite;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: float 2s ease-in-out infinite;
+  box-shadow: 0 4rpx 16rpx rgba(192, 132, 252, 0.5);
 }
 
-.ai-text {
-  font-size: 28rpx;
-  font-weight: bold;
+.ai-badge-text {
+  font-size: 30rpx;
+  font-weight: 800;
   color: #FFFFFF;
+  text-shadow: 0 2rpx 4rpx rgba(0,0,0,0.2);
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10rpx); }
+/* ========== App Name ========== */
+.app-name-section {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding-bottom: 40rpx;
 }
 
 .app-name {
-  margin-top: 32rpx;
-  font-size: 44rpx;
-  font-weight: bold;
+  font-size: 48rpx;
+  font-weight: 800;
   color: #FFFFFF;
-  text-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.2);
+  text-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
+  letter-spacing: 4rpx;
 }
 
-.app-slogan {
-  margin-top: 16rpx;
+.app-subtitle {
+  margin-top: 12rpx;
   font-size: 26rpx;
   color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
 }
 
-/* 角色选择 */
-.role-selection {
-  padding: 0 32rpx;
-  margin-bottom: 32rpx;
+/* ========== Role Selection ========== */
+.role-section {
+  position: relative;
+  z-index: 2;
+  padding: 0 40rpx;
+  margin-bottom: 40rpx;
 }
 
 .role-title {
   text-align: center;
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333333;
+  font-size: var(--font-child-md);
+  font-weight: 700;
+  color: #FFFFFF;
   margin-bottom: 24rpx;
+  text-shadow: 0 2rpx 6rpx rgba(0,0,0,0.1);
 }
 
 .role-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
 }
 
 .role-card {
-  width: calc(50% - 8rpx);
-  background: #FFFFFF;
-  border-radius: 24rpx;
-  padding: 32rpx 24rpx;
+  min-height: var(--touch-min);
+  border-radius: var(--radius-child);
+  padding: 28rpx 20rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 3rpx solid transparent;
-  transition: all 0.3s ease;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  justify-content: center;
+  border: 4rpx solid transparent;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--radius-child);
+  border: 4rpx solid transparent;
+  pointer-events: none;
+  transition: border-color 0.3s ease;
+}
+
+.role-card.active::after {
+  border-color: #FFFFFF;
 }
 
 .role-card.active {
-  border-color: #4A90D9;
-  box-shadow: 0 8rpx 24rpx rgba(74, 144, 217, 0.2);
   transform: translateY(-4rpx);
+  box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
 }
 
-.role-card:active {
-  transform: scale(0.98);
+/* Role-specific gradients */
+.role-student {
+  background: linear-gradient(145deg, #5BC0EB 0%, #87CEEB 100%);
 }
 
-.role-icon {
+.role-parent {
+  background: linear-gradient(145deg, #FF8FAB 0%, #FFB6C8 100%);
+}
+
+.role-teacher {
+  background: linear-gradient(145deg, #6BCB77 0%, #8ED99A 100%);
+}
+
+.role-principal {
+  background: linear-gradient(145deg, #C084FC 0%, #D4A5FD 100%);
+}
+
+.role-emoji {
   font-size: 64rpx;
-  margin-bottom: 16rpx;
+  margin-bottom: 12rpx;
+  line-height: 1.2;
 }
 
 .role-name {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #333333;
-  margin-bottom: 8rpx;
+  font-size: var(--font-child-md);
+  font-weight: 700;
+  color: #FFFFFF;
+  text-shadow: 0 2rpx 4rpx rgba(0,0,0,0.15);
 }
 
-.role-desc {
-  font-size: 22rpx;
-  color: #999999;
-}
-
-.role-card:nth-child(1) .role-icon { background: linear-gradient(135deg, #FFE066 0%, #FFB347 100%); }
-.role-card:nth-child(2) .role-icon { background: linear-gradient(135deg, #87CEEB 0%, #4A90D9 100%); }
-.role-card:nth-child(3) .role-icon { background: linear-gradient(135deg, #98FB98 0%, #32CD32 100%); }
-.role-card:nth-child(4) .role-icon { background: linear-gradient(135deg, #DDA0DD 0%, #9370DB 100%); }
-
-/* 登录表单 */
-.form-section {
-  background: #FFFFFF;
-  margin: 0 32rpx;
-  padding: 48rpx 40rpx;
-  border-radius: 32rpx;
-  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.15);
+/* ========== Login Actions ========== */
+.login-actions {
   position: relative;
-  z-index: 10;
+  z-index: 2;
+  padding: 0 48rpx;
+  margin-bottom: 32rpx;
 }
 
 .btn-wechat {
   background: linear-gradient(135deg, #07C160 0%, #06AD56 100%);
-  border-radius: 48rpx;
-  height: 96rpx;
+  border-radius: 50rpx;
+  height: 100rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(7, 193, 96, 0.3);
-  margin-bottom: 40rpx;
+  box-shadow: 0 8rpx 30rpx rgba(7, 193, 96, 0.35);
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: 100rpx;
 }
 
-.btn-wechat:active {
-  transform: scale(0.98);
+.btn-wechat::after {
+  border: none;
 }
 
-.btn-content {
+.btn-wechat-inner {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.wechat-icon {
+.wechat-icon-circle {
   width: 48rpx;
   height: 48rpx;
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.25);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28rpx;
-  color: #07C160;
   margin-right: 16rpx;
 }
 
-.btn-text {
-  font-size: 32rpx;
-  font-weight: 600;
+.wechat-icon-text {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+.btn-wechat-text {
+  font-size: var(--font-child-md);
+  font-weight: 700;
   color: #FFFFFF;
 }
 
-.divider-line {
+/* Phone login link */
+.phone-login-link {
+  text-align: center;
+  padding: 24rpx 0;
+  min-height: var(--touch-min);
   display: flex;
   align-items: center;
-  margin: 32rpx 0;
+  justify-content: center;
 }
 
-.divider-line::before,
-.divider-line::after {
-  content: '';
-  flex: 1;
-  height: 1rpx;
-  background: #EEEEEE;
+.phone-link-text {
+  font-size: 28rpx;
+  color: rgba(91, 192, 235, 0.9);
+  font-weight: 500;
 }
 
-.divider-text {
-  padding: 0 24rpx;
-  font-size: 24rpx;
-  color: #999999;
+/* Phone login form */
+.phone-form {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s var(--ease-bounce), opacity 0.3s ease;
+  opacity: 0;
+  background: #FFFFFF;
+  border-radius: var(--radius-child);
+  padding: 0 32rpx;
+  box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.08);
+}
+
+.phone-form.show {
+  max-height: 600rpx;
+  opacity: 1;
+  padding: 36rpx 32rpx;
 }
 
 .form-item {
-  margin-bottom: 32rpx;
+  margin-bottom: 24rpx;
 }
 
 .form-label {
   display: flex;
   align-items: center;
-  margin-bottom: 16rpx;
+  margin-bottom: 12rpx;
   font-size: 28rpx;
-  color: #333333;
+  color: #555;
+  font-weight: 600;
 }
 
 .label-icon {
-  margin-right: 12rpx;
-  font-size: 32rpx;
+  margin-right: 10rpx;
+  font-size: 30rpx;
 }
 
 .form-input {
   height: 88rpx;
-  background: #F8F9FA;
-  border-radius: 16rpx;
+  background: #F5F7FA;
+  border-radius: 24rpx;
   padding: 0 24rpx;
   font-size: 28rpx;
   border: 2rpx solid transparent;
@@ -287,139 +510,44 @@
 }
 
 .form-input:focus {
-  border-color: #4A90D9;
+  border-color: var(--student-sky);
   background: #FFFFFF;
 }
 
-.btn-login {
-  background: linear-gradient(135deg, #4A90D9 0%, #3A7BC8 100%);
-  border-radius: 48rpx;
-  height: 96rpx;
+.btn-phone-login {
+  background: linear-gradient(135deg, var(--student-sky) 0%, #3AAFE0 100%);
+  border-radius: 50rpx;
+  height: var(--touch-min);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(74, 144, 217, 0.3);
-  margin-top: 48rpx;
   color: #FFFFFF;
-  font-size: 32rpx;
-  font-weight: 600;
+  font-size: var(--font-child-md);
+  font-weight: 700;
+  border: none;
+  margin-top: 8rpx;
+  box-shadow: 0 8rpx 24rpx rgba(91, 192, 235, 0.3);
 }
 
-.btn-login:active {
-  transform: scale(0.98);
+.btn-phone-login::after {
+  border: none;
 }
 
-/* 角色切换 */
-.role-switch {
-  margin-top: 40rpx;
-}
-
-.role-tabs {
-  display: flex;
-  background: #F5F5F5;
-  border-radius: 12rpx;
-  padding: 6rpx;
-}
-
-.role-tab {
-  flex: 1;
-  height: 64rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26rpx;
-  color: #666666;
-  border-radius: 8rpx;
-  transition: all 0.3s;
-}
-
-.role-tab.active {
-  background: #FFFFFF;
-  color: #4A90D9;
-  font-weight: 600;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
-}
-
-/* 底部说明 */
+/* ========== Footer ========== */
 .footer-section {
-  padding: 48rpx 32rpx;
+  position: relative;
+  z-index: 2;
+  padding: 24rpx 32rpx 48rpx;
   text-align: center;
 }
 
 .agreement-text {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 22rpx;
+  color: rgba(100, 100, 100, 0.6);
+  line-height: 1.8;
 }
 
 .link {
-  color: #FFD700;
-}
-
-/* 装饰动画 */
-.decoration-stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.star {
-  position: absolute;
-  font-size: 32rpx;
-  animation: twinkle 2s ease-in-out infinite;
-}
-
-.star-1 {
-  top: 20%;
-  left: 15%;
-  animation-delay: 0s;
-}
-
-.star-2 {
-  top: 30%;
-  right: 20%;
-  animation-delay: 0.5s;
-}
-
-.star-3 {
-  top: 15%;
-  right: 10%;
-  animation-delay: 1s;
-}
-
-.star-4 {
-  top: 40%;
-  left: 8%;
-  animation-delay: 1.5s;
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.2); }
-}
-
-.balloon {
-  position: absolute;
-  font-size: 48rpx;
-  animation: balloonFloat 4s ease-in-out infinite;
-}
-
-.balloon-1 {
-  bottom: 20%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.balloon-2 {
-  bottom: 30%;
-  right: 5%;
-  animation-delay: 2s;
-}
-
-@keyframes balloonFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-20rpx) rotate(5deg); }
+  color: var(--student-sky);
+  font-weight: 500;
 }

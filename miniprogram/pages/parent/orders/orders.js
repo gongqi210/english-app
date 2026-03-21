@@ -95,5 +95,9 @@ Page({
     wx.navigateTo({
       url: '/pages/parent/purchase/purchase'
     });
+  },
+
+  onBack: function() {
+    wx.navigateBack({ delta: 1 });
   }
 });

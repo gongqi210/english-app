@@ -21,6 +21,14 @@ Page({
 
   onLoad: function() {
     this.loadClasses();
+    this.setStatusBarHeight();
+  },
+
+  setStatusBarHeight: function() {
+    const app = getApp();
+    this.setData({
+      statusBarHeight: app.globalData.systemInfo ? app.globalData.systemInfo.statusBarHeight : 20
+    });
   },
 
   loadClasses: function() {
@@ -203,5 +211,9 @@ Page({
         }
       }
     });
+  },
+
+  onBack: function() {
+    wx.navigateBack({ delta: 1 });
   }
 });

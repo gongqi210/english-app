@@ -1,106 +1,145 @@
 <!--pages/auth/login/login.wxml-->
 <view class="login-page">
-  <!-- 顶部装饰 -->
-  <view class="header-decoration">
+  <!-- Animated sky background -->
+  <view class="sky-bg">
     <view class="cloud cloud-1"></view>
     <view class="cloud cloud-2"></view>
     <view class="cloud cloud-3"></view>
+    <view class="cloud cloud-4"></view>
   </view>
 
-  <!-- Logo区域 -->
-  <view class="logo-section">
+  <!-- Twinkling stars -->
+  <view class="stars-layer">
+    <view class="star anim-twinkle star-1">✦</view>
+    <view class="star anim-twinkle star-2">✦</view>
+    <view class="star anim-twinkle star-3">✦</view>
+    <view class="star anim-twinkle star-4">✦</view>
+    <view class="star anim-twinkle star-5">✦</view>
+  </view>
+
+  <!-- Floating balloons -->
+  <view class="balloons-layer">
+    <view class="balloon balloon-1">🎊</view>
+    <view class="balloon balloon-2">🎊</view>
+    <view class="balloon balloon-3">🎊</view>
+  </view>
+
+  <!-- Custom nav spacer -->
+  <view class="nav-spacer"></view>
+
+  <!-- Logo area -->
+  <view class="logo-section anim-bounce-in">
     <view class="logo-wrapper">
-      <view class="logo-icon">
+      <view class="logo-icon anim-float">
         <text class="icon-abc">ABC</text>
       </view>
-      <view class="logo-float">
-        <text class="ai-text">AI</text>
+      <view class="ai-badge">
+        <text class="ai-badge-text">AI</text>
       </view>
     </view>
+  </view>
+
+  <!-- App name -->
+  <view class="app-name-section">
     <view class="app-name">我AI学英语</view>
-    <view class="app-slogan">AI赋能，让英语学习更有趣</view>
+    <view class="app-subtitle">AI赋能，让英语学习更有趣 🎱</view>
   </view>
 
-  <!-- 角色选择 -->
-  <view class="role-selection">
-    <view class="role-title">请选择您的身份</view>
+  <!-- Role selection -->
+  <view class="role-section">
+    <view class="role-title">选择你的身份</view>
     <view class="role-grid">
-      <view class="role-card {{currentRole === 'student' ? 'active' : ''}}" bindtap="switchRole" data-role="student">
-        <view class="role-icon">👧</view>
+      <view
+        class="role-card role-student tap-bounce {{currentRole === 'student' ? 'active' : ''}}"
+        bindtap="switchRole"
+        data-role="student"
+      >
+        <view class="role-emoji">👤</view>
         <view class="role-name">学生</view>
-        <view class="role-desc">我是来学英语的</view>
       </view>
 
-      <view class="role-card {{currentRole === 'parent' ? 'active' : ''}}" bindtap="switchRole" data-role="parent">
-        <view class="role-icon">👨‍👩‍👧</view>
+      <view
+        class="role-card role-parent tap-bounce {{currentRole === 'parent' ? 'active' : ''}}"
+        bindtap="switchRole"
+        data-role="parent"
+      >
+        <view class="role-emoji">👨‍👩</view>
         <view class="role-name">家长</view>
-        <view class="role-desc">查看孩子学习情况</view>
       </view>
 
-      <view class="role-card {{currentRole === 'teacher' ? 'active' : ''}}" bindtap="switchRole" data-role="teacher">
-        <view class="role-icon">👩‍🏫</view>
+      <view
+        class="role-card role-teacher tap-bounce {{currentRole === 'teacher' ? 'active' : ''}}"
+        bindtap="switchRole"
+        data-role="teacher"
+      >
+        <view class="role-emoji">👩‍🏫</view>
         <view class="role-name">老师</view>
-        <view class="role-desc">布置作业、管理学生</view>
       </view>
 
-      <view class="role-card {{currentRole === 'principal' ? 'active' : ''}}" bindtap="switchRole" data-role="principal">
-        <view class="role-icon">🏫</view>
+      <view
+        class="role-card role-principal tap-bounce {{currentRole === 'principal' ? 'active' : ''}}"
+        bindtap="switchRole"
+        data-role="principal"
+      >
+        <view class="role-emoji">🏫</view>
         <view class="role-name">校长</view>
-        <view class="role-desc">学校管理、数据分析</view>
       </view>
     </view>
   </view>
 
-  <!-- 登录表单 -->
-  <view class="form-section">
-    <!-- 微信一键登录 -->
-    <button class="btn-wechat" bindtap="handleWechatLogin">
-      <view class="btn-content">
-        <text class="wechat-icon">微</text>
-        <text class="btn-text">微信一键登录</text>
+  <!-- Login button area -->
+  <view class="login-actions">
+    <button class="btn-wechat tap-bounce" bindtap="handleWechatLogin">
+      <view class="btn-wechat-inner">
+        <view class="wechat-icon-circle">
+          <text class="wechat-icon-text">微</text>
+        </view>
+        <text class="btn-wechat-text">微信一键登录</text>
       </view>
     </button>
 
-    <view class="divider-line">
-      <view class="divider-text">或使用账号密码登录</view>
+    <view class="phone-login-link" bindtap="togglePhoneLogin">
+      <text class="phone-link-text">📱 使用手机号登录</text>
     </view>
 
-    <!-- 手机号登录 -->
-    <view class="form-item">
-      <view class="form-label">
-        <text class="label-icon">📱</text>
-        <text>手机号</text>
+    <!-- Phone login form (collapsible) -->
+    <view class="phone-form {{showPhoneLogin ? 'show' : ''}}">
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-icon">📱</text>
+          <text>手机号</text>
+        </view>
+        <input
+          class="form-input"
+          type="number"
+          maxlength="11"
+          placeholder="请输入手机号"
+          bindinput="handlePhoneInput"
+          value="{{phone}}"
+        />
       </view>
-      <input
-        class="form-input"
-        type="number"
-        maxlength="11"
-        placeholder="请输入手机号"
-        bindinput="handlePhoneInput"
-        value="{{phone}}"
-      />
-    </view>
 
-    <view class="form-item">
-      <view class="form-label">
-        <text class="label-icon">🔒</text>
-        <text>密码</text>
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-icon">🔒</text>
+          <text>密码</text>
+        </view>
+        <input
+          class="form-input"
+          type="password"
+          placeholder="请输入密码"
+          bindinput="handlePasswordInput"
+          value="{{password}}"
+        />
       </view>
-      <input
-        class="form-input"
-        type="password"
-        placeholder="请输入密码"
-        bindinput="handlePasswordInput"
-        value="{{password}}"
-      />
-    </view>
 
-    <button class="btn-login" bindtap="handlePasswordLogin">
-      <text>登 录</text>
-    </button>
+      <button class="btn-phone-login tap-bounce" bindtap="handlePasswordLogin">
+        <text>登 录</text>
+      </button>
+    </view>
   </view>
 
-  <!-- 底部说明 -->
+  <!-- Footer -->
   <view class="footer-section">
     <view class="agreement-text">
       <text>登录即表示同意</text>
@@ -108,15 +147,5 @@
       <text>和</text>
       <text class="link">《隐私政策》</text>
     </view>
-  </view>
-
-  <!-- 装饰动画 -->
-  <view class="decoration-stars">
-    <view class="star star-1">⭐</view>
-    <view class="star star-2">✨</view>
-    <view class="star star-3">🌟</view>
-    <view class="star star-4">💫</view>
-    <view class="balloon balloon-1">🎈</view>
-    <view class="balloon balloon-2">🎈</view>
   </view>
 </view>

@@ -1,40 +1,103 @@
 <view class="orders-page">
-  <!-- 订单筛选 -->
-  <view class="tabs">
-    <view class="tab {{currentTab === 'all' ? 'active' : ''}}" bindtap="onTabChange" data-tab="all">全部</view>
-    <view class="tab {{currentTab === 'paid' ? 'active' : ''}}" bindtap="onTabChange" data-tab="paid">已完成</view>
-    <view class="tab {{currentTab === 'pending' ? 'active' : ''}}" bindtap="onTabChange" data-tab="pending">待支付</view>
-    <view class="tab {{currentTab === 'refund' ? 'active' : ''}}" bindtap="onTabChange" data-tab="refund">退款</view>
+  <!-- Custom Navigation -->
+  <view class="custom-nav">
+    <view class="nav-content">
+      <view class="nav-back" bindtap="onBack">
+        <text>←</text>
+      </view>
+      <text class="nav-title">我的订单</text>
+    </view>
   </view>
 
-  <!-- 订单列表 -->
-  <scroll-view scroll-y class="order-list">
-    <view class="order-card" wx:for="{{filteredOrders}}" wx:key="id">
-      <view class="order-header">
-        <text class="order-no">订单号：{{item.orderNo}}</text>
-        <text class="order-status {{item.status}}">{{item.statusText}}</text>
+  <!-- Main Content -->
+  <view class="main-content">
+    <!-- Tab Bar -->
+    <view class="tab-bar">
+      <view
+        class="tab-item {{currentTab === 'all' ? 'active' : ''}}"
+        bindtap="onTabChange"
+        data-tab="all"
+      >
+        <text class="tab-text">全部</text>
       </view>
-      <view class="order-body">
-        <view class="order-info">
-          <text class="order-name">{{item.productName}}</text>
-          <text class="order-desc">{{item.productDesc}}</text>
-          <text class="order-date">{{item.createTime}}</text>
-        </view>
-        <view class="order-price">
-          <text class="price-symbol">¥</text>
-          <text class="price-value">{{item.amount}}</text>
-        </view>
+      <view
+        class="tab-item {{currentTab === 'paid' ? 'active' : ''}}"
+        bindtap="onTabChange"
+        data-tab="paid"
+      >
+        <text class="tab-text">已完成</text>
       </view>
-      <view class="order-footer">
-        <button class="btn-refund" wx:if="{{item.status === 'paid'}}" bindtap="onRefund" data-id="{{item.id}}">退款</button>
-        <button class="btn-pay" wx:if="{{item.status === 'pending'}}" bindtap="onPay" data-id="{{item.id}}">去支付</button>
+      <view
+        class="tab-item {{currentTab === 'pending' ? 'active' : ''}}"
+        bindtap="onTabChange"
+        data-tab="pending"
+      >
+        <text class="tab-text">待支付</text>
+      </view>
+      <view
+        class="tab-item {{currentTab === 'refund' ? 'active' : ''}}"
+        bindtap="onTabChange"
+        data-tab="refund"
+      >
+        <text class="tab-text">退款</text>
       </view>
     </view>
 
-    <!-- 空状态 -->
-    <view class="empty-state" wx:if="{{filteredOrders.length === 0}}">
-      <text class="empty-icon">📋</text>
-      <text class="empty-text">暂无订单</text>
-    </view>
-  </scroll-view>
+    <!-- Order List -->
+    <scroll-view scroll-y class="order-list">
+      <view class="order-card" wx:for="{{filteredOrders}}" wx:key="id">
+        <view class="order-card-inner">
+          <view class="order-header">
+            <text class="order-no">订单号：{{item.orderNo}}</text>
+            <view class="order-status-pill {{item.status}}">
+              <text class="status-text">{{item.statusText}}</text>
+            </view>
+          </view>
+          <view class="order-body">
+            <view class="order-info">
+              <text class="order-name">{{item.productName}}</text>
+              <text class="order-desc">{{item.productDesc}}</text>
+              <text class="order-date">{{item.createTime}}</text>
+            </view>
+            <view class="order-price">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{item.amount}}</text>
+            </view>
+          </view>
+          <view class="order-footer">
+            <button
+              class="btn-refund"
+              wx:if="{{item.status === 'paid'}}"
+              bindtap="onRefund"
+              data-id="{{item.id}}"
+              hover-class="tap-bounce"
+            >
+              退款
+            </button>
+            <button
+              class="btn-pay"
+              wx:if="{{item.status === 'pending'}}"
+              bindtap="onPay"
+              data-id="{{item.id}}"
+              hover-class="tap-bounce"
+            >
+              去支付
+            </button>
+          </view>
+        </view>
+      </view>
+
+      <!-- Empty State -->
+      <view class="empty-container" wx:if="{{filteredOrders.length === 0}}">
+        <view class="empty-state">
+          <text class="empty-icon">📋</text>
+          <text class="empty-title">暂无订单</text>
+          <text class="empty-desc">快去挑选心仪的会员套餐吧</text>
+          <button class="btn-goshop" bindtap="onPay" hover-class="tap-bounce">
+            前往购买
+          </button>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
 </view>

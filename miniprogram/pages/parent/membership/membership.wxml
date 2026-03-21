@@ -1,95 +1,116 @@
 <view class="membership-page">
-  <!-- 会员卡片 -->
-  <view class="member-card">
-    <view class="card-bg"></view>
-    <view class="card-content">
-      <view class="member-level">
-        <text class="level-badge {{currentMember.level}}">{{currentMember.levelText}}</text>
-        <text class="member-name">{{currentMember.name}}</text>
+  <!-- Custom Navigation -->
+  <view class="custom-nav">
+    <view class="nav-content">
+      <view class="nav-back" bindtap="onBack">
+        <text>←</text>
       </view>
-      <view class="member-info">
-        <view class="info-item">
-          <text class="info-label">到期时间</text>
-          <text class="info-value">{{currentMember.expireDate}}</text>
-        </view>
-        <view class="info-item">
-          <text class="info-label">剩余天数</text>
-          <text class="info-value">{{currentMember.daysLeft}}天</text>
-        </view>
-      </view>
-      <view class="member-benefits">
-        <view class="benefit-item" wx:for="{{currentMember.benefits}}" wx:key="index">
-          <text class="benefit-icon">✓</text>
-          <text class="benefit-text">{{item}}</text>
-        </view>
-      </view>
+      <text class="nav-title">会员中心</text>
     </view>
   </view>
 
-  <!-- 续费按钮 -->
-  <view class="renewal-section">
-    <button class="btn-renewal" bindtap="onRenew">立即续费</button>
-  </view>
-
-  <!-- 会员权益 -->
-  <view class="benefits-section">
-    <view class="section-title">🎁 会员权益</view>
-    <view class="benefits-grid">
-      <view class="benefit-card" wx:for="{{allBenefits}}" wx:key="id">
-        <text class="benefit-icon">{{item.icon}}</text>
-        <text class="benefit-name">{{item.name}}</text>
-        <text class="benefit-desc">{{item.desc}}</text>
-        <view class="benefit-status {{item.unlocked ? 'active' : 'locked'}}">
-          {{item.unlocked ? '已开通' : '未开通'}}
+  <!-- Main Content -->
+  <view class="main-content">
+    <!-- Member Card -->
+    <view class="member-card">
+      <view class="member-card-bg"></view>
+      <view class="member-card-content">
+        <view class="member-header">
+          <view class="level-badge {{currentMember.level}}">
+            <text class="level-icon">👑</text>
+            <text class="level-text">{{currentMember.levelText}}</text>
+          </view>
+          <text class="member-name">{{currentMember.name}}</text>
         </view>
-      </view>
-    </view>
-  </view>
-
-  <!-- 套餐对比 -->
-  <view class="packages-section">
-    <view class="section-title">💎 开通会员</view>
-    <view class="packages-list">
-      <view
-        class="package-card {{item.popular ? 'popular' : ''}}"
-        wx:for="{{packages}}"
-        wx:key="id"
-      >
-        <view class="popular-tag" wx:if="{{item.popular}}">最受欢迎</view>
-        <view class="package-name">{{item.name}}</view>
-        <view class="package-price">
-          <text class="price-symbol">¥</text>
-          <text class="price-value">{{item.price}}</text>
-          <text class="price-unit">/{{item.unit}}</text>
-        </view>
-        <view class="package-original" wx:if="{{item.originalPrice}}">
-          ¥{{item.originalPrice}}
-        </view>
-        <view class="package-features">
-          <view class="feature" wx:for="{{item.features}}" wx:for-item="f" wx:key="index">
-            <text>✓</text> {{f}}
+        <view class="member-stats">
+          <view class="stat-item">
+            <text class="stat-label">到期时间</text>
+            <text class="stat-value">{{currentMember.expireDate}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-label">剩余天数</text>
+            <text class="stat-value highlight">{{currentMember.daysLeft}}天</text>
           </view>
         </view>
-        <button class="btn-buy" bindtap="onBuyPackage" data-id="{{item.id}}">
-          立即购买
-        </button>
+        <view class="member-benefits">
+          <view class="benefit-item" wx:for="{{currentMember.benefits}}" wx:key="index">
+            <text class="benefit-check">✓</text>
+            <text class="benefit-text">{{item}}</text>
+          </view>
+        </view>
       </view>
     </view>
-  </view>
 
-  <!-- 底部导航 -->
-  <view class="bottom-nav">
-    <view class="nav-item" bindtap="onViewOrders">
-      <text class="nav-icon">📋</text>
-      <text class="nav-text">我的订单</text>
+    <!-- Renewal Button -->
+    <button class="btn-renewal" bindtap="onRenew" hover-class="tap-bounce">
+      <text class="btn-renewal-icon">✨</text>
+      <text>立即续费</text>
+    </button>
+
+    <!-- Benefits Section -->
+    <view class="benefits-section">
+      <view class="section-title">会员权益</view>
+      <view class="benefits-grid">
+        <view class="benefit-card {{item.unlocked ? 'unlocked' : 'locked'}}" wx:for="{{allBenefits}}" wx:key="id">
+          <text class="benefit-icon">{{item.icon}}</text>
+          <text class="benefit-name">{{item.name}}</text>
+          <text class="benefit-desc">{{item.desc}}</text>
+          <view class="benefit-status">
+            <text class="status-text">{{item.unlocked ? '已开通' : '未开通'}}</text>
+          </view>
+        </view>
+      </view>
     </view>
-    <view class="nav-item">
-      <text class="nav-icon">❓</text>
-      <text class="nav-text">帮助中心</text>
+
+    <!-- Packages Section -->
+    <view class="packages-section">
+      <view class="section-title">开通会员</view>
+      <view class="packages-list">
+        <view
+          class="package-card {{item.popular ? 'popular' : ''}}"
+          wx:for="{{packages}}"
+          wx:key="id"
+        >
+          <view class="popular-tag" wx:if="{{item.popular}}">
+            <text>⭐ 最受欢迎</text>
+          </view>
+          <view class="package-name">{{item.name}}</view>
+          <view class="package-price">
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{item.price}}</text>
+            <text class="price-unit">/{{item.unit}}</text>
+          </view>
+          <view class="package-original" wx:if="{{item.originalPrice}}">
+            <text>原价 ¥{{item.originalPrice}}</text>
+          </view>
+          <view class="package-features">
+            <view class="feature-item" wx:for="{{item.features}}" wx:for-item="f" wx:key="index">
+              <text class="feature-check">✓</text>
+              <text class="feature-text">{{f}}</text>
+            </view>
+          </view>
+          <button class="btn-buy" bindtap="onBuyPackage" data-id="{{item.id}}" hover-class="tap-bounce">
+            立即购买
+          </button>
+        </view>
+      </view>
     </view>
-    <view class="nav-item">
-      <text class="nav-icon">📞</text>
-      <text class="nav-text">联系客服</text>
+
+    <!-- Bottom Navigation -->
+    <view class="bottom-nav">
+      <view class="nav-item" bindtap="onViewOrders">
+        <text class="nav-icon">📋</text>
+        <text class="nav-text">我的订单</text>
+      </view>
+      <view class="nav-item">
+        <text class="nav-icon">❓</text>
+        <text class="nav-text">帮助中心</text>
+      </view>
+      <view class="nav-item">
+        <text class="nav-icon">📞</text>
+        <text class="nav-text">联系客服</text>
+      </view>
     </view>
   </view>
 </view>

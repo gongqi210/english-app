@@ -1,81 +1,111 @@
-<view class="container">
-  <!-- 孩子信息卡片 -->
-  <view class="child-card">
-    <view class="child-info">
-      <image class="child-avatar" src="https://picsum.photos/200/200?random=502" />
-      <view class="child-detail">
-        <text class="child-name">小明</text>
-        <text class="child-class">三年级一班</text>
+<view class="homework-page">
+  <!-- Custom Navigation -->
+  <view class="custom-nav">
+    <view class="nav-content">
+      <view class="nav-back" bindtap="onBack">
+        <text>←</text>
       </view>
-    </view>
-    <view class="week-summary">
-      <view class="summary-item">
-        <text class="summary-num">8/10</text>
-        <text class="summary-label">本周完成</text>
-      </view>
-      <view class="summary-item">
-        <text class="summary-num">88分</text>
-        <text class="summary-label">平均分</text>
-      </view>
-      <view class="summary-progress">
-        <view class="progress-bar">
-          <view class="progress-fill" style="width: 80%;"></view>
-        </view>
-        <text>80%</text>
-      </view>
+      <text class="nav-title">孩子作业</text>
     </view>
   </view>
 
-  <!-- 今日待完成 -->
-  <view class="section-title">🔥 今日待完成</view>
-  <view class="todo-card" wx:if="{{todayHomework}}">
-    <view class="todo-header">
-      <text class="todo-title">{{todayHomework.title}}</text>
-      <text class="todo-deadline">截止：{{todayHomework.deadline}}</text>
-    </view>
-    <button class="btn-remind" bindtap="onRemind">提醒孩子做作业</button>
-  </view>
-
-  <!-- 最近完成 -->
-  <view class="section-title">✅ 最近完成</view>
-  <view class="completed-list">
-    <view class="completed-card" wx:for="{{completedHomework}}" wx:key="id">
-      <view class="completed-header">
-        <text class="completed-title">{{item.title}}</text>
-        <view class="completed-score">
-          <text class="score">{{item.score}}分</text>
-          <text class="stars">{{item.stars}}</text>
+  <!-- Main Content -->
+  <view class="main-content">
+    <!-- Child Info Card -->
+    <view class="child-card">
+      <view class="child-card-inner">
+        <image class="child-avatar" src="{{currentChild.avatar}}" />
+        <view class="child-info">
+          <text class="child-name">{{currentChild.name}}</text>
+          <text class="child-class">{{currentChild.className}}</text>
+        </view>
+        <view class="child-progress">
+          <view class="progress-ring">
+            <view class="progress-ring-text">{{weeklyStats.completed}}/{{weeklyStats.total}}</view>
+          </view>
+          <text class="progress-label">本周完成</text>
         </view>
       </view>
-      <view class="completed-info">
-        <text>{{item.date}}</text>
-        <text>用时：{{item.timeSpent}}</text>
+      <view class="progress-bar-container">
+        <view class="progress-bar-bg">
+          <view class="progress-bar-fill" style="width: {{weeklyStats.total > 0 ? (weeklyStats.completed / weeklyStats.total * 100) : 0}}%;"></view>
+        </view>
+        <text class="progress-text">{{weeklyStats.total > 0 ? Math.round(weeklyStats.completed / weeklyStats.total * 100) : 0}}%</text>
       </view>
     </view>
-  </view>
 
-  <!-- 学习趋势 -->
-  <view class="section-title">📈 学习趋势</view>
-  <view class="trend-card">
-    <view class="trend-chart">
-      <view class="chart-line">
-        <view class="chart-point" wx:for="{{trendData}}" wx:key="index" style="left: {{item.x}}%; bottom: {{item.y}}%;">
-          <view class="point-dot"></view>
+    <!-- Today's Homework Card -->
+    <view class="section-header">
+      <text class="section-title">今日待完成</text>
+    </view>
+    <view class="today-card" wx:if="{{todayHomework}}">
+      <view class="today-card-inner">
+        <view class="today-info">
+          <text class="today-title">{{todayHomework.title}}</text>
+          <view class="today-deadline">
+            <text class="deadline-icon">⏰</text>
+            <text class="deadline-text">截止：{{todayHomework.deadline}}</text>
+          </view>
+        </view>
+        <button class="btn-remind" bindtap="onRemind" hover-class="tap-bounce">
+          <text class="btn-remind-icon">🔔</text>
+          <text>提醒孩子</text>
+        </button>
+      </view>
+    </view>
+    <view class="empty-today" wx:if="{{!todayHomework}}">
+      <text class="empty-icon">🎉</text>
+      <text class="empty-text">今日作业已全部完成！</text>
+    </view>
+
+    <!-- Completed Homework List -->
+    <view class="section-header">
+      <text class="section-title">最近完成</text>
+    </view>
+    <view class="completed-list">
+      <view class="completed-card" wx:for="{{completedHomework}}" wx:key="id">
+        <view class="completed-card-inner">
+          <view class="completed-info">
+            <text class="completed-title">{{item.title}}</text>
+            <view class="completed-meta">
+              <text class="completed-date">{{item.date}}</text>
+              <text class="completed-time">用时：{{item.timeSpent}}</text>
+            </view>
+          </view>
+          <view class="completed-score">
+            <text class="score-value">{{item.score}}</text>
+            <text class="score-unit">分</text>
+            <view class="stars-container">
+              <text class="stars">{{item.stars}}</text>
+            </view>
+          </view>
         </view>
       </view>
-      <view class="chart-labels">
-        <text>周一</text>
-        <text>周二</text>
-        <text>周三</text>
-        <text>周四</text>
-        <text>周五</text>
-        <text>周六</text>
-        <text>周日</text>
-      </view>
     </view>
-    <view class="trend-summary">
-      <text class="trend-label">薄弱环节：听力理解</text>
-      <text class="trend-suggestion">建议加强练习</text>
+
+    <!-- Learning Trend Chart -->
+    <view class="section-header">
+      <text class="section-title">学习趋势</text>
+    </view>
+    <view class="trend-card">
+      <view class="trend-chart">
+        <view class="chart-bars">
+          <view class="chart-bar-item" wx:for="{{trendData}}" wx:key="index">
+            <view class="chart-bar" style="height: {{item.value * 3}}rpx; background: {{item.color}};"></view>
+            <text class="chart-bar-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="trend-summary">
+        <view class="trend-item">
+          <text class="trend-icon">📊</text>
+          <text class="trend-label">薄弱环节：听力理解</text>
+        </view>
+        <view class="trend-item">
+          <text class="trend-icon">💡</text>
+          <text class="trend-suggestion">建议加强练习</text>
+        </view>
+      </view>
     </view>
   </view>
 </view>

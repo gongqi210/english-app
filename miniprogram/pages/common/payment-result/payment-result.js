@@ -36,5 +36,9 @@ Page({
     wx.switchTab({
       url: '/pages/student/home/home'
     });
+  },
+
+  onBack: function() {
+    wx.navigateBack({ delta: 1 });
   }
 });

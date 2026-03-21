@@ -1,35 +1,53 @@
-<view class="container">
+<!--pages/teacher/question-bank/question-bank.wxml-->
+<view class="question-bank-page">
+  <!-- 自定义导航栏 -->
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-content">
+      <view class="nav-back" bindtap="onBack">
+        <text>←</text>
+      </view>
+      <text class="nav-title">题库管理</text>
+    </view>
+  </view>
+
   <!-- 搜索栏 -->
-  <view class="search-bar">
-    <view class="search-input">
+  <view class="search-section" style="padding-top: calc(88rpx + var(--status-bar-height, 0));">
+    <view class="search-bar">
       <text class="search-icon">🔍</text>
-      <input placeholder="搜索题目..." bindinput="onSearchInput" />
+      <input class="search-input" placeholder="搜索题目..." bindinput="onSearchInput" confirm-type="search" bindconfirm="onSearch" />
     </view>
   </view>
 
   <!-- 筛选标签 -->
-  <scroll-view scroll-x class="filter-tabs">
-    <view class="tab {{currentFilter === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="all">全部</view>
-    <view class="tab {{currentFilter === 'choice' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="choice">选择题</view>
-    <view class="tab {{currentFilter === 'fill_blank' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="fill_blank">填空题</view>
-    <view class="tab {{currentFilter === 'listening' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="listening">听力题</view>
-    <view class="tab {{currentFilter === 'tracing' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="tracing">书写题</view>
-  </scroll-view>
-
-  <!-- 题目列表 -->
-  <view class="question-header">
-    <text class="header-title">题目列表</text>
-    <button class="btn-add" bindtap="onCreateQuestion">+ 新建题目</button>
+  <view class="filter-section">
+    <scroll-view scroll-x class="filter-tabs">
+      <view class="tab {{currentFilter === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="all">全部</view>
+      <view class="tab {{currentFilter === 'choice' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="choice">选择题</view>
+      <view class="tab {{currentFilter === 'fill_blank' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="fill_blank">填空题</view>
+      <view class="tab {{currentFilter === 'listening' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="listening">听力题</view>
+      <view class="tab {{currentFilter === 'tracing' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="tracing">书写题</view>
+      <view class="tab {{currentFilter === 'reading' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="reading">跟读题</view>
+    </scroll-view>
   </view>
 
-  <scroll-view scroll-y class="question-list">
+  <!-- 题目列表头部 -->
+  <view class="list-header">
+    <text class="header-title">题目列表</text>
+    <view class="list-toggle">
+      <text class="toggle-icon {{viewMode === 'list' ? 'active' : ''}}" bindtap="onToggleView" data-mode="list">☷</text>
+      <text class="toggle-icon {{viewMode === 'grid' ? 'active' : ''}}" bindtap="onToggleView" data-mode="grid">▦</text>
+    </view>
+  </view>
+
+  <!-- 题目列表 -->
+  <scroll-view scroll-y class="question-list" wx:if="{{viewMode === 'list'}}">
     <view class="question-card" wx:for="{{questions}}" wx:key="id">
       <view class="card-top">
         <view class="type-tag {{item.type}}">{{item.typeName}}</view>
-        <view class="card-actions">
-          <text class="action-btn" bindtap="onEdit" data-id="{{item.id}}">编辑</text>
-          <text class="action-btn" bindtap="onCopy" data-id="{{item.id}}">复制</text>
-          <text class="action-btn delete" bindtap="onDelete" data-id="{{item.id}}">删除</text>
+        <view class="difficulty-indicator">
+          <view class="difficulty-dot {{item.difficulty >= 1 ? 'active' : ''}}"></view>
+          <view class="difficulty-dot {{item.difficulty >= 2 ? 'active' : ''}}"></view>
+          <view class="difficulty-dot {{item.difficulty >= 3 ? 'active' : ''}}"></view>
         </view>
       </view>
 
@@ -37,7 +55,7 @@
         <text class="question-text">{{item.content}}</text>
       </view>
 
-      <view class="question-options" wx:if="{{item.options}}">
+      <view class="question-options" wx:if="{{item.options && item.options.length > 0}}">
         <view class="option" wx:for="{{item.options}}" wx:for-item="opt" wx:key="key">
           <text class="opt-key">{{opt.key}}.</text>
           <text class="opt-value">{{opt.value}}</text>
@@ -53,34 +71,80 @@
           <text class="label">知识点：</text>
           <text class="value">{{item.knowledgePoint}}</text>
         </view>
-        <view class="meta-item">
-          <text class="label">使用次数：</text>
-          <text class="value">{{item.usageCount}}</text>
+        <view class="meta-item usage">
+          <text class="label">使用：</text>
+          <text class="value">{{item.usageCount}}次</text>
+        </view>
+      </view>
+
+      <view class="card-actions">
+        <text class="action-btn" bindtap="onEdit" data-id="{{item.id}}">编辑</text>
+        <text class="action-btn" bindtap="onCopy" data-id="{{item.id}}">复制</text>
+        <text class="action-btn delete" bindtap="onDelete" data-id="{{item.id}}">删除</text>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{questions.length === 0 && !loading}}">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">暂无题目</text>
+    </view>
+  </scroll-view>
+
+  <!-- 网格视图 -->
+  <scroll-view scroll-y class="question-grid" wx:if="{{viewMode === 'grid'}}">
+    <view class="grid-item" wx:for="{{questions}}" wx:key="id">
+      <view class="grid-top">
+        <view class="type-tag {{item.type}}">{{item.typeName}}</view>
+        <view class="difficulty-indicator small">
+          <view class="difficulty-dot {{item.difficulty >= 1 ? 'active' : ''}}"></view>
+          <view class="difficulty-dot {{item.difficulty >= 2 ? 'active' : ''}}"></view>
+          <view class="difficulty-dot {{item.difficulty >= 3 ? 'active' : ''}}"></view>
+        </view>
+      </view>
+      <text class="grid-content">{{item.content}}</text>
+      <view class="grid-footer">
+        <text class="grid-usage">{{item.usageCount}}次使用</text>
+        <view class="grid-actions">
+          <text class="action-btn" bindtap="onEdit" data-id="{{item.id}}">✏️</text>
+          <text class="action-btn delete" bindtap="onDelete" data-id="{{item.id}}">🗑️</text>
         </view>
       </view>
     </view>
   </scroll-view>
 
-  <!-- 导入按钮 -->
+  <!-- 导入区域 -->
   <view class="import-section">
     <view class="import-title">快速导入</view>
     <view class="import-options">
       <view class="import-option" bindtap="onImportImage">
-        <text class="import-icon">📷</text>
+        <view class="import-icon-wrapper">
+          <text class="import-icon">📷</text>
+        </view>
         <text class="import-label">拍照导入</text>
       </view>
       <view class="import-option" bindtap="onImportPDF">
-        <text class="import-icon">📄</text>
+        <view class="import-icon-wrapper">
+          <text class="import-icon">📄</text>
+        </view>
         <text class="import-label">PDF导入</text>
       </view>
       <view class="import-option" bindtap="onImportExcel">
-        <text class="import-icon">📊</text>
+        <view class="import-icon-wrapper">
+          <text class="import-icon">📊</text>
+        </view>
         <text class="import-label">批量导入</text>
       </view>
       <view class="import-option" bindtap="onImportAI">
-        <text class="import-icon">🤖</text>
+        <view class="import-icon-wrapper ai">
+          <text class="import-icon">🤖</text>
+        </view>
         <text class="import-label">AI智能导入</text>
       </view>
     </view>
+  </view>
+
+  <!-- 新建题目按钮 -->
+  <view class="fab-button" bindtap="onCreateQuestion">
+    <text class="fab-icon">+</text>
   </view>
 </view>

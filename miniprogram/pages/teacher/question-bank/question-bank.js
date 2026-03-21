@@ -19,6 +19,14 @@ Page({
 
   onLoad: function() {
     this.loadQuestions();
+    this.setStatusBarHeight();
+  },
+
+  setStatusBarHeight: function() {
+    const app = getApp();
+    this.setData({
+      statusBarHeight: app.globalData.systemInfo ? app.globalData.systemInfo.statusBarHeight : 20
+    });
   },
 
   onShow: function() {
@@ -170,5 +178,9 @@ Page({
       title: 'AI智能导入',
       icon: 'none'
     });
+  },
+
+  onBack: function() {
+    wx.navigateBack({ delta: 1 });
   }
 });

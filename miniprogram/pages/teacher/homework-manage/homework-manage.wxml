@@ -1,83 +1,148 @@
-<view class="container">
+<!--pages/teacher/homework-manage/homework-manage.wxml-->
+<view class="homework-manage-page">
+  <!-- 自定义导航栏 -->
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-content">
+      <view class="nav-back" bindtap="onBack">
+        <text>←</text>
+      </view>
+      <text class="nav-title">作业管理</text>
+    </view>
+  </view>
+
   <!-- 统计卡片 -->
-  <view class="stats-card">
-    <view class="stats-title">📊 本周数据</view>
-    <view class="stats-grid">
-      <view class="stat-item">
-        <text class="stat-num">{{stats.assigned}}</text>
-        <text class="stat-label">布置作业</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-num">{{stats.submitRate}}%</text>
-        <text class="stat-label">提交率</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-num">{{stats.completeRate}}%</text>
-        <text class="stat-label">完成率</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-num">{{stats.avgScore}}分</text>
-        <text class="stat-label">平均分</text>
+  <view class="stats-section" style="padding-top: calc(88rpx + var(--status-bar-height, 0));">
+    <view class="stats-card">
+      <view class="stats-grid">
+        <view class="stat-item">
+          <text class="stat-num">{{stats.assigned}}</text>
+          <text class="stat-label">布置作业</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">{{stats.submitRate}}%</text>
+          <text class="stat-label">提交率</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">{{stats.completeRate}}%</text>
+          <text class="stat-label">完成率</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">{{stats.avgScore}}分</text>
+          <text class="stat-label">平均分</text>
+        </view>
       </view>
     </view>
   </view>
 
-  <!-- 筛选 -->
-  <view class="filter-tabs">
-    <view class="tab {{status === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-status="all">全部</view>
-    <view class="tab {{status === 'ongoing' ? 'active' : ''}}" bindtap="onFilterChange" data-status="ongoing">进行中</view>
-    <view class="tab {{status === 'finished' ? 'active' : ''}}" bindtap="onFilterChange" data-status="finished">已结束</view>
+  <!-- 筛选标签 -->
+  <view class="filter-section">
+    <view class="filter-tabs">
+      <view class="tab {{status === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-status="all">全部</view>
+      <view class="tab {{status === 'ongoing' ? 'active' : ''}}" bindtap="onFilterChange" data-status="ongoing">待批改</view>
+      <view class="tab {{status === 'finished' ? 'active' : ''}}" bindtap="onFilterChange" data-status="finished">已结束</view>
+    </view>
+    <view class="class-filter">
+      <picker mode="selector" range="{{classes}}" range-key="name" bindchange="onClassFilterChange">
+        <view class="class-picker">
+          <text>{{selectedClassName || '全部班级'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
   </view>
 
   <!-- 作业列表 -->
-  <view class="homework-list">
+  <scroll-view scroll-y class="homework-list">
     <view class="homework-card" wx:for="{{homeworkList}}" wx:key="id">
       <view class="card-header">
-        <view class="card-title">{{item.title}}</view>
-        <view class="card-status {{item.status}}">{{item.statusText}}</view>
-      </view>
-      <view class="card-info">
-        <text>{{item.dateRange}}</text>
-        <text>{{item.className}} · {{item.studentCount}}人</text>
+        <view class="card-title-row">
+          <text class="card-title">{{item.title}}</text>
+          <view class="status-pill {{item.status}}">{{item.statusText}}</view>
+        </view>
+        <view class="card-meta">
+          <text class="meta-date">{{item.dateRange}}</text>
+          <text class="meta-dot">·</text>
+          <text class="meta-class">{{item.className}}</text>
+          <text class="meta-dot">·</text>
+          <text class="meta-count">{{item.studentCount}}人</text>
+        </view>
       </view>
 
       <view class="progress-section">
+        <view class="progress-header">
+          <text class="progress-label">提交进度</text>
+          <text class="progress-value">{{item.submitted}}/{{item.studentCount}} ({{item.submitRate}}%)</text>
+        </view>
         <view class="progress-bar">
           <view class="progress-fill" style="width: {{item.submitRate}}%;"></view>
         </view>
-        <text class="progress-text">提交 {{item.submitted}}/{{item.studentCount}} ({{item.submitRate}}%)</text>
       </view>
 
-      <view class="card-stats">
-        <view class="stat">
-          <text class="stat-label">平均分</text>
-          <text class="stat-value">{{item.avgScore}}分</text>
+      <view class="score-section">
+        <view class="score-item">
+          <view class="score-icon avg">
+            <text class="score-icon-text">📊</text>
+          </view>
+          <view class="score-info">
+            <text class="score-label">平均分</text>
+            <text class="score-value">{{item.avgScore}}分</text>
+          </view>
         </view>
-        <view class="stat">
-          <text class="stat-label">优秀</text>
-          <text class="stat-value good">{{item.excellentCount}}人</text>
+        <view class="score-item">
+          <view class="score-icon excellent">
+            <text class="score-icon-text">🌟</text>
+          </view>
+          <view class="score-info">
+            <text class="score-label">优秀</text>
+            <text class="score-value good">{{item.excellentCount}}人</text>
+          </view>
         </view>
-        <view class="stat">
-          <text class="stat-label">需加油</text>
-          <text class="stat-value warning">{{item.needsImprovement}}人</text>
+        <view class="score-item">
+          <view class="score-icon warning">
+            <text class="score-icon-text">💪</text>
+          </view>
+          <view class="score-info">
+            <text class="score-label">需加油</text>
+            <text class="score-value warn">{{item.needsImprovement}}人</text>
+          </view>
         </view>
       </view>
 
       <view class="card-actions">
-        <view class="action-btn" bindtap="onViewStats" data-id="{{item.id}}">📊 统计</view>
-        <view class="action-btn" bindtap="onViewList" data-id="{{item.id}}">📋 名单</view>
-        <view class="action-btn" bindtap="onEdit" data-id="{{item.id}}">✏️ 编辑</view>
-        <view class="action-btn feedback" bindtap="onFeedback" data-id="{{item.id}}">💬 反馈</view>
+        <view class="action-btn" bindtap="onViewStats" data-id="{{item.id}}">
+          <text class="action-icon">📈</text>
+          <text class="action-text">统计</text>
+        </view>
+        <view class="action-btn" bindtap="onViewList" data-id="{{item.id}}">
+          <text class="action-icon">📋</text>
+          <text class="action-text">名单</text>
+        </view>
+        <view class="action-btn" bindtap="onEdit" data-id="{{item.id}}">
+          <text class="action-icon">✏️</text>
+          <text class="action-text">编辑</text>
+        </view>
+        <view class="action-btn primary" bindtap="onFeedback" data-id="{{item.id}}">
+          <text class="action-icon">💬</text>
+          <text class="action-text">反馈</text>
+        </view>
       </view>
     </view>
-  </view>
+
+    <view class="empty-state" wx:if="{{homeworkList.length === 0 && !loading}}">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无作业</text>
+      <view class="empty-action" bindtap="onHomeworkCreate">
+        <text class="empty-btn">去创建作业</text>
+      </view>
+    </view>
+  </scroll-view>
 
   <!-- 反馈弹窗 -->
   <view class="feedback-modal {{showFeedbackModal ? 'show' : ''}}" wx:if="{{showFeedbackModal}}">
     <view class="feedback-mask" bindtap="onCloseFeedback"></view>
     <view class="feedback-content">
       <view class="feedback-header">
-        <text class="feedback-title">💬 作业反馈</text>
+        <text class="feedback-title">作业反馈</text>
         <text class="close-btn" bindtap="onCloseFeedback">✕</text>
       </view>
 
@@ -103,7 +168,7 @@
       <!-- AI生成反馈 -->
       <view class="feedback-section">
         <view class="section-label">
-          <text>🤖 AI生成反馈</text>
+          <text>AI生成反馈</text>
           <text class="ai-tip">基于学生作业情况自动生成</text>
         </view>
         <view class="ai-feedback">
@@ -116,7 +181,7 @@
           />
           <view class="ai-actions">
             <button class="btn-regenerate" bindtap="onRegenerateAI">
-              🔄 重新生成
+              重新生成
             </button>
           </view>
         </view>
@@ -125,7 +190,7 @@
       <!-- 老师编辑 -->
       <view class="feedback-section">
         <view class="section-label">
-          <text>✏️ 老师审核编辑</text>
+          <text>老师审核编辑</text>
           <text class="edit-tip">可修改AI生成的内容后再发送</text>
         </view>
         <textarea
@@ -154,8 +219,8 @@
 
       <!-- 发送按钮 -->
       <view class="feedback-actions">
-        <button class="btn-preview" bindtap="onPreviewFeedback">👀 预览</button>
-        <button class="btn-send" bindtap="onSendFeedback">📤 发送反馈</button>
+        <button class="btn-preview" bindtap="onPreviewFeedback">预览</button>
+        <button class="btn-send" bindtap="onSendFeedback">发送反馈</button>
       </view>
     </view>
   </view>
@@ -164,7 +229,7 @@
   <view class="preview-modal {{showPreviewModal ? 'show' : ''}}" wx:if="{{showPreviewModal}}">
     <view class="preview-mask" bindtap="onClosePreview"></view>
     <view class="preview-content">
-      <view class="preview-header">📱 预览效果</view>
+      <view class="preview-header">预览效果</view>
       <view class="preview-chat">
         <view class="preview-msg">
           <text class="msg-time">{{currentTime}}</text>
